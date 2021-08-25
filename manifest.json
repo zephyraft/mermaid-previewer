@@ -1,0 +1,32 @@
+{
+  "name": "Mermaid Previewer",
+  "description": "Preview mermaid. mermaid version 8.11.5.",
+  "version": "1.0",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*",
+        "file:///*.html"
+      ],
+      "exclude_matches": [
+        "*://mermaid-js.github.io/*"
+      ],
+      "js": [
+        "vendor/mermaid.min.js",
+        "mermaid-render.js"
+      ]
+    }
+  ]
+}
