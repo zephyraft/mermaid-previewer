@@ -12,21 +12,5 @@
   ],
   "host_permissions": [
     "<all_urls>"
-  ],
-  "content_scripts": [
-    {
-      "matches": [
-        "http://*/*",
-        "https://*/*",
-        "file:///*.html"
-      ],
-      "exclude_matches": [
-        "*://mermaid-js.github.io/*"
-      ],
-      "js": [
-        "vendor/mermaid.min.js",
-        "mermaid-render.js"
-      ]
-    }
   ]
 }

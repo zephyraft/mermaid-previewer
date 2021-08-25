@@ -1,35 +1,40 @@
-const GITHUB_SELECTOR = "pre[lang='mermaid'] > code"
+function mutationCallback(mutations) {
+    for (let mutation of mutations) {
+        for (let node of mutation.addedNodes) {
+            // 我们只跟踪元素，跳过其他节点（例如文本节点）
+            if (!(node instanceof HTMLElement)) {
+                continue;
+            }
 
-function observerGitHubEditorPreview() {
-    const observer = new window.MutationObserver(mutations => {
-        for (let mutation of mutations) {
-            for (let node of mutation.addedNodes) {
-                // 我们只跟踪元素，跳过其他节点（例如文本节点）
-                if (!(node instanceof HTMLElement)) {
-                    continue;
-                }
-
-                const container = findContainers(node);
-                if (container) {
-                    render(container);
-                }
+            const container = findContainers(node);
+            if (container && container.length !== 0) {
+                render(container);
             }
         }
+    }
+}
+
+function observerGitHubEditorPreview() {
+    // 若已存在observer，先disconnect
+    if (window.observer) {
+        window.observer.disconnect();
+    }
+
+    window.observer = new window.MutationObserver(mutations => {
+        mutationCallback(mutations);
     });
-    observer.observe(document, {childList: true, subtree: true});
+    window.observer.observe(document, {childList: true, subtree: true});
 }
 
 function findContainers(dom) {
+    const GITHUB_SELECTOR = "pre[lang='mermaid'] > code:not([data-processed=true])"
+
     return dom.querySelectorAll(GITHUB_SELECTOR);
 }
 
 function render(dom) {
-    console.debug('render mermaid by plugin');
-    mermaid?.init(undefined, dom);
+    mermaid.init(undefined, dom);
 }
 
+render(findContainers(document));
 observerGitHubEditorPreview();
-chrome.runtime.onMessage.addListener((request, sender, response) => {
-    const containers = findContainers(document);
-    render(containers);
-})
