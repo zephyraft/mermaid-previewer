@@ -12,5 +12,13 @@
   ],
   "host_permissions": [
     "<all_urls>"
-  ]
+  ],
+  "action": {
+    "default_icon": {
+      "128": "/icon/128.png"
+    }
+  },
+  "icons": {
+    "128": "/icon/128.png"
+  }
 }
