@@ -24,6 +24,18 @@
     HadRenderedKey = "data-processed";
 
     /**
+     * mermaid图表正则匹配
+     * @type {RegExp}
+     */
+    mermaidRegex = /^\s*(graph\s+\w{2}|graph|graph\s+.{1}|flowchart\s+\w{2}|flowchart|flowchart\s+.{1}|sequenceDiagram|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|pie\s+title\s.+|requirementDiagram|gitGraph:)\s*\n/mg
+
+    /**
+     * mermaid md 代码块正则匹配
+     * @type {RegExp}
+     */
+    mermaidCodeRegex = /```mermaid\s*\n(.|\n)*\n\s*```/g
+
+    /**
      * dom树改变时触发的回调
      * @param mutations dom改变事件
      */
@@ -116,11 +128,15 @@
 
         const mermaidDomList = dom.querySelectorAll(selectors);
         for (const mermaidDom of mermaidDomList) {
-            // 去除内部多余的html tag
+            // 去除内部多余的html tag，主要是为了兼容bitbucket
             mermaidDom.innerHTML = mermaidDom.innerText
             // console.log('mermaid-debug', domElement.innerText)
         }
-        return mermaidDomList;
+        // 过滤不符合正则的dom
+        return Array.from(mermaidDomList).filter(mermaidDom => {
+            // console.log("" + mermaidDom.innerText);
+            return new RegExp(mermaidRegex).test(mermaidDom.innerText);
+        })
     }
 
     /**
