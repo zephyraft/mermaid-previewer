@@ -7,12 +7,21 @@ window.mermaidPreviewerExcludeList = [
 // TODO 增加专用的配置页面，提供给高级用户进行配置
 // dom selector
 window.mermaidPreviewerSelectorList = [
-    "pre[lang='mermaid'] > code:not([data-processed=true])", // github
+    "pre[lang='mermaid'] > code", // github
     "div[class='codehilite'] > pre", // bitbucket
 ];
 
-// 隐藏dom的class
-window.mermaidPreviewerHiddenClass = "mermaid-previewer-hidden-node";
+/**
+ * 用于保存原始mermaid code的key
+ * @type {string}
+ */
+window.mermaidPreviewerRawDataKey = "data-mermaid-previewer-raw";
+
+/**
+ * 用于判断是否已被渲染的key，由mermaid jsapi定义
+ * @type {string}
+ */
+window.mermaidPreviewerHadRenderedKey = "data-processed";
 
 /**
  * dom树改变时触发的回调
@@ -28,14 +37,15 @@ function mermaidPreviewerMutationCallback(mutations) {
                 continue;
             }
 
-            const container = mermaidPreviewerFindContainers(node);
-            if (container && container.length !== 0) {
-                mermaidPreviewerRender(container);
+            const mermaidDomList = mermaidPreviewerFindAndSaveRaw(node);
+            // noinspection JSUnresolvedVariable
+            if (mermaidDomList.length !== 0) {
+                mermaidPreviewerRender(mermaidDomList);
             }
         }
 
         // 解决bitbucket预览加载问题
-        mermaidPreviewerBitbucketPreviewHack(mutation)
+        mermaidPreviewerBitbucketPreviewHack(mutation);
     }
 }
 
@@ -51,12 +61,19 @@ function mermaidPreviewerBitbucketPreviewHack(mutation) {
         mutation.removedNodes.length !== 0
     ) {
         // console.log('hack render for bitbucket preview cancel');
-        const hiddenDom = document.querySelectorAll("span." + window.mermaidPreviewerHiddenClass);
-        for (let hiddenDomElement of hiddenDom) {
-            const mermaidDom = hiddenDomElement.previousSibling;
-            mermaidDom.innerHTML = hiddenDomElement.innerHTML;
-            mermaidDom.removeAttribute('data-processed');
-            mermaidPreviewerRender(mermaidDom);
+        const mermaidDomList = mermaidPreviewerFindContainers(document, mermaidPreviewerRenderedSelector());
+        // noinspection JSUnresolvedVariable
+        if (mermaidDomList.length !== 0) {
+            // 恢复原始mermaid
+            for (const mermaidDom of mermaidDomList) {
+                // console.log(mermaidDom);
+                // noinspection JSUnresolvedFunction
+                mermaidDom.innerHTML = mermaidDom.getAttribute(window.mermaidPreviewerRawDataKey);
+                // noinspection JSUnresolvedFunction
+                mermaidDom.removeAttribute(window.mermaidPreviewerHadRenderedKey);
+            }
+            // 重新渲染
+            mermaidPreviewerRender(mermaidDomList);
         }
     }
 }
@@ -82,9 +99,10 @@ function mermaidPreviewerObserverDynamicInsertDom() {
 /**
  * 匹配符合条件的dom
  * @param dom 从这个dom结点搜索
+ * @param selectors dom selector
  * @return 符合条件的dom结点数组
  */
-function mermaidPreviewerFindContainers(dom) {
+function mermaidPreviewerFindContainers(dom, selectors) {
     // 排除某些域名
     let needExclude = false;
     for (const excludeItem of window.mermaidPreviewerExcludeList) {
@@ -96,46 +114,75 @@ function mermaidPreviewerFindContainers(dom) {
         return dom.querySelectorAll(undefined);
     }
 
-    // TODO 适配非markdown页面
-    const mermaidDom = dom.querySelectorAll(mermaidPreviewerSelectorList.join(", "));
-    for (let domElement of mermaidDom) {
+    const mermaidDomList = dom.querySelectorAll(selectors);
+    for (const mermaidDom of mermaidDomList) {
         // 去除内部多余的html tag
-        domElement.innerHTML = domElement.innerText
+        mermaidDom.innerHTML = mermaidDom.innerText
         // console.log('mermaid-debug', domElement.innerText)
-        // 缓存mermaid原始内容
-        mermaidPreviewerSaveRawByHiddenDom(domElement)
     }
-
-    return dom.querySelectorAll(mermaidPreviewerSelectorList.join(", "));
+    return mermaidDomList;
 }
 
 /**
- * 新增隐藏dom，缓存mermaid原始内容
- * 主要用于解决bitbucket预览加载问题，使用mermaidPreviewerBitbucketPreviewHack读取缓存内容
- * @param mermaidDom
+ * 未渲染selector
+ * @return 未渲染selector
  */
-function mermaidPreviewerSaveRawByHiddenDom(mermaidDom) {
-    // 创建
-    const hiddenNode = document.createElement("span");
-    // 设置class，便于后续搜索此dom
-    hiddenNode.setAttribute('class', window.mermaidPreviewerHiddenClass);
-    // 缓存原始内容
-    hiddenNode.innerHTML = mermaidDom.innerHTML;
-    // 设置为隐藏
-    hiddenNode.style.display = "none";
-    // 插入到domElement后
-    mermaidDom.parentNode.insertBefore(hiddenNode, mermaidDom.nextSibling);
+function mermaidPreviewerNotRenderSelector() {
+    // noinspection UnnecessaryLocalVariableJS
+    const selectors = mermaidPreviewerSelectorList.map(selector => {
+        selector += `:not([${window.mermaidPreviewerHadRenderedKey}=true])`;
+        return selector;
+    }).join(", ");
+    // console.log(selectors);
+    return selectors;
+}
+
+/**
+ * 已渲染selector
+ * @return 已渲染selector
+ */
+function mermaidPreviewerRenderedSelector() {
+    // noinspection UnnecessaryLocalVariableJS
+    const selectors = mermaidPreviewerSelectorList.map(selector => {
+        selector += `[${window.mermaidPreviewerHadRenderedKey}=true]`;
+        return selector;
+    }).join(", ");
+    // console.log(selectors);
+    return selectors;
+}
+
+/**
+ * 缓存mermaid原始内容
+ * @param mermaidDomList
+ */
+function mermaidPreviewerSaveRaw(mermaidDomList) {
+    for (const mermaidDom of mermaidDomList) {
+        // 缓存mermaid原始内容
+        mermaidDom.setAttribute(window.mermaidPreviewerRawDataKey, mermaidDom.innerHTML)
+    }
+}
+
+/**
+ * 查找并保存原始mermaid code
+ * @param dom 从这个dom结点搜索
+ * @return 符合条件的dom结点数组
+ */
+function mermaidPreviewerFindAndSaveRaw(dom) {
+    const mermaidDomList = mermaidPreviewerFindContainers(dom, mermaidPreviewerNotRenderSelector());
+    mermaidPreviewerSaveRaw(mermaidDomList)
+    return mermaidDomList;
 }
 
 /**
  * 渲染mermaid图
- * @param dom 需要渲染的dom结点
+ * @param mermaidDomList 需要渲染的dom结点
  */
-function mermaidPreviewerRender(dom) {
-    mermaid.init(undefined, dom);
+function mermaidPreviewerRender(mermaidDomList) {
+    // noinspection JSUnresolvedVariable
+    mermaid.init(undefined, mermaidDomList);
 }
 
 // 首次进入页面时，执行render
-mermaidPreviewerRender(mermaidPreviewerFindContainers(document));
+mermaidPreviewerRender(mermaidPreviewerFindAndSaveRaw(document));
 // 监听动态插入的dom
 mermaidPreviewerObserverDynamicInsertDom();

@@ -55,6 +55,8 @@ The following websites natively support mermaid and will cause conflicts, so the
 ## TODO
 
 - [ ] outside markdown
+- [ ] config page for exclude list and match list
+- [ ] export mermaid image file
 - [ ] ...
 
 ## Vendor List
