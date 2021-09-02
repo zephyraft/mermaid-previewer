@@ -27,13 +27,13 @@
      * mermaid图表正则匹配
      * @type {RegExp}
      */
-    mermaidRegex = /^\s*(graph\s+\w{2}|graph|graph\s+.{1}|flowchart\s+\w{2}|flowchart|flowchart\s+.{1}|sequenceDiagram|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|pie\s+title\s.+|requirementDiagram|gitGraph:)\s*\n/mg
+    mermaidRegex = /^\s*(graph\s+\w{2}|graph|graph\s+.|flowchart\s+\w{2}|flowchart|flowchart\s+.|sequenceDiagram|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|pie\s+title\s.+|requirementDiagram|gitGraph:)\s*\n/mg
 
     /**
      * mermaid md 代码块正则匹配
      * @type {RegExp}
      */
-    mermaidCodeRegex = /```mermaid\s*\n(.|\n)*\n\s*```/g
+    mermaidCodeRegex = /```mermaid\s*\n([^`]|\n)*\n\s*```/g
 
     /**
      * dom树改变时触发的回调
