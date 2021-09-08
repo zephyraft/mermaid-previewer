@@ -1,10 +1,5 @@
 // 使用块作用域，避免变量污染
 {
-    // TODO 增加专用的配置页面，提供给用户配置
-    excludeDomainList = [
-        "gitlab.com", // https://gitlab.com/zzzzzzzephyr/test
-    ];
-
     // TODO 增加专用的配置页面，提供给高级用户进行配置
     matchSelectorList = [
         "pre[lang='mermaid'] > code", // github
@@ -22,18 +17,6 @@
      * @type {string}
      */
     HadRenderedKey = "data-processed";
-
-    /**
-     * mermaid图表正则匹配
-     * @type {RegExp}
-     */
-    mermaidRegex = /^\s*(graph\s+\w{2}|graph|graph\s+.|flowchart\s+\w{2}|flowchart|flowchart\s+.|sequenceDiagram|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|pie\s+title\s.+|requirementDiagram|gitGraph:)\s*\n/mg
-
-    /**
-     * mermaid md 代码块正则匹配
-     * @type {RegExp}
-     */
-    mermaidCodeRegex = /```mermaid\s*\n([^`]|\n)*\n\s*```/g
 
     /**
      * dom树改变时触发的回调
@@ -115,28 +98,13 @@
      * @return NodeList 符合条件的dom结点数组
      */
     function queryContainers(dom, selectors) {
-        // 排除某些域名
-        let needExclude = false;
-        for (const excludeItem of excludeDomainList) {
-            if (window.location.href.includes(excludeItem)) {
-                needExclude = true;
-            }
-        }
-        if (needExclude) {
-            return dom.querySelectorAll(undefined);
-        }
-
         const mermaidDomList = dom.querySelectorAll(selectors);
         for (const mermaidDom of mermaidDomList) {
             // 去除内部多余的html tag，主要是为了兼容bitbucket
-            mermaidDom.innerHTML = mermaidDom.innerText
+            mermaidDom.innerHTML = mermaidDom.innerText;
             // console.log('mermaid-debug', domElement.innerText)
         }
-        // 过滤不符合正则的dom
-        return Array.from(mermaidDomList).filter(mermaidDom => {
-            // console.log("" + mermaidDom.innerText);
-            return new RegExp(mermaidRegex).test(mermaidDom.innerText);
-        })
+        return mermaidDomList;
     }
 
     /**
@@ -195,7 +163,10 @@
      */
     function render(mermaidDomList) {
         // noinspection JSUnresolvedVariable
-        mermaid.init(undefined, mermaidDomList);
+        if (mermaid !== undefined) {
+            // noinspection JSUnresolvedVariable
+            mermaid.init(undefined, mermaidDomList);
+        }
     }
 
     /**
