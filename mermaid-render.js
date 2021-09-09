@@ -170,6 +170,61 @@
     }
 
     /**
+     * svg转png
+     * @param svgContainer
+     * @param callback
+     */
+    function svgToPng(svgContainer, callback) {
+        const svgDom = svgContainer.querySelector("svg");
+        const svgData = new XMLSerializer().serializeToString(svgDom);
+        const imgDom = document.createElement("img");
+        imgDom.setAttribute("src", "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData))));
+
+        const canvasDom = document.createElement("canvas");
+        const svgSize = svgDom.getBoundingClientRect();
+        canvasDom.width = svgSize.width;
+        canvasDom.height = svgSize.height;
+        const ctx = canvasDom.getContext( "2d" );
+        imgDom.onload = function() {
+            ctx.drawImage(imgDom, 0, 0);
+            const pngSrc = canvasDom.toDataURL("image/png");
+            callback(svgDom.id, pngSrc);
+        };
+    }
+
+    /**
+     * 发送消息
+     * @param name 文件名
+     * @param src 源
+     */
+    function sendPngSrc(name, src) {
+        // noinspection JSUnresolvedFunction,JSUnresolvedVariable
+        chrome.runtime.sendMessage({
+            type: "ContextMenuPngSrc",
+            name: name,
+            src: src,
+        });
+    }
+
+    /**
+     * 增强右键上下文菜单
+     */
+    function watchRightClick() {
+        window.oncontextmenu = function (e) {
+            // 寻找父级最近的符合selector的元素
+            const parentMermaidDom = e.target.closest(renderedSelector())
+            // console.log("oncontextmenu", e.target, parentMermaidDom);
+            if (parentMermaidDom) {
+                // 发送png url
+                svgToPng(parentMermaidDom, sendPngSrc);
+            } else {
+                // 发送空url
+                sendPngSrc(null);
+            }
+            return true; // 不阻止默认事件
+        }
+    }
+    /**
      * 首次进入页面时，执行render
      */
     render(queryAndSaveRaw(document));
@@ -177,4 +232,8 @@
      * 监听动态插入的dom
      */
     watchDomMutation();
+    /**
+     * 增强右键上下文菜单
+     */
+    watchRightClick();
 }

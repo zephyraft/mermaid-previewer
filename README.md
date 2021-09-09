@@ -1,6 +1,6 @@
 # Mermaid Previewer
 
-A chrome plugin for previewing Mermaid. Mermaid version is **8.12.0**.
+A chrome plugin for previewing Mermaid. Mermaid version is **8.12.1**.
 
 Temporarily only supports in markdown.
 
@@ -55,7 +55,7 @@ The following websites natively support mermaid and will cause conflicts, so the
 ## TODO
 
 - [ ] config page for exclude list and match list
-- [ ] export mermaid image file
+- [X] export mermaid image file
 - [ ] ...
 
 ## Vendor List
