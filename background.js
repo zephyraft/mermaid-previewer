@@ -46,7 +46,7 @@ chrome.runtime.onInstalled.addListener(function() {
     // noinspection JSUnresolvedVariable
     chrome.contextMenus.create({
         id: "exportPNG", // 唯一id
-        title: "export png",
+        title: "Export png",
         contexts: ["all"], // 配置菜单可以出现的上下文
     });
 });

@@ -188,7 +188,7 @@
         imgDom.onload = function() {
             ctx.drawImage(imgDom, 0, 0);
             const pngSrc = canvasDom.toDataURL("image/png");
-            callback(svgDom.id, pngSrc);
+            callback(svgDom.id + ".png", pngSrc);
         };
     }
 
