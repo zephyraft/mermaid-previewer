@@ -2,7 +2,8 @@
 // 定义域名排除列表
 const excludeDomainList = [
     "gitlab.com", // https://gitlab.com/zzzzzzzephyr/test
-    "chrome.google.com" // chrome官网无法execute
+    "chrome.google.com", // chrome官网无法execute
+    "clickhouse.tech", // clickhouse官网与bitbucket冲突
 ];
 
 // noinspection JSUnresolvedVariable
