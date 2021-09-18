@@ -192,7 +192,9 @@
 
         const canvasDom = document.createElement("canvas");
         const svgSize = svgDom.getBoundingClientRect();
-        canvasDom.width = svgSize.width;
+        // canvasDom.width = svgSize.width;
+        // 使用maxWidth避免导出图片宽度不够被截断
+        canvasDom.width = parseInt(window.getComputedStyle(svgDom).maxWidth);
         canvasDom.height = svgSize.height;
         const ctx = canvasDom.getContext( "2d" );
         imgDom.onload = function() {
