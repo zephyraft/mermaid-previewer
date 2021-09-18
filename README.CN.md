@@ -9,6 +9,8 @@ graph LR
 A --> B
 ```
 
+在渲染好的mermaid图上点击鼠标右键，选择"Export png"可导出png图片.
+
 ## 支持列表
 
 - [x] GitHub
@@ -48,7 +50,6 @@ A --> B
 
 以下网站原生支持mermaid或存在dom结构冲突, 所以从本插件排除.
 - gitlab.com
-- clickhouse.tech
 
 ## TODO
 
@@ -59,6 +60,7 @@ A --> B
 ## 供应商列表
 
 - https://github.com/mermaid-js/mermaid
+- https://github.com/CodeSeven/toastr
 
 ## 改动日志
 - 1.2.0   mermaid图片导出.

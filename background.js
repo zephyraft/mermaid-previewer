@@ -3,9 +3,8 @@
 // TODO 增加专用的配置页面，提供给用户配置
 // 定义域名排除列表
 const excludeDomainList = [
-    "gitlab.com", // https://gitlab.com/zzzzzzzephyr/test
     "chrome.google.com", // chrome官网无法execute
-    "feishu.cn", // 排除飞书
+    "gitlab.com", // https://gitlab.com/zzzzzzzephyr/test
 ];
 
 // 监听tab改变

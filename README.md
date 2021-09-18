@@ -9,6 +9,8 @@ graph LR
 A --> B
 ```
 
+Right-click on the rendered mermaid image and select "Export png" to export the png image.
+
 ## Support list
 
 - [x] GitHub
@@ -48,7 +50,6 @@ or
 
 The following websites natively support mermaid or have dom structure conflicts, so they are excluded from this plugin.
 - gitlab.com
-- clickhouse.tech
 
 ## TODO
 
@@ -59,6 +60,7 @@ The following websites natively support mermaid or have dom structure conflicts,
 ## Vendor List
 
 - https://github.com/mermaid-js/mermaid
+- https://github.com/CodeSeven/toastr
 
 ## Changelog
 - [1.2.0]  Mermaid picture export.
