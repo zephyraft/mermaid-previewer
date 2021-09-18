@@ -19,6 +19,12 @@
     HadRenderedKey = "data-processed";
 
     /**
+     * mermaid图表正则匹配
+     * @type {RegExp}
+     */
+    mermaidRegex = /^\s*(graph\s+\w{2}|graph|graph\s+.|flowchart\s+\w{2}|flowchart|flowchart\s+.|sequenceDiagram|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|pie\s+title\s.+|requirementDiagram|gitGraph:)\s*\n/mg
+
+    /**
      * dom树改变时触发的回调
      * @param mutations dom改变事件
      */
@@ -104,7 +110,11 @@
             mermaidDom.innerHTML = mermaidDom.innerText;
             // console.log('mermaid-debug', domElement.innerText)
         }
-        return mermaidDomList;
+        // 过滤不符合正则的dom
+        return Array.from(mermaidDomList).filter(mermaidDom => {
+            // console.log("" + mermaidDom.innerText);
+            return new RegExp(mermaidRegex).test(mermaidDom.innerText.trim());
+        });
     }
 
     /**
