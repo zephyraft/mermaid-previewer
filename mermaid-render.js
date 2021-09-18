@@ -1,3 +1,4 @@
+// noinspection JSUnresolvedVariable,JSUnresolvedFunction
 // 使用块作用域，避免变量污染
 {
     // TODO 增加专用的配置页面，提供给高级用户进行配置
@@ -39,7 +40,6 @@
                 }
 
                 const mermaidDomList = queryAndSaveRaw(node);
-                // noinspection JSUnresolvedVariable
                 if (mermaidDomList.length !== 0) {
                     render(mermaidDomList);
                 }
@@ -56,21 +56,18 @@
      * @param mutation
      */
     function bitbucketPreviewHack(mutation) {
-        // 判断是否符合bitbucket 预览取消时的mutation
+        // TODO 判断是否符合bitbucket 预览取消时的mutation
         if (
             mutation.target === document.querySelector('div#editor-container.maskable') &&
             mutation.removedNodes.length !== 0
         ) {
             // console.log('hack render for bitbucket preview cancel');
             const mermaidDomList = queryContainers(document, renderedSelector());
-            // noinspection JSUnresolvedVariable
             if (mermaidDomList.length !== 0) {
                 // 恢复原始mermaid
                 for (const mermaidDom of mermaidDomList) {
                     // console.log(mermaidDom);
-                    // noinspection JSUnresolvedFunction
                     mermaidDom.innerHTML = mermaidDom.getAttribute(rawDataKey);
-                    // noinspection JSUnresolvedFunction
                     mermaidDom.removeAttribute(HadRenderedKey);
                 }
                 // 重新渲染
@@ -110,6 +107,15 @@
             mermaidDom.innerHTML = mermaidDom.innerText;
             // console.log('mermaid-debug', domElement.innerText)
         }
+        return mermaidDomList;
+    }
+
+    /**
+     * 匹配符合条件的dom
+     * @param mermaidDomList dom列表
+     * @return NodeList 符合条件的dom结点数组
+     */
+    function matchMermaidExp(mermaidDomList) {
         // 过滤不符合正则的dom
         return Array.from(mermaidDomList).filter(mermaidDom => {
             // console.log("" + mermaidDom.innerText);
@@ -122,13 +128,10 @@
      * @return string 未渲染selector
      */
     function notRenderSelector() {
-        // noinspection UnnecessaryLocalVariableJS
-        const selectors = matchSelectorList.map(selector => {
+        return matchSelectorList.map(selector => {
             selector += `:not([${HadRenderedKey}=true])`;
             return selector;
         }).join(", ");
-        // console.log(selectors);
-        return selectors;
     }
 
     /**
@@ -136,13 +139,10 @@
      * @return string 已渲染selector
      */
     function renderedSelector() {
-        // noinspection UnnecessaryLocalVariableJS
-        const selectors = matchSelectorList.map(selector => {
+        return matchSelectorList.map(selector => {
             selector += `[${HadRenderedKey}=true]`;
             return selector;
         }).join(", ");
-        // console.log(selectors);
-        return selectors;
     }
 
     /**
@@ -163,8 +163,9 @@
      */
     function queryAndSaveRaw(dom) {
         const mermaidDomList = queryContainers(dom, notRenderSelector());
-        saveRawCode(mermaidDomList)
-        return mermaidDomList;
+        const filteredDomList = matchMermaidExp(mermaidDomList);
+        saveRawCode(filteredDomList)
+        return filteredDomList;
     }
 
     /**
@@ -172,9 +173,7 @@
      * @param mermaidDomList 需要渲染的dom结点
      */
     function render(mermaidDomList) {
-        // noinspection JSUnresolvedVariable
         if (mermaid !== undefined) {
-            // noinspection JSUnresolvedVariable
             mermaid.init(undefined, mermaidDomList);
         }
     }
@@ -196,8 +195,8 @@
         // 使用maxWidth避免导出图片宽度不够被截断
         canvasDom.width = parseInt(window.getComputedStyle(svgDom).maxWidth);
         canvasDom.height = svgSize.height;
-        const ctx = canvasDom.getContext( "2d" );
-        imgDom.onload = function() {
+        const ctx = canvasDom.getContext("2d");
+        imgDom.onload = function () {
             ctx.drawImage(imgDom, 0, 0);
             const pngSrc = canvasDom.toDataURL("image/png");
             callback(svgDom.id + ".png", pngSrc);
@@ -210,7 +209,6 @@
      * @param src 源
      */
     function sendPngSrc(name, src) {
-        // noinspection JSUnresolvedFunction,JSUnresolvedVariable
         chrome.runtime.sendMessage({
             type: "ContextMenuPngSrc",
             name: name,
@@ -236,6 +234,44 @@
             return true; // 不阻止默认事件
         }
     }
+
+    /**
+     * 监听Toast类型的message
+     */
+    function watchToastMessage() {
+        chrome.runtime.onMessage.addListener((message) => {
+            if (message?.type === 'Toast') {
+                toast(message.text, message.level);
+            }
+        });
+    }
+
+    /**
+     * 弹出toast
+     * @param text 内容
+     * @param level 为Error时显示红色
+     */
+    function toast(text, level) {
+        const backgroundColor =
+            level === 'Error'
+            ? "linear-gradient(to right, rgb(255, 95, 109), rgb(255, 195, 113))"
+            : "";
+
+        Toastify({
+            text: text,
+            duration: 3000,
+            backgroundColor,
+            // style: {
+            //     background: backgroundColor
+            // },
+            close: true,
+            position: "center",
+            offset: {
+                y: 200 // vertical axis - can be a number or a string indicating unity. eg: '2em'
+            },
+        }).showToast();
+    }
+
     /**
      * 首次进入页面时，执行render
      */
@@ -245,7 +281,12 @@
      */
     watchDomMutation();
     /**
-     * 增强右键上下文菜单
+     * 监听右键点击事件
      */
     watchRightClick();
+    /**
+     * 监听toast消息
+     */
+    watchToastMessage();
+
 }

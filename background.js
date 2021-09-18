@@ -1,3 +1,5 @@
+// noinspection JSUnresolvedVariable,JSUnresolvedFunction
+
 // TODO 增加专用的配置页面，提供给用户配置
 // 定义域名排除列表
 const excludeDomainList = [
@@ -6,45 +8,40 @@ const excludeDomainList = [
     "feishu.cn", // 排除飞书
 ];
 
-// noinspection JSUnresolvedVariable
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'complete') {
-        // noinspection JSUnresolvedVariable
-        chrome.tabs.get(tabId, tab => {
-            // console.log(tab.url);
-            // 只有当获取到了url时才继续，如 chrome://extensions/ 页面无法获取到
-            if (tab.url) {
-                // 判断是否需要执行脚本
-                let needExecute = true;
-                for (const excludeItem of excludeDomainList) {
-                    if (tab.url.includes(excludeItem)) {
-                        needExecute = false;
-                        break;
-                    }
-                }
-                if (needExecute) {
-                    // 加载依赖项
-                    // noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                    chrome.scripting.executeScript({
-                        target: { tabId: tabId },
-                        files: ['vendor/mermaid.min.js']
-                    }, () => {
-                        // 加载render脚本
-                        // noinspection JSUnresolvedVariable,JSUnresolvedFunction
-                        chrome.scripting.executeScript({
-                            target: { tabId: tabId},
-                            files: ['mermaid-render.js']
-                        });
-                    });
-                }
-            }
+// 监听tab改变
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+    // 判断是否需要执行脚本
+    let needExecute = true;
+    for (const excludeItem of excludeDomainList) {
+        if (!tab.url || tab.url.includes(excludeItem)) {
+            needExecute = false;
+            break;
+        }
+    }
+
+    // tab加载完成
+    if (changeInfo.status === 'complete' && needExecute) {
+        // 加载依赖项
+        await chrome.scripting.executeScript({
+            target: {tabId: tabId},
+            files: ['vendor/mermaid.min.js']
+        });
+        await chrome.scripting.insertCSS({
+            target: { tabId: tabId},
+            files: ['vendor/toastify.min.css']
+        });
+        await chrome.scripting.executeScript({
+            target: { tabId: tabId},
+            files: ['vendor/toastify.min.js']
+        });
+        await chrome.scripting.executeScript({
+            target: { tabId: tabId},
+            files: ['mermaid-render.js']
         });
     }
 });
 
-// noinspection JSUnresolvedVariable
 chrome.runtime.onInstalled.addListener(function() {
-    // noinspection JSUnresolvedVariable
     chrome.contextMenus.create({
         id: "exportPNG", // 唯一id
         title: "Export png",
@@ -55,18 +52,27 @@ chrome.runtime.onInstalled.addListener(function() {
 let src = null;
 let name = null;
 
-// noinspection JSUnresolvedVariable
-chrome.contextMenus.onClicked.addListener(function(info, tab) {
+chrome.contextMenus.onClicked.addListener(async function (info, tab) {
     if (src) {
-        // noinspection JSUnresolvedVariable
         chrome.downloads.download({filename: name, url: src});
+        chrome.tabs.sendMessage(tab.id, {
+            type: "Toast",
+            level: "Info",
+            text: "Export Success",
+        });
     } else {
         console.debug("name", name);
         console.debug("src", src);
+        chrome.tabs.sendMessage(tab.id, {
+            type: "Toast",
+            level: "Error",
+            text: "Please use it above the specific mermaid diagram",
+        });
     }
 });
 
-// noinspection JSUnresolvedVariable
+// 监听ContextMenuPngSrc消息
+// noinspection JSUnusedLocalSymbols
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message?.type === 'ContextMenuPngSrc') {
         src = message.src
