@@ -60,10 +60,11 @@ A --> B
 ## 供应商列表
 
 - https://github.com/mermaid-js/mermaid
-- https://github.com/CodeSeven/toastr
+- https://github.com/apvarun/toastify-js
 
 ## 改动日志
-- 1.2.0   mermaid图片导出.
-- 1.1.0   新增bitbucket支持, 更新mermaid版本到8.12.1.
-- 1.0.1   更新mermaid版本到8.12.0.
-- 1.0.0   首次发布, mermaid版本8.11.5.
+- [1.2.1]   修复Toast.
+- [1.2.0]   mermaid图片导出.
+- [1.1.0]   新增bitbucket支持, 更新mermaid版本到8.12.1.
+- [1.0.1]   更新mermaid版本到8.12.0.
+- [1.0.0]   首次发布, mermaid版本8.11.5.

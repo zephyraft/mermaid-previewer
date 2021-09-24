@@ -239,11 +239,14 @@
      * 监听Toast类型的message
      */
     function watchToastMessage() {
-        chrome.runtime.onMessage.addListener((message) => {
-            if (message?.type === 'Toast') {
-                toast(message.text, message.level);
-            }
-        });
+        if (!window.mermaidPreviewerHadWatchToast) {
+            chrome.runtime.onMessage.addListener((message) => {
+                if (message?.type === 'Toast') {
+                    toast(message.text, message.level);
+                }
+            });
+            window.mermaidPreviewerHadWatchToast = true;
+        }
     }
 
     /**
@@ -252,18 +255,31 @@
      * @param level 为Error时显示红色
      */
     function toast(text, level) {
-        const backgroundColor =
-            level === 'Error'
-            ? "linear-gradient(to right, rgb(255, 95, 109), rgb(255, 195, 113))"
-            : "";
+        const css = level === "Error" ? {
+            backgroundColor: "rgba(254, 242, 242, 1)",
+            style: {
+                color: 'rgba(239, 68, 68, 1)',
+                textAlign: 'center',
+                borderColor: 'rgba(248, 113, 113, 1)',
+                borderWidth: '1px',
+                borderRadius: '0.375rem'
+            },
+        } : {
+            backgroundColor: "rgba(239, 246, 255, 1)",
+            style: {
+                color: 'rgba(59, 130, 246, 1)',
+                textAlign: 'center',
+                borderColor: 'rgba(96, 165, 250, 1)',
+                borderWidth: '1px',
+                borderRadius: '0.375rem'
+            },
+        }
 
         Toastify({
             text: text,
             duration: 3000,
-            backgroundColor,
-            // style: {
-            //     background: backgroundColor
-            // },
+            backgroundColor: css.backgroundColor,
+            style: css.style,
             close: true,
             position: "center",
             offset: {

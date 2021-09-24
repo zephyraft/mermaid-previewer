@@ -60,9 +60,10 @@ The following websites natively support mermaid or have dom structure conflicts,
 ## Vendor List
 
 - https://github.com/mermaid-js/mermaid
-- https://github.com/CodeSeven/toastr
+- https://github.com/apvarun/toastify-js
 
 ## Changelog
+- [1.2.1]  Fix Toast.
 - [1.2.0]  Mermaid picture export.
 - [1.1.0]  Added bitbucket support, updated mermaid version to 8.12.1.
 - [1.0.1]  Update mermaid version to 8.12.0.
