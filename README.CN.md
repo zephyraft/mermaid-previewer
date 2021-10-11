@@ -1,7 +1,7 @@
 # Mermaid Previewer
 
 一款用于预览markdown中mermaid图的chrome插件, 本地渲染mermaid图, 不涉及远程api调用.
-目前支持github和bitbucket, 适配mermaid 8.12.1版本.
+目前支持github和bitbucket.
 
 markdown中设置代码块语言为mermaid:
 ```mermaid

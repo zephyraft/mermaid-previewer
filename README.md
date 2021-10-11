@@ -1,7 +1,7 @@
 # Mermaid Previewer
 
 A chrome plug-in for previewing the mermaid map in markdown, rendering the mermaid map locally, without involving remote api calls.
-Currently supports GitHub and bitbucket, and adapts to mermaid 8.12.1 version.
+Currently supports GitHub and bitbucket.
 
 Set the code block language to mermaid in markdown:
 ```mermaid
