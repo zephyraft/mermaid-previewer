@@ -1,7 +1,6 @@
 # Mermaid Previewer
 
-A chrome plug-in for previewing the mermaid map in markdown, rendering the mermaid map locally, without involving remote api calls.
-Currently supports GitHub and bitbucket.
+A chrome extension for previewing and exporting mermaid in github/bitbucket.
 
 Set the code block language to mermaid in markdown:
 ```mermaid
@@ -63,6 +62,7 @@ The following websites natively support mermaid or have dom structure conflicts,
 - https://github.com/apvarun/toastify-js
 
 ## Changelog
+- [1.2.3]  Update mermaid version to 8.13.3.
 - [1.2.2]  Update mermaid version to 8.13.2.
 - [1.2.1]  Fix Toast.
 - [1.2.0]  Mermaid picture export.

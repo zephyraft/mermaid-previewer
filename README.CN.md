@@ -63,6 +63,7 @@ A --> B
 - https://github.com/apvarun/toastify-js
 
 ## 改动日志
+- [1.2.3]   更新mermaid版本到8.13.3.
 - [1.2.2]   更新mermaid版本到8.13.2.
 - [1.2.1]   修复Toast.
 - [1.2.0]   mermaid图片导出.
