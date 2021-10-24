@@ -9,7 +9,7 @@ update-vendor:
 		 --url 'https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css' \
 		 --output './vendor/toastify.min.css'
 zip:
-	zip -r -X ~/Downloads/mermaid-dev.zip \
+	zip -r -X ~/Downloads/mermaid-perviewer.zip \
 	  icon \
 	  vendor/mermaid.min.js \
 	  vendor/toastify.min.js \
