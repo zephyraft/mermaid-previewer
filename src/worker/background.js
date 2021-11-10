@@ -23,19 +23,19 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         // 加载依赖项
         await chrome.scripting.executeScript({
             target: {tabId: tabId},
-            files: ['vendor/mermaid.min.js']
+            files: ['static/vendor/mermaid.min.js']
         });
         await chrome.scripting.insertCSS({
             target: { tabId: tabId},
-            files: ['vendor/toastify.min.css']
+            files: ['static/vendor/toastify.min.css']
         });
         await chrome.scripting.executeScript({
             target: { tabId: tabId},
-            files: ['vendor/toastify.min.js']
+            files: ['static/vendor/toastify.min.js']
         });
         await chrome.scripting.executeScript({
             target: { tabId: tabId},
-            files: ['mermaid-render.js']
+            files: ['src/content/mermaid-render.js']
         });
     }
 });

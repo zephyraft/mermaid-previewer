@@ -4,7 +4,7 @@
   "version": "1.2.3",
   "manifest_version": 3,
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/worker/background.js"
   },
   "permissions": [
     "scripting",
@@ -16,11 +16,11 @@
   ],
   "action": {
     "default_icon": {
-      "128": "/icon/128.png"
+      "128": "static/icon/128.png"
     }
   },
   "icons": {
-    "16": "/icon/128.png",
-    "128": "/icon/128.png"
+    "16": "static/icon/128.png",
+    "128": "static/icon/128.png"
   }
 }
