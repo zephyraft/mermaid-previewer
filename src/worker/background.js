@@ -1,14 +1,13 @@
-// noinspection JSUnresolvedVariable,JSUnresolvedFunction
-
-// TODO 增加专用的配置页面，提供给用户配置
-// 定义域名排除列表
-const excludeDomainList = [
-    "chrome.google.com", // chrome官网无法execute
-    "gitlab.com", // https://gitlab.com/zzzzzzzephyr/test
-];
-
+// noinspection JSUnresolvedVariable,JSUnresolvedFunction,JSDeprecatedSymbols
 // 监听tab改变
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+    // 域名排除列表
+    const storage = await chrome.storage.sync.get(['excludeDomainList']);
+    console.log('storage', storage);
+    const localStorage = await chrome.storage.local.get(['defaultExcludeDomainList']);
+    console.log('localStorage', localStorage);
+    const excludeDomainList = storage.excludeDomainList || localStorage.defaultExcludeDomainList;
+
     // 判断是否需要执行脚本
     let needExecute = true;
     for (const excludeItem of excludeDomainList) {
@@ -77,4 +76,23 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         src = message.src
         name = message.name
     }
+});
+
+chrome.runtime.onInstalled.addListener(() => {
+    // 默认配置
+    const defaultExcludeDomainList = [
+        "chrome.google.com", // chrome官网无法execute
+        "gitlab.com", // https://gitlab.com/zzzzzzzephyr/test
+    ];
+    const defaultMatchSelectorList = [
+        "pre[lang='mermaid'] > code", // github
+        "div[class='codehilite'] > pre", // bitbucket
+    ];
+
+    chrome.storage.local.set({
+        defaultExcludeDomainList,
+        defaultMatchSelectorList
+    });
+
+    console.log('set default settings');
 });

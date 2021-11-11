@@ -9,12 +9,14 @@
   "permissions": [
     "scripting",
     "contextMenus",
-    "downloads"
+    "downloads",
+    "storage"
   ],
   "host_permissions": [
     "<all_urls>"
   ],
   "action": {
+    "default_popup": "static/html/options.html",
     "default_icon": {
       "128": "static/icon/128.png"
     }

@@ -1,35 +1,29 @@
 // noinspection JSUnresolvedVariable,JSUnresolvedFunction
 // 使用块作用域，避免变量污染
 {
-    // TODO 增加专用的配置页面，提供给高级用户进行配置
-    matchSelectorList = [
-        "pre[lang='mermaid'] > code", // github
-        "div[class='codehilite'] > pre", // bitbucket
-    ];
-
     /**
      * 用于保存原始mermaid code的key
      * @type {string}
      */
-    rawDataKey = "data-mermaid-previewer-raw";
+    const rawDataKey = "data-mermaid-previewer-raw";
 
     /**
      * 用于判断是否已被渲染的key，由mermaid jsapi定义
      * @type {string}
      */
-    HadRenderedKey = "data-processed";
+    const HadRenderedKey = "data-processed";
 
     /**
      * mermaid图表正则匹配
      * @type {RegExp}
      */
-    mermaidRegex = /^\s*(graph\s+\w{2}|graph|graph\s+.|flowchart\s+\w{2}|flowchart|flowchart\s+.|sequenceDiagram|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|pie\s+title\s.+|requirementDiagram|gitGraph:)\s*\n/mg
+    const mermaidRegex = /^\s*(graph\s+\w{2}|graph|graph\s+.|flowchart\s+\w{2}|flowchart|flowchart\s+.|sequenceDiagram|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|pie\s+title\s.+|requirementDiagram|gitGraph:)\s*\n/mg
 
     /**
      * dom树改变时触发的回调
      * @param mutations dom改变事件
      */
-    function mermaidPreviewerMutationCallback(mutations) {
+    async function mermaidPreviewerMutationCallback(mutations) {
         // console.log('mutation', mutations);
         for (let mutation of mutations) {
             // 处理新增结点
@@ -39,14 +33,14 @@
                     continue;
                 }
 
-                const mermaidDomList = queryAndSaveRaw(node);
+                const mermaidDomList = await queryAndSaveRaw(node);
                 if (mermaidDomList.length !== 0) {
-                    render(mermaidDomList);
+                    await render(mermaidDomList);
                 }
             }
 
             // 解决bitbucket预览加载问题
-            bitbucketPreviewHack(mutation);
+            await bitbucketPreviewHack(mutation);
         }
     }
 
@@ -55,14 +49,14 @@
      * 加载缓存的原始mermaid，重新进行渲染
      * @param mutation
      */
-    function bitbucketPreviewHack(mutation) {
+    async function bitbucketPreviewHack(mutation) {
         // TODO 判断是否符合bitbucket 预览取消时的mutation
         if (
             mutation.target === document.querySelector('div#editor-container.maskable') &&
             mutation.removedNodes.length !== 0
         ) {
             // console.log('hack render for bitbucket preview cancel');
-            const mermaidDomList = queryContainers(document, renderedSelector());
+            const mermaidDomList = await queryContainers(document, renderedSelector());
             if (mermaidDomList.length !== 0) {
                 // 恢复原始mermaid
                 for (const mermaidDom of mermaidDomList) {
@@ -71,7 +65,7 @@
                     mermaidDom.removeAttribute(HadRenderedKey);
                 }
                 // 重新渲染
-                render(mermaidDomList);
+                await render(mermaidDomList);
             }
         }
     }
@@ -79,7 +73,7 @@
     /**
      * 监听动态插入的dom，渲染其中符合条件的部分
      */
-    function watchDomMutation() {
+    async function watchDomMutation() {
         // 使用长变量名，尽可能减少命名重复的可能
         // 若已存在observer，先disconnect
         if (window.mermaidPreviewerMutationObserver) {
@@ -87,8 +81,8 @@
         }
 
         // 定义observer callback
-        window.mermaidPreviewerMutationObserver = new window.MutationObserver(mutations => {
-            mermaidPreviewerMutationCallback(mutations);
+        window.mermaidPreviewerMutationObserver = new window.MutationObserver(async mutations => {
+            await mermaidPreviewerMutationCallback(mutations);
         });
         // observe
         window.mermaidPreviewerMutationObserver.observe(document, {childList: true, subtree: true});
@@ -100,7 +94,7 @@
      * @param selectors dom selector
      * @return NodeList 符合条件的dom结点数组
      */
-    function queryContainers(dom, selectors) {
+    async function queryContainers(dom, selectors) {
         const mermaidDomList = dom.querySelectorAll(selectors);
         for (const mermaidDom of mermaidDomList) {
             // 去除内部多余的html tag，主要是为了兼容bitbucket
@@ -115,7 +109,7 @@
      * @param mermaidDomList dom列表
      * @return NodeList 符合条件的dom结点数组
      */
-    function matchMermaidExp(mermaidDomList) {
+    async function matchMermaidExp(mermaidDomList) {
         // 过滤不符合正则的dom
         return Array.from(mermaidDomList).filter(mermaidDom => {
             // console.log("" + mermaidDom.innerText);
@@ -123,11 +117,20 @@
         });
     }
 
+    async function getMatchSelectorList() {
+        const storage = await chrome.storage.sync.get(['matchSelectorList']);
+        console.log('storage', storage);
+        const localStorage = await chrome.storage.sync.get(['defaultMatchSelectorList']);
+        console.log('localStorage', localStorage);
+        return storage.matchSelectorList || localStorage.defaultMatchSelectorList;
+    }
+
     /**
      * 未渲染selector
      * @return string 未渲染selector
      */
-    function notRenderSelector() {
+    async function notRenderSelector() {
+        const matchSelectorList = await getMatchSelectorList();
         return matchSelectorList.map(selector => {
             selector += `:not([${HadRenderedKey}=true])`;
             return selector;
@@ -138,7 +141,8 @@
      * 已渲染selector
      * @return string 已渲染selector
      */
-    function renderedSelector() {
+    async function renderedSelector() {
+        const matchSelectorList = await getMatchSelectorList();
         return matchSelectorList.map(selector => {
             selector += `[${HadRenderedKey}=true]`;
             return selector;
@@ -149,7 +153,7 @@
      * 缓存mermaid原始code
      * @param mermaidDomList
      */
-    function saveRawCode(mermaidDomList) {
+    async function saveRawCode(mermaidDomList) {
         for (const mermaidDom of mermaidDomList) {
             // 缓存mermaid原始内容
             mermaidDom.setAttribute(rawDataKey, mermaidDom.innerHTML)
@@ -161,10 +165,10 @@
      * @param dom 从这个dom结点搜索
      * @return NodeList 符合条件的dom结点数组
      */
-    function queryAndSaveRaw(dom) {
-        const mermaidDomList = queryContainers(dom, notRenderSelector());
-        const filteredDomList = matchMermaidExp(mermaidDomList);
-        saveRawCode(filteredDomList)
+    async function queryAndSaveRaw(dom) {
+        const mermaidDomList = await queryContainers(dom, await notRenderSelector());
+        const filteredDomList = await matchMermaidExp(mermaidDomList);
+        await saveRawCode(filteredDomList)
         return filteredDomList;
     }
 
@@ -172,9 +176,9 @@
      * 渲染mermaid图
      * @param mermaidDomList 需要渲染的dom结点
      */
-    function render(mermaidDomList) {
+    async function render(mermaidDomList) {
         if (mermaid !== undefined) {
-            mermaid.init(undefined, mermaidDomList);
+            mermaid.init(undefined, await mermaidDomList);
         }
     }
 
@@ -183,7 +187,7 @@
      * @param svgContainer
      * @param callback
      */
-    function svgToPng(svgContainer, callback) {
+    async function svgToPng(svgContainer, callback) {
         const svgDom = svgContainer.querySelector("svg");
         const svgData = new XMLSerializer().serializeToString(svgDom);
         const imgDom = document.createElement("img");
@@ -196,10 +200,10 @@
         canvasDom.width = parseInt(window.getComputedStyle(svgDom).maxWidth);
         canvasDom.height = svgSize.height;
         const ctx = canvasDom.getContext("2d");
-        imgDom.onload = function () {
+        imgDom.onload = async function () {
             ctx.drawImage(imgDom, 0, 0);
             const pngSrc = canvasDom.toDataURL("image/png");
-            callback(svgDom.id + ".png", pngSrc);
+            await callback(svgDom.id + ".png", pngSrc);
         };
     }
 
@@ -208,7 +212,7 @@
      * @param name 文件名
      * @param src 源
      */
-    function sendPngSrc(name, src) {
+    async function sendPngSrc(name, src) {
         chrome.runtime.sendMessage({
             type: "ContextMenuPngSrc",
             name: name,
@@ -219,17 +223,17 @@
     /**
      * 增强右键上下文菜单
      */
-    function watchRightClick() {
-        window.oncontextmenu = function (e) {
+    async function watchRightClick() {
+        window.oncontextmenu = async function (e) {
             // 寻找父级最近的符合selector的元素
-            const parentMermaidDom = e.target.closest(renderedSelector())
+            const parentMermaidDom = e.target.closest(await renderedSelector())
             // console.log("oncontextmenu", e.target, parentMermaidDom);
             if (parentMermaidDom) {
                 // 发送png url
-                svgToPng(parentMermaidDom, sendPngSrc);
+                await svgToPng(parentMermaidDom, sendPngSrc);
             } else {
                 // 发送空url
-                sendPngSrc(null);
+                await sendPngSrc(null);
             }
             return true; // 不阻止默认事件
         }
@@ -238,11 +242,12 @@
     /**
      * 监听Toast类型的message
      */
-    function watchToastMessage() {
+    async function watchToastMessage() {
         if (!window.mermaidPreviewerHadWatchToast) {
-            chrome.runtime.onMessage.addListener((message) => {
+            // noinspection JSDeprecatedSymbols
+            chrome.runtime.onMessage.addListener(async (message) => {
                 if (message?.type === 'Toast') {
-                    toast(message.text, message.level);
+                    await toast(message.text, message.level);
                 }
             });
             window.mermaidPreviewerHadWatchToast = true;
@@ -254,7 +259,7 @@
      * @param text 内容
      * @param level 为Error时显示红色
      */
-    function toast(text, level) {
+    async function toast(text, level) {
         const css = level === "Error" ? {
             style: {
                 color: 'rgba(239, 68, 68, 1)',
@@ -290,18 +295,18 @@
     /**
      * 首次进入页面时，执行render
      */
-    render(queryAndSaveRaw(document));
+    render(queryAndSaveRaw(document)).then(_ => {});
     /**
      * 监听动态插入的dom
      */
-    watchDomMutation();
+    watchDomMutation().then(_ => {});
     /**
      * 监听右键点击事件
      */
-    watchRightClick();
+    watchRightClick().then(_ => {});
     /**
      * 监听toast消息
      */
-    watchToastMessage();
+    watchToastMessage().then(_ => {});
 
 }
