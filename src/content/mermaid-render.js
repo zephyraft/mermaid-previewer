@@ -119,9 +119,9 @@
 
     async function getMatchSelectorList() {
         const storage = await chrome.storage.sync.get(['matchSelectorList']);
-        console.log('storage', storage);
-        const localStorage = await chrome.storage.sync.get(['defaultMatchSelectorList']);
-        console.log('localStorage', localStorage);
+        console.debug('storage', storage);
+        const localStorage = await chrome.storage.local.get(['defaultMatchSelectorList']);
+        console.debug('localStorage', localStorage);
         return storage.matchSelectorList || localStorage.defaultMatchSelectorList;
     }
 
@@ -295,18 +295,18 @@
     /**
      * 首次进入页面时，执行render
      */
-    render(queryAndSaveRaw(document)).then(_ => {});
-    /**
-     * 监听动态插入的dom
-     */
-    watchDomMutation().then(_ => {});
-    /**
-     * 监听右键点击事件
-     */
-    watchRightClick().then(_ => {});
-    /**
-     * 监听toast消息
-     */
-    watchToastMessage().then(_ => {});
-
+    render(queryAndSaveRaw(document)).then(_ => {
+        /**
+         * 监听动态插入的dom
+         */
+        watchDomMutation().then(_ => {});
+        /**
+         * 监听右键点击事件
+         */
+        watchRightClick().then(_ => {});
+        /**
+         * 监听toast消息
+         */
+        watchToastMessage().then(_ => {});
+    });
 }

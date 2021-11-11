@@ -1,0 +1,17 @@
+.title {
+    font-size: medium;
+    font-weight: bold;
+}
+.form-group {
+    padding-top: 10px;
+}
+textarea {
+    white-space: nowrap;
+    resize: vertical;
+}
+#save {
+    float: right;
+}
+#status {
+    height: 22px;
+}

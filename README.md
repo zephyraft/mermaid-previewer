@@ -53,8 +53,8 @@ The following websites natively support mermaid or have dom structure conflicts,
 ## TODO
 
 - [X] mermaid picture export.
-- [ ] Provide custom exclusion list and rule list configuration capabilities.
-- [ ] ...
+- [X] Provide custom exclusion list and rule list configuration capabilities.
+- [X] ...
 
 ## Vendor List
 
@@ -62,6 +62,7 @@ The following websites natively support mermaid or have dom structure conflicts,
 - https://github.com/apvarun/toastify-js
 
 ## Changelog
+- [1.2.4]  Added popup options page, providing domain exclusion and dom selector configuration.
 - [1.2.3]  Update mermaid version to 8.13.3.
 - [1.2.2]  Update mermaid version to 8.13.2.
 - [1.2.1]  Fix Toast.

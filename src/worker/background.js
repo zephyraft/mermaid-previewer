@@ -3,9 +3,9 @@
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     // 域名排除列表
     const storage = await chrome.storage.sync.get(['excludeDomainList']);
-    console.log('storage', storage);
+    console.debug('storage', storage);
     const localStorage = await chrome.storage.local.get(['defaultExcludeDomainList']);
-    console.log('localStorage', localStorage);
+    console.debug('localStorage', localStorage);
     const excludeDomainList = storage.excludeDomainList || localStorage.defaultExcludeDomainList;
 
     // 判断是否需要执行脚本
@@ -13,6 +13,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     for (const excludeItem of excludeDomainList) {
         if (!tab.url || tab.url.includes(excludeItem)) {
             needExecute = false;
+            console.debug('domain match excludeItem', excludeItem);
             break;
         }
     }
@@ -94,5 +95,5 @@ chrome.runtime.onInstalled.addListener(() => {
         defaultMatchSelectorList
     });
 
-    console.log('set default settings');
+    console.debug('set default settings');
 });

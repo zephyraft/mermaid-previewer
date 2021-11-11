@@ -13,7 +13,7 @@ async function saveOptions() {
     status.textContent = 'Options saved.';
     setTimeout(function () {
         status.textContent = '';
-    }, 750);
+    }, 2000);
 }
 
 async function restoreOptions() {
@@ -22,13 +22,13 @@ async function restoreOptions() {
         'excludeDomainList',
         'matchSelectorList',
     ]);
-    console.log('storage', storage);
+    console.debug('storage', storage);
     // noinspection JSUnresolvedVariable
     const localStorage = await chrome.storage.local.get([
         'defaultExcludeDomainList',
         'defaultMatchSelectorList',
     ]);
-    console.log('localStorage', localStorage);
+    console.debug('localStorage', localStorage);
     document.getElementById('excludeDomainList').value = arrayToString(storage.excludeDomainList || localStorage.defaultExcludeDomainList);
     document.getElementById('matchSelectorList').value = arrayToString(storage.matchSelectorList || localStorage.defaultMatchSelectorList);
 }
@@ -43,13 +43,13 @@ async function resetDefaults() {
 function arrayToString(array) {
     let res = '';
     for (const element of array) {
-        res += element + ",\n";
+        res += element + "\n";
     }
-    return res.substr(0, res.length - 2);
+    return res.substr(0, res.length - 1);
 }
 
 function stringToArray(string) {
-    let array = string.split(",");
+    let array = string.split("\n");
     array = array.map((item) => item.trim());
     array = array.filter((item) => item && item !== '');
     return array;
