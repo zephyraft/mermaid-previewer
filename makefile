@@ -13,3 +13,5 @@ zip:
 	  src \
       static \
 	  manifest.json
+pack:
+	rollup -c
