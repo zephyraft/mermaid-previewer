@@ -1,3 +1,4 @@
+# TODO 使用包管理器管理依赖
 update-vendor:
 	curl --request GET -sL \
 	     --url 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js' \
