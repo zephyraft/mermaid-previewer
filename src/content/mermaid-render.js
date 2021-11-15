@@ -1,5 +1,8 @@
-// noinspection JSUnresolvedVariable,JSUnresolvedFunction
-// 使用块作用域，避免变量污染
+import Toastify from "toastify-js"
+import mermaid from "mermaid";
+
+import "toastify-js/src/toastify.css"
+
 {
     /**
      * 用于保存原始mermaid code的key
@@ -118,8 +121,10 @@
     }
 
     async function getMatchSelectorList() {
+        // noinspection JSUnresolvedVariable
         const storage = await chrome.storage.sync.get(['matchSelectorList']);
         console.debug('storage', storage);
+        // noinspection JSUnresolvedVariable
         const localStorage = await chrome.storage.local.get(['defaultMatchSelectorList']);
         console.debug('localStorage', localStorage);
         return storage.matchSelectorList || localStorage.defaultMatchSelectorList;
@@ -177,9 +182,7 @@
      * @param mermaidDomList 需要渲染的dom结点
      */
     async function render(mermaidDomList) {
-        if (mermaid !== undefined) {
-            mermaid.init(undefined, await mermaidDomList);
-        }
+        mermaid.init(undefined, await mermaidDomList);
     }
 
     /**
@@ -213,6 +216,7 @@
      * @param src 源
      */
     async function sendPngSrc(name, src) {
+        // noinspection JSUnresolvedVariable,JSUnresolvedFunction
         chrome.runtime.sendMessage({
             type: "ContextMenuPngSrc",
             name: name,
@@ -244,7 +248,7 @@
      */
     async function watchToastMessage() {
         if (!window.mermaidPreviewerHadWatchToast) {
-            // noinspection JSDeprecatedSymbols
+            // noinspection JSUnresolvedVariable,JSUnresolvedFunction
             chrome.runtime.onMessage.addListener(async (message) => {
                 if (message?.type === 'Toast') {
                     await toast(message.text, message.level);

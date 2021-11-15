@@ -1,0 +1,40 @@
+{
+  "name": "mermaid-previewer",
+  "version": "1.2.4",
+  "description": "Preview and export mermaid in github/bitbucket.",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "pack": "pnpm run build; cd dist; zip -r -X mermaid-perviewer.zip *; mv mermaid-perviewer.zip .."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zephyraft/mermaid-perviewer.git"
+  },
+  "keywords": [
+    "chrome-extension",
+    "mermaid"
+  ],
+  "author": "zephyraft",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zephyraft/mermaid-perviewer/issues"
+  },
+  "homepage": "https://github.com/zephyraft/mermaid-perviewer#readme",
+  "dependencies": {
+    "mermaid": "^8.13.3",
+    "toastify-js": "^1.11.2"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.0.6",
+    "@rollup/plugin-strip": "^2.1.0",
+    "postcss": "^8.3.11",
+    "rollup-plugin-copy": "^3.4.0",
+    "rollup-plugin-delete": "^2.0.0",
+    "rollup-plugin-postcss": "^4.0.1"
+  }
+}

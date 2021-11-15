@@ -1,27 +1,54 @@
-const outputDir = "dist";
-const format = "umd";
+import {nodeResolve} from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import copy from 'rollup-plugin-copy';
+import del from 'rollup-plugin-delete';
+import postcss from 'rollup-plugin-postcss'
+import strip from '@rollup/plugin-strip';
 
+const outputDir = "dist";
+const format = "esm";
+
+// noinspection JSUnusedGlobalSymbols
 export default [
     {
         input: "src/content/mermaid-render.js",
         output: {
-            file: `${outputDir}/content.js`,
+            dir: `${outputDir}/src/content`,
             format: format,
-            compact: true
-        }
+        },
+        plugins: [
+            del({targets: `${outputDir}/*`, verbose: true}),
+            nodeResolve(),
+            commonjs(),
+            postcss(),
+            //
+            strip(),
+            copy({
+                targets: [
+                    {src: "src/manifest.json", dest: outputDir},
+                    {src: "public", dest: outputDir}
+                ]
+            }),
+        ],
     },
     {
         input: "src/option/options.js",
         output: {
-            file: `${outputDir}/options.js`,
+            dir: `${outputDir}/src/option`,
             format: format
-        }
+        },
+        plugins: [
+            strip(),
+        ],
     },
     {
         input: "src/worker/background.js",
         output: {
-            file: `${outputDir}/background.js`,
+            dir: `${outputDir}/src/worker`,
             format: format
-        }
+        },
+        plugins: [
+            strip(),
+        ],
     },
 ];

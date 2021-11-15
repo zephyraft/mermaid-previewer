@@ -16,13 +16,13 @@
     "<all_urls>"
   ],
   "action": {
-    "default_popup": "static/html/options.html",
+    "default_popup": "public/html/options.html",
     "default_icon": {
-      "128": "static/icon/128.png"
+      "128": "public/icon/128.png"
     }
   },
   "icons": {
-    "16": "static/icon/128.png",
-    "128": "static/icon/128.png"
+    "16": "public/icon/128.png",
+    "128": "public/icon/128.png"
   }
 }

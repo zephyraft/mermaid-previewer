@@ -1,4 +1,3 @@
-
 async function saveOptions() {
     const excludeDomainList = stringToArray(document.getElementById('excludeDomainList').value);
     const matchSelectorList = stringToArray(document.getElementById('matchSelectorList').value);

@@ -20,20 +20,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
     // tab加载完成
     if (changeInfo.status === 'complete' && needExecute) {
-        // TODO 使用打包工具简化脚本使用
-        // 加载依赖项
-        await chrome.scripting.executeScript({
-            target: {tabId: tabId},
-            files: ['static/vendor/mermaid.min.js']
-        });
-        await chrome.scripting.insertCSS({
-            target: { tabId: tabId},
-            files: ['static/vendor/toastify.min.css']
-        });
-        await chrome.scripting.executeScript({
-            target: { tabId: tabId},
-            files: ['static/vendor/toastify.min.js']
-        });
         await chrome.scripting.executeScript({
             target: { tabId: tabId},
             files: ['src/content/mermaid-render.js']
