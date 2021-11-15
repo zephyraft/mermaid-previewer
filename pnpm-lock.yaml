@@ -7,6 +7,7 @@ specifiers:
   '@rollup/plugin-strip': ^2.1.0
   mermaid: ^8.13.3
   postcss: ^8.3.11
+  prettier: 2.4.1
   rollup-plugin-copy: ^3.4.0
   rollup-plugin-delete: ^2.0.0
   rollup-plugin-postcss: ^4.0.1
@@ -22,6 +23,7 @@ devDependencies:
   '@rollup/plugin-node-resolve': 13.0.6
   '@rollup/plugin-strip': 2.1.0
   postcss: 8.3.11
+  prettier: 2.4.1
   rollup-plugin-copy: 3.4.0
   rollup-plugin-delete: 2.0.0
   rollup-plugin-postcss: 4.0.1_postcss@8.3.11
@@ -1757,6 +1759,12 @@ packages:
       nanoid: 3.1.30
       picocolors: 1.0.0
       source-map-js: 0.6.2
+    dev: true
+
+  /prettier/2.4.1:
+    resolution: {integrity: sha512-9fbDAXSBcc6Bs1mZrDYb3XKzDLm4EXXL9sC1LqKP5rZkT6KRr/rf9amVUcODVXgguK/isJz0d0hP72WeaKWsvA==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
     dev: true
 
   /promise.series/0.2.0:

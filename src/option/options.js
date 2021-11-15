@@ -1,60 +1,74 @@
 async function saveOptions() {
-    const excludeDomainList = stringToArray(document.getElementById('excludeDomainList').value);
-    const matchSelectorList = stringToArray(document.getElementById('matchSelectorList').value);
-    // noinspection JSUnresolvedVariable
-    await chrome.storage.sync.set({
-        excludeDomainList: excludeDomainList,
-        matchSelectorList: matchSelectorList
-    });
+  const excludeDomainList = stringToArray(
+    document.getElementById("excludeDomainList").value
+  );
+  const matchSelectorList = stringToArray(
+    document.getElementById("matchSelectorList").value
+  );
+  // noinspection JSUnresolvedVariable
+  await chrome.storage.sync.set({
+    excludeDomainList: excludeDomainList,
+    matchSelectorList: matchSelectorList,
+  });
 
-    // Update status to let user know options were saved.
-    const status = document.getElementById('status');
-    status.textContent = 'Options saved.';
-    setTimeout(function () {
-        status.textContent = '';
-    }, 2000);
+  // Update status to let user know options were saved.
+  const status = document.getElementById("status");
+  status.textContent = "Options saved.";
+  setTimeout(function () {
+    status.textContent = "";
+  }, 2000);
 }
 
 async function restoreOptions() {
-    // noinspection JSUnresolvedVariable
-    const storage = await chrome.storage.sync.get([
-        'excludeDomainList',
-        'matchSelectorList',
-    ]);
-    console.debug('storage', storage);
-    // noinspection JSUnresolvedVariable
-    const localStorage = await chrome.storage.local.get([
-        'defaultExcludeDomainList',
-        'defaultMatchSelectorList',
-    ]);
-    console.debug('localStorage', localStorage);
-    document.getElementById('excludeDomainList').value = arrayToString(storage.excludeDomainList || localStorage.defaultExcludeDomainList);
-    document.getElementById('matchSelectorList').value = arrayToString(storage.matchSelectorList || localStorage.defaultMatchSelectorList);
+  // noinspection JSUnresolvedVariable
+  const storage = await chrome.storage.sync.get([
+    "excludeDomainList",
+    "matchSelectorList",
+  ]);
+  console.debug("storage", storage);
+  // noinspection JSUnresolvedVariable
+  const localStorage = await chrome.storage.local.get([
+    "defaultExcludeDomainList",
+    "defaultMatchSelectorList",
+  ]);
+  console.debug("localStorage", localStorage);
+  document.getElementById("excludeDomainList").value = arrayToString(
+    storage.excludeDomainList || localStorage.defaultExcludeDomainList
+  );
+  document.getElementById("matchSelectorList").value = arrayToString(
+    storage.matchSelectorList || localStorage.defaultMatchSelectorList
+  );
 }
 
 async function resetDefaults() {
-    // noinspection JSUnresolvedVariable
-    const localStorage = await chrome.storage.local.get(['defaultExcludeDomainList', 'defaultMatchSelectorList']);
-    document.getElementById('excludeDomainList').value = arrayToString(localStorage.defaultExcludeDomainList);
-    document.getElementById('matchSelectorList').value = arrayToString(localStorage.defaultMatchSelectorList);
+  // noinspection JSUnresolvedVariable
+  const localStorage = await chrome.storage.local.get([
+    "defaultExcludeDomainList",
+    "defaultMatchSelectorList",
+  ]);
+  document.getElementById("excludeDomainList").value = arrayToString(
+    localStorage.defaultExcludeDomainList
+  );
+  document.getElementById("matchSelectorList").value = arrayToString(
+    localStorage.defaultMatchSelectorList
+  );
 }
 
 function arrayToString(array) {
-    let res = '';
-    for (const element of array) {
-        res += element + "\n";
-    }
-    return res.substr(0, res.length - 1);
+  let res = "";
+  for (const element of array) {
+    res += element + "\n";
+  }
+  return res.substr(0, res.length - 1);
 }
 
 function stringToArray(string) {
-    let array = string.split("\n");
-    array = array.map((item) => item.trim());
-    array = array.filter((item) => item && item !== '');
-    return array;
+  let array = string.split("\n");
+  array = array.map((item) => item.trim());
+  array = array.filter((item) => item && item !== "");
+  return array;
 }
 
-document.addEventListener('DOMContentLoaded', restoreOptions);
-document.getElementById('save').addEventListener('click', saveOptions);
-document.getElementById('reset').addEventListener('click', resetDefaults);
-
+document.addEventListener("DOMContentLoaded", restoreOptions);
+document.getElementById("save").addEventListener("click", saveOptions);
+document.getElementById("reset").addEventListener("click", resetDefaults);
