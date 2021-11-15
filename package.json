@@ -6,7 +6,7 @@
     "test": "test"
   },
   "scripts": {
-    "dev": "rollup -c --environment DEBUG",
+    "dev": "rollup -c -w --environment DEBUG",
     "build": "rollup -c",
     "pack": "pnpm run build; cd dist; zip -r -X mermaid-perviewer.zip *; mv mermaid-perviewer.zip .."
   },

@@ -112,7 +112,7 @@ import "toastify-js/src/toastify.css";
     for (const mermaidDom of mermaidDomList) {
       // 去除内部多余的html tag，主要是为了兼容bitbucket
       mermaidDom.innerHTML = mermaidDom.innerText;
-      console.debug('mermaid-debug', domElement.innerText)
+      console.debug('mermaid-debug', mermaidDom.innerText)
     }
     return mermaidDomList;
   }

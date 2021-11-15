@@ -3,11 +3,11 @@
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   // 域名排除列表
   const storage = await chrome.storage.sync.get(["excludeDomainList"]);
-  console.debug("storage", storage);
+  console.debug("background storage", storage);
   const localStorage = await chrome.storage.local.get([
     "defaultExcludeDomainList",
   ]);
-  console.debug("localStorage", localStorage);
+  console.debug("background localStorage", localStorage);
   const excludeDomainList =
     storage.excludeDomainList || localStorage.defaultExcludeDomainList;
 
