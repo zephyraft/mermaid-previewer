@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/zephyraft/mermaid-perviewer#readme",
   "dependencies": {
-    "mermaid": "^8.13.3",
+    "mermaid": "^8.13.4",
     "toastify-js": "^1.11.2"
   },
   "devDependencies": {
@@ -37,6 +37,6 @@
     "prettier": "2.4.1",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-delete": "^2.0.0",
-    "rollup-plugin-postcss": "^4.0.1"
+    "rollup-plugin-postcss": "^4.0.2"
   }
 }
