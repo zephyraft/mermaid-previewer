@@ -77,7 +77,7 @@ chrome.runtime.onInstalled.addListener(() => {
   ];
   const defaultMatchSelectorList = [
     "pre[lang='mermaid'] > code", // github
-    "div[class='codehilite'] > pre", // bitbucket
+    "div.codehilite > pre", // bitbucket
   ];
 
   chrome.storage.local.set({

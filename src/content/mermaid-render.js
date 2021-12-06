@@ -55,6 +55,7 @@ import "toastify-js/src/toastify.css";
    */
   async function bitbucketPreviewHack(mutation) {
     // TODO 判断是否符合bitbucket 预览取消时的mutation
+    console.debug(`mutation=${JSON.stringify(mutation)}`);
     if (
       mutation.target ===
         document.querySelector("div#editor-container.maskable") &&
@@ -63,8 +64,9 @@ import "toastify-js/src/toastify.css";
       console.debug('hack render for bitbucket preview cancel');
       const mermaidDomList = await queryContainers(
         document,
-        renderedSelector()
+        await renderedSelector()
       );
+      console.debug('mermaidDomList', mermaidDomList);
       if (mermaidDomList.length !== 0) {
         // 恢复原始mermaid
         for (const mermaidDom of mermaidDomList) {
