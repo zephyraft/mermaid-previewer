@@ -18,7 +18,11 @@ let configs = [
     },
     plugins: [
       // clean dist
-      del({ targets: `${outputDir}/*`, verbose: true }),
+      del({
+        targets: `${outputDir}/*`,
+        verbose: true,
+        runOnce: true,
+      }),
       // resolve dependencies
       nodeResolve(),
       commonjs(),
