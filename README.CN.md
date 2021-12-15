@@ -61,8 +61,30 @@ A --> B
 
 - https://github.com/mermaid-js/mermaid
 - https://github.com/apvarun/toastify-js
+- 感谢 [JetBrains](https://www.jetbrains.com/?from=ferry) 开源license授权
+
+<p>
+ <a href="https://www.jetbrains.com/?from=ferry">
+   <img height="100" src="https://www.jetbrains.com/company/brand/img/logo6.svg">
+ </a>
+</p>
+
+## 配置
+你可以自定义配置以支持和排除更多网站，扩展的默认配置如下
+
+排除域名:
+```
+chrome.google.com
+gitlab.com
+```
+匹配Selectors:
+```
+pre[lang='mermaid'] > code
+div.codehilite > pre
+```
 
 ## 改动日志
+- [1.2.5]  更新mermaid版本到8.13.5. 修复bitbucket预览问题.
 - [1.2.4]  新增popup配置页, 提供域名排除列表以及dom selector配置.
 - [1.2.3]  更新mermaid版本到8.13.3.
 - [1.2.2]  更新mermaid版本到8.13.2.

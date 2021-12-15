@@ -1,6 +1,6 @@
 {
   "name": "mermaid-previewer",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Preview and export mermaid in github/bitbucket.",
   "directories": {
     "test": "test"
@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "rollup -c -w --environment DEBUG",
     "build": "rollup -c",
-    "pack": "pnpm run build; cd dist; zip -r -X mermaid-perviewer.zip *; mv mermaid-perviewer.zip .."
+    "pack": "pnpm run build; cd dist; zip -r -X mermaid-perviewer.zip *; mv mermaid-perviewer.zip ../release"
   },
   "repository": {
     "type": "git",

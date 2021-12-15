@@ -60,8 +60,31 @@ The following websites natively support mermaid or have dom structure conflicts,
 
 - https://github.com/mermaid-js/mermaid
 - https://github.com/apvarun/toastify-js
+- Thanks to [JetBrains](https://www.jetbrains.com/?from=ferry) open source license authorization
+
+<p>
+ <a href="https://www.jetbrains.com/?from=ferry">
+   <img height="100" src="https://www.jetbrains.com/company/brand/img/logo6.svg">
+ </a>
+</p>
+
+## Config
+
+You can customize the configuration to support and exclude more websites. The default configuration of the extension is as follows: 
+
+Exclude Domain:
+```
+chrome.google.com
+gitlab.com
+```
+Match Selectors:
+```
+pre[lang='mermaid'] > code
+div.codehilite > pre
+```
 
 ## Changelog
+- [1.2.5]  Update mermaid version to 8.13.5, fix preview issue of Bitbucket.
 - [1.2.4]  Added popup options page, providing domain exclusion and dom selector configuration.
 - [1.2.3]  Update mermaid version to 8.13.3.
 - [1.2.2]  Update mermaid version to 8.13.2.
