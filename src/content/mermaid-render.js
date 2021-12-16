@@ -54,7 +54,6 @@ import "toastify-js/src/toastify.css";
    * @param mutation
    */
   async function bitbucketPreviewHack(mutation) {
-    // TODO 判断是否符合bitbucket 预览取消时的mutation
     console.debug(`mutation=${JSON.stringify(mutation)}`);
     if (
       mutation.target ===

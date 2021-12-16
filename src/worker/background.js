@@ -71,6 +71,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 chrome.runtime.onInstalled.addListener(() => {
   // 默认配置
+  // TODO 解决版本升级时的配置更新问题 目前如果用户设置过自己的配置，则无法自动应用新的默认配置
   const defaultExcludeDomainList = [
     "chrome.google.com", // chrome官网无法execute
     "gitlab.com", // https://gitlab.com/zzzzzzzephyr/test
