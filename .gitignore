@@ -2,3 +2,4 @@
 dist
 node_modules
 release
+._.DS_Store

@@ -1,33 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Mermaid Previewer Options</title>
-    <link rel="stylesheet" href="../css/options.css"/>
+  <title>Mermaid Previewer Options</title>
+  <link rel="stylesheet" href="../css/options.css" />
 </head>
-<body>
+<body style="width: 470px">
 
-<div class="title">Mermaid Previewer Options</div>
-<div class="form-group">
-    <div class="form-line">
-        <label class="optionLabel" for="excludeDomainList">Exclude Domains: </label>
+<div>
+  <div class="bg-neutral-50">
+    <div class="px-4 pt-3 pd-1">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">
+        Mermaid Previewer Options
+      </h3>
     </div>
-    <div class="form-line">
-        <textarea id="excludeDomainList" rows="5" cols="50"></textarea>
-    </div>
-</div>
-<div class="form-group">
-    <div class="form-line">
-        <label class="optionLabel" for="matchSelectorList">Match Selectors: </label>
-    </div>
-    <div class="form-line">
-        <textarea id="matchSelectorList" rows="5" cols="50"></textarea>
-    </div>
-</div>
+    <div class="border-t border-gray-200">
+      <div class="shadow">
+        <div class="px-4 py-2 space-y-6">
+          <div>
+            <div class="text-base font-medium text-gray-700">
+              Exclude Domains
+            </div>
+            <p class="my-1 text-xs text-gray-500">
+              List of domain names that need to be excluded from execution
+            </p>
+            <div class="mt-2 text-sm text-gray-700">
+              Default
+            </div>
+            <p class="pl-3 my-1 text-xs text-gray-500">
+              chrome.google.com
+            </p>
+            <p class="pl-3 my-1 text-xs text-gray-500">
+              gitlab.com
+            </p>
+            <label for="ExcludeDomains" class="block text-sm text-gray-700">
+              Customize
+            </label>
+            <div class="mt-1">
+              <textarea id="ExcludeDomains" name="ExcludeDomains" rows="3"
+                        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full border border-gray-300 rounded-md text-sm"
+                        placeholder="example.com"></textarea>
+            </div>
+          </div>
 
-<div class="form-line" id="status"></div>
-<div class="form-group">
-    <button id="reset">Reset Default</button>
-    <button id="save">Save</button>
+          <div>
+            <div class="col-span-3">
+              <div class="text-base font-medium text-gray-700">
+                Match Selectors
+              </div>
+              <p class="my-1 text-xs text-gray-500">
+                Set <a class="text-blue-500" href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors">selectors</a>
+                to Match the DOM that needs to be rendered
+              </p>
+              <div class="mt-2 text-sm text-gray-700">
+                Default
+              </div>
+              <p class="pl-3 my-1 text-xs text-gray-500">
+                pre[lang='mermaid'] > code
+              </p>
+              <p class="pl-3 my-1 text-xs text-gray-500">
+                div.codehilite > pre
+              </p>
+              <label for="MatchSelectors" class="block text-sm text-gray-700">
+                Customize
+              </label>
+              <div class="mt-1">
+                  <textarea id="MatchSelectors" name="MatchSelectors" rows="3"
+                            class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full border border-gray-300 rounded-md text-sm"
+                            placeholder="pre > code"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="px-4 py-3 text-right">
+            <button type="submit"
+                    class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="../../src/option/options.js"></script>

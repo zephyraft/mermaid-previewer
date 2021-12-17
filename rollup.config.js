@@ -4,14 +4,17 @@ import copy from "rollup-plugin-copy";
 import del from "rollup-plugin-delete";
 import postcss from "rollup-plugin-postcss";
 import strip from "@rollup/plugin-strip";
+import tailwindcss from "tailwindcss";
+import autoprefixer from "autoprefixer";
 
 const outputDir = "dist";
 const format = "esm";
 const disableDebug = !(process.env.DEBUG === "true");
 
 let configs = [
+  // 内容
   {
-    input: "src/content/mermaid-render.js",
+    input: "src/content/render.js",
     output: {
       dir: `${outputDir}/src/content`,
       format: format,
@@ -28,15 +31,17 @@ let configs = [
       commonjs(),
       // bundle css import
       postcss(),
-      // copy file
+      // 复制静态资源
       copy({
         targets: [
           { src: "src/manifest.json", dest: outputDir },
-          { src: "public", dest: outputDir },
+          { src: "public/icon", dest: `${outputDir}/public` },
+          { src: "public/html", dest: `${outputDir}/public` },
         ],
       }),
     ],
   },
+  // 设置
   {
     input: "src/option/options.js",
     output: {
@@ -45,6 +50,7 @@ let configs = [
     },
     plugins: [],
   },
+  // 后台
   {
     input: "src/worker/background.js",
     output: {
@@ -52,6 +58,25 @@ let configs = [
       format: format,
     },
     plugins: [],
+  },
+  // tailwindcss
+  {
+    input: "public/css/options.css",
+    output: {
+      file: `${outputDir}/public/css/options.css`,
+      format: format,
+    },
+    plugins: [
+      postcss({
+        plugins: [
+          tailwindcss(),
+          autoprefixer(),
+        ],
+        extensions: [".css"],
+        extract: true,
+        minimize: disableDebug,
+      })
+    ],
   },
 ];
 

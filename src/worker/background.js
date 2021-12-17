@@ -25,7 +25,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && needExecute) {
     await chrome.scripting.executeScript({
       target: { tabId: tabId },
-      files: ["src/content/mermaid-render.js"],
+      files: ["src/content/render.js"],
     });
   }
 });
