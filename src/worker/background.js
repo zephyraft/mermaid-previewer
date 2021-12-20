@@ -1,4 +1,5 @@
 // noinspection JSUnresolvedVariable,JSUnresolvedFunction,JSDeprecatedSymbols
+
 // 监听tab改变
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   // 域名排除列表
@@ -8,9 +9,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     "defaultExcludeDomainList",
   ]);
   console.debug("background localStorage", localStorage);
-  const excludeDomainList =
-    storage.excludeDomainList || localStorage.defaultExcludeDomainList;
-
+  const excludeDomainList = (storage.excludeDomainList || []).concat(localStorage.defaultExcludeDomainList);
+  console.debug(excludeDomainList);
   // 判断是否需要执行脚本
   let needExecute = true;
   for (const excludeItem of excludeDomainList) {
@@ -71,8 +71,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 chrome.runtime.onInstalled.addListener(() => {
   // 默认配置
-  // TODO 解决版本升级时的配置更新问题 目前如果用户设置过自己的配置，则无法自动应用新的默认配置
-  // TODO 考虑将默认配置从自定义配置中分离出来，最终使用的配置是插件默认+用户自定义
   const defaultExcludeDomainList = [
     "chrome.google.com", // chrome官网无法execute
     "gitlab.com", // https://gitlab.com/zzzzzzzephyr/test

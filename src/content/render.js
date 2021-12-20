@@ -140,7 +140,9 @@ import "toastify-js/src/toastify.css";
       "defaultMatchSelectorList",
     ]);
     console.debug("localStorage", localStorage);
-    return storage.matchSelectorList || localStorage.defaultMatchSelectorList;
+    const list = (storage.matchSelectorList || []).concat(localStorage.defaultMatchSelectorList);
+    console.debug(list);
+    return list;
   }
 
   /**

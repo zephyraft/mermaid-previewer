@@ -48,7 +48,11 @@ let configs = [
       dir: `${outputDir}/src/option`,
       format: format,
     },
-    plugins: [],
+    plugins: [
+      // resolve dependencies
+      nodeResolve(),
+      commonjs(),
+    ],
   },
   // 后台
   {
@@ -57,7 +61,11 @@ let configs = [
       dir: `${outputDir}/src/worker`,
       format: format,
     },
-    plugins: [],
+    plugins: [
+      // resolve dependencies
+      nodeResolve(),
+      commonjs(),
+    ],
   },
   // tailwindcss
   {
