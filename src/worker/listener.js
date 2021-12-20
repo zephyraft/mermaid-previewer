@@ -2,7 +2,7 @@ import {
   defaultExcludeDomainList, defaultMatchSelectorList, getLocal, getSync, setLocal,
   STORAGE_KEY_DEFAULT_EXCLUDE_DOMAIN, STORAGE_KEY_DEFAULT_MATCH_SELECTOR, STORAGE_KEY_EXCLUDE_DOMAIN
 } from "../utils/storage";
-import { downloadFailMessage, downloadSuccessMessage } from "../utils/message";
+import { downloadFailMessage, downloadSuccessMessage, MESSAGE_TYPE_MENU } from "../utils/message";
 
 const initOptions = async () => {
   const defaultOptions = {};
@@ -57,7 +57,7 @@ export const installedListener = async () => {
 
 // 监听ContextMenuPngSrc消息
 export const menuMessageListener = (message) => {
-  if (message?.type === "ContextMenuPngSrc") {
+  if (message?.type === MESSAGE_TYPE_MENU) {
     downloadContext.src = message.src;
     downloadContext.name = message.name;
   }
@@ -85,7 +85,7 @@ export const tabsUpdateListener = async (tabId, changeInfo, tab) => {
     // noinspection JSUnresolvedVariable, JSUnresolvedFunction
     await chrome.scripting.executeScript({
       target: { tabId: tabId },
-      files: ["src/content/render.js"]
+      files: ["src/content/content.js"]
     });
   }
 };

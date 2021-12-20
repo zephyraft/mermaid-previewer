@@ -14,10 +14,12 @@ const disableDebug = !(process.env.DEBUG === "true");
 let configs = [
   // 内容
   {
-    input: "src/content/render.js",
+    input: "src/content/content.js",
     output: {
       dir: `${outputDir}/src/content`,
       format: format,
+      banner: "{",
+      footer: "}",
     },
     plugins: [
       // clean dist
