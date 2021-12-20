@@ -1,7 +1,8 @@
-import Toastify from "toastify-js";
 import mermaid from "mermaid";
 
-import "toastify-js/src/toastify.css";
+import { getLocal, getSync, STORAGE_KEY_DEFAULT_MATCH_SELECTOR, STORAGE_KEY_MATCH_SELECTOR } from "../utils/storage";
+import { toast } from "../utils/toast";
+import { MESSAGE_TYPE_TOAST } from "../utils/message";
 
 {
   /**
@@ -132,17 +133,13 @@ import "toastify-js/src/toastify.css";
   }
 
   async function getMatchSelectorList() {
-    // noinspection JSUnresolvedVariable
-    const storage = await chrome.storage.sync.get(["matchSelectorList"]);
-    console.debug("storage", storage);
-    // noinspection JSUnresolvedVariable
-    const localStorage = await chrome.storage.local.get([
-      "defaultMatchSelectorList",
-    ]);
-    console.debug("localStorage", localStorage);
-    const list = (storage.matchSelectorList || []).concat(localStorage.defaultMatchSelectorList);
-    console.debug(list);
-    return list;
+    const customMatchSelectorList = await getSync(STORAGE_KEY_MATCH_SELECTOR);
+    console.debug("customMatchSelectorList", customMatchSelectorList);
+    const defaultMatchSelectorList = await getLocal(STORAGE_KEY_DEFAULT_MATCH_SELECTOR);
+    console.debug("defaultMatchSelectorList", defaultMatchSelectorList);
+    const concatMatchSelectorList = customMatchSelectorList.concat(defaultMatchSelectorList);
+    console.debug("concatMatchSelectorList", concatMatchSelectorList);
+    return concatMatchSelectorList;
   }
 
   /**
@@ -273,55 +270,13 @@ import "toastify-js/src/toastify.css";
    */
   async function watchToastMessage() {
     if (!window.mermaidPreviewerHadWatchToast) {
-      // noinspection JSUnresolvedVariable,JSUnresolvedFunction
       chrome.runtime.onMessage.addListener(async (message) => {
-        if (message?.type === "Toast") {
+        if (message?.type === MESSAGE_TYPE_TOAST) {
           await toast(message.text, message.level);
         }
       });
       window.mermaidPreviewerHadWatchToast = true;
     }
-  }
-
-  /**
-   * 弹出toast
-   * @param text 内容
-   * @param level 为Error时显示红色
-   */
-  async function toast(text, level) {
-    const css =
-      level === "Error"
-        ? {
-            style: {
-              color: "rgba(239, 68, 68, 1)",
-              textAlign: "center",
-              borderColor: "rgba(248, 113, 113, 1)",
-              borderWidth: "1px",
-              borderRadius: "0.375rem",
-              background: "rgba(254, 242, 242, 1)",
-            },
-          }
-        : {
-            style: {
-              color: "rgba(59, 130, 246, 1)",
-              textAlign: "center",
-              borderColor: "rgba(96, 165, 250, 1)",
-              borderWidth: "1px",
-              borderRadius: "0.375rem",
-              background: "rgba(239, 246, 255, 1)",
-            },
-          };
-
-    Toastify({
-      text: text,
-      duration: 3000,
-      style: css.style,
-      close: true,
-      position: "center",
-      offset: {
-        y: 200, // vertical axis - can be a number or a string indicating unity. eg: '2em'
-      },
-    }).showToast();
   }
 
   /**

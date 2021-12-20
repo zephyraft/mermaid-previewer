@@ -1,41 +1,39 @@
-import { optionsArrayToStr, optionsStrToArray } from "../utils/utils";
+import {
+  getSync,
+  optionsArrayToStr,
+  optionsStrToArray, setSync,
+  STORAGE_KEY_EXCLUDE_DOMAIN,
+  STORAGE_KEY_MATCH_SELECTOR
+} from "../utils/storage";
 
-async function saveOptions() {
-  const excludeDomainList = optionsStrToArray(
-    document.getElementById("ExcludeDomains").value
-  );
-  const matchSelectorList = optionsStrToArray(
-    document.getElementById("MatchSelectors").value
-  );
-  // noinspection JSUnresolvedVariable
-  await chrome.storage.sync.set({
-    excludeDomainList: excludeDomainList,
-    matchSelectorList: matchSelectorList
-  });
-
-  // Update status to let user know options were saved.
+function saveSuccess() {
   const status = document.getElementById("Status");
   status.textContent = "Options Saved.";
-  setTimeout(function() {
+  setTimeout(() => {
     status.textContent = "";
   }, 2000);
 }
 
-async function restoreOptions() {
-  // noinspection JSUnresolvedVariable
-  const storage = await chrome.storage.sync.get([
-    "excludeDomainList",
-    "matchSelectorList"
-  ]);
-  console.debug("storage", storage);
-  document.getElementById("ExcludeDomains").value = optionsArrayToStr(
-    storage.excludeDomainList
-  );
-  document.getElementById("MatchSelectors").value = optionsArrayToStr(
-    storage.matchSelectorList
-  );
+async function saveOptions() {
+  const excludeDomainList = optionsStrToArray(document.getElementById("ExcludeDomains").value);
+  const matchSelectorList = optionsStrToArray(document.getElementById("MatchSelectors").value);
+
+  const options = {};
+  options[STORAGE_KEY_EXCLUDE_DOMAIN] = excludeDomainList;
+  options[STORAGE_KEY_MATCH_SELECTOR] = matchSelectorList;
+  await setSync(options);
+
+  // 保存成功提示信息
+  saveSuccess();
 }
 
+async function restoreOptions() {
+  const excludeDomainList = await getSync(STORAGE_KEY_EXCLUDE_DOMAIN);
+  const matchSelectorList = await getSync(STORAGE_KEY_MATCH_SELECTOR);
+  console.debug("storage", excludeDomainList, matchSelectorList);
+  document.getElementById("ExcludeDomains").value = optionsArrayToStr(excludeDomainList);
+  document.getElementById("MatchSelectors").value = optionsArrayToStr(matchSelectorList);
+}
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.getElementById("SaveButton").addEventListener("click", saveOptions);
