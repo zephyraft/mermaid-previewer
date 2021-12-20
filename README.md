@@ -25,6 +25,9 @@ Right-click on the rendered mermaid image and select "Export png" to export the 
   - [x] markdown preview
   - [x] edit preview
   - [x] ...
+- [x] mermaid picture export.
+- [x] Provide custom exclusion list and rule list configuration capabilities.
+
 
 At the same time, the following pages with dom structure are supported:
 ```html
@@ -45,32 +48,10 @@ or
 </div>
 ```
 
-## Exclude list
-
-The following websites natively support mermaid or have dom structure conflicts, so they are excluded from this plugin.
-- gitlab.com
-
-## TODO
-
-- [X] mermaid picture export.
-- [X] Provide custom exclusion list and rule list configuration capabilities.
-- [X] ...
-
-## Vendor List
-
-- https://github.com/mermaid-js/mermaid
-- https://github.com/apvarun/toastify-js
-- Thanks to [JetBrains](https://www.jetbrains.com/?from=ferry) open source license authorization
-
-<p>
- <a href="https://www.jetbrains.com/?from=ferry">
-   <img height="100" src="https://www.jetbrains.com/company/brand/img/logo6.svg">
- </a>
-</p>
 
 ## Config
 
-You can customize the configuration to support and exclude more websites. The default configuration of the extension is as follows: 
+You can customize the configuration to support and exclude more websites. The default configuration of the extension is as follows:
 
 Exclude Domain:
 ```
@@ -93,3 +74,20 @@ div.codehilite > pre
 - [1.1.0]  Added bitbucket support, updated mermaid version to 8.12.1.
 - [1.0.1]  Update mermaid version to 8.12.0.
 - [1.0.0]  First released, mermaid version 8.11.5.
+
+## TODO
+
+- [ ] autotest suit
+- [ ] ...
+
+## Vendor List
+
+- https://github.com/mermaid-js/mermaid
+- https://github.com/apvarun/toastify-js
+- Thanks to [JetBrains](https://www.jetbrains.com/?from=ferry) open source license authorization
+  <p>
+   <a href="https://www.jetbrains.com/?from=ferry">
+     <img height="100" src="https://www.jetbrains.com/company/brand/img/logo6.svg" alt="">
+   </a>
+  </p>
+- https://github.com/tailwindlabs/tailwindcss

@@ -26,6 +26,9 @@ A --> B
   - [x] markdown preview
   - [x] edit preview
   - [x] ...
+- [x] mermaid图片导出.
+- [x] 提供自定义排除列表和规则列表配置能力.
+
 
 同时支持以下dom结构的页面:
 ```html
@@ -46,28 +49,6 @@ A --> B
 </div>
 ```
 
-## 排除列表
-
-以下网站原生支持mermaid或存在dom结构冲突, 所以从本插件排除.
-- gitlab.com
-
-## TODO
-
-- [X] mermaid图片导出.
-- [X] 提供自定义排除列表和规则列表配置能力.
-- [X] ...
-
-## 供应商列表
-
-- https://github.com/mermaid-js/mermaid
-- https://github.com/apvarun/toastify-js
-- 感谢 [JetBrains](https://www.jetbrains.com/?from=ferry) 开源license授权
-
-<p>
- <a href="https://www.jetbrains.com/?from=ferry">
-   <img height="100" src="https://www.jetbrains.com/company/brand/img/logo6.svg">
- </a>
-</p>
 
 ## 配置
 你可以自定义配置以支持和排除更多网站，扩展的默认配置如下
@@ -93,3 +74,20 @@ div.codehilite > pre
 - [1.1.0]  新增bitbucket支持, 更新mermaid版本到8.12.1.
 - [1.0.1]  更新mermaid版本到8.12.0.
 - [1.0.0]  首次发布, mermaid版本8.11.5.
+
+## TODO
+
+- [ ] 自动化测试套件
+- [ ] ...
+
+## 供应商列表
+
+- https://github.com/mermaid-js/mermaid
+- https://github.com/apvarun/toastify-js
+- 感谢 [JetBrains](https://www.jetbrains.com/?from=ferry) 开源license授权
+  <p>
+   <a href="https://www.jetbrains.com/?from=ferry">
+     <img height="100" src="https://www.jetbrains.com/company/brand/img/logo6.svg" alt="">
+   </a>
+  </p>
+- https://github.com/tailwindlabs/tailwindcss
