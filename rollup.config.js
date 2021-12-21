@@ -6,6 +6,7 @@ import postcss from "rollup-plugin-postcss";
 import strip from "@rollup/plugin-strip";
 import tailwindcss from "tailwindcss";
 import autoprefixer from "autoprefixer";
+import tailwindConfig from "./tailwind.config";
 
 const outputDir = "dist";
 const format = "esm";
@@ -79,7 +80,7 @@ let configs = [
     plugins: [
       postcss({
         plugins: [
-          tailwindcss(),
+          tailwindcss(tailwindConfig),
           autoprefixer(),
         ],
         extensions: [".css"],
