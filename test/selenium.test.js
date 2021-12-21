@@ -3,7 +3,9 @@
 // 需要安装依赖
 // https://geekflare.com/install-chromium-ubuntu-centos/
 // https://www.selenium.dev/documentation/webdriver/getting_started/
-const {Capabilities, Builder, By, Key, until } = require('selenium-webdriver');
+import { Builder, By, Capabilities, Key, until } from "selenium-webdriver";
+import { HadRenderedSelector } from "../src/content/selectors";
+import { defaultMatchSelectorList } from "../src/utils/storage";
 
 const waitTimeout = 10000;
 let driver;
@@ -37,11 +39,25 @@ test("selenium-check", async () => {
   expect(title).toBe("cheese_百度搜索");
 });
 
-test("plugin-check", async () => {
-  await driver.get("https://bitbucket.org/zephyraft/test/src/master/");
-  // 等待结果 [data-processed=true]
-  const code = await driver.wait(until.elementLocated(By.css("div.codehilite > pre[data-processed=true]")), waitTimeout);
+const renderTest = async (url) => {
+  await driver.get(url);
+  // 等待结果
+  const selector = defaultMatchSelectorList.map((selector) => {
+    selector += HadRenderedSelector;
+    return selector;
+  }).join(", ");
+  const code = await driver.wait(until.elementLocated(By.css(selector)), waitTimeout);
   const svg = await code.findElement(By.tagName("svg"));
-  console.log(await svg.getAttribute('outerHTML'));
   expect(svg).toBeDefined();
-});
+  expect(await svg.getAttribute('outerHTML')).toMatch(/<svg.*<\/svg>/)
+}
+
+describe("mermaid-render", () => {
+  test("bitbucket-render", async () => {
+    await renderTest("https://bitbucket.org/zephyraft/test/src/master/");
+  });
+
+  test("github-render", async () => {
+    await renderTest("https://github.com/zephyraft/mermaid-previewer/blob/master/test/example.md");
+  });
+})

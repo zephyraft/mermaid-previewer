@@ -5,7 +5,7 @@ import { getLocal, getSync, STORAGE_KEY_DEFAULT_MATCH_SELECTOR, STORAGE_KEY_MATC
  * @type {string}
  */
 export const HadRenderedKey = "data-processed";
-const HadRenderedSelector = `[${HadRenderedKey}=true]`;
+export const HadRenderedSelector = `[${HadRenderedKey}=true]`;
 
 /**
  * 获取selectors

@@ -5,11 +5,12 @@
   "directories": {
     "test": "test"
   },
+  "type": "module",
   "scripts": {
     "dev": "rollup -c -w --environment DEBUG",
     "build": "rollup -c",
     "pack": "pnpm run build; cd dist; zip -r -X mermaid-perviewer.zip *; mv mermaid-perviewer.zip ../release",
-    "test": "jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "repository": {
     "type": "git",
