@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "rollup -c -w --environment DEBUG",
     "build": "rollup -c",
-    "pack": "pnpm run build; cd dist; zip -r -X mermaid-perviewer.zip *; mv mermaid-perviewer.zip ../release"
+    "pack": "pnpm run build; cd dist; zip -r -X mermaid-perviewer.zip *; mv mermaid-perviewer.zip ../release",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -35,11 +36,13 @@
     "@rollup/plugin-strip": "^2.1.0",
     "@tailwindcss/forms": "^0.4.0",
     "autoprefixer": "^10.4.0",
+    "jest": "^27.4.5",
     "postcss": "^8.4.5",
     "prettier": "2.4.1",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-postcss": "^4.0.2",
+    "selenium-webdriver": "^4.1.0",
     "tailwindcss": "^3.0.6"
   }
 }
