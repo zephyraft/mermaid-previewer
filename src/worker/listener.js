@@ -50,6 +50,7 @@ const judgeExec = (excludeDomainList, url) => {
 
 export const installedListener = async () => {
   // 初始化配置
+  // TODO 默认配置不需要存storage里
   await initOptions();
   // 初始化菜单
   initMenu();
