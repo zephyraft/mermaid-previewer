@@ -1,4 +1,9 @@
-import { getLocal, getSync, STORAGE_KEY_DEFAULT_MATCH_SELECTOR, STORAGE_KEY_MATCH_SELECTOR } from "../utils/storage";
+import {
+  getLocal,
+  getSync,
+  STORAGE_KEY_DEFAULT_MATCH_SELECTOR,
+  STORAGE_KEY_MATCH_SELECTOR,
+} from "../utils/storage";
 
 /**
  * 用于判断是否已被渲染的key，由mermaid jsapi定义
@@ -13,16 +18,20 @@ export const HadRenderedSelector = `[${HadRenderedKey}=true]`;
 const getMatchSelectorList = async () => {
   const customMatchSelectorList = await getSync(STORAGE_KEY_MATCH_SELECTOR);
   console.debug("customMatchSelectorList", customMatchSelectorList);
-  const defaultMatchSelectorList = await getLocal(STORAGE_KEY_DEFAULT_MATCH_SELECTOR);
+  const defaultMatchSelectorList = await getLocal(
+    STORAGE_KEY_DEFAULT_MATCH_SELECTOR
+  );
   console.debug("defaultMatchSelectorList", defaultMatchSelectorList);
-  const concatMatchSelectorList = customMatchSelectorList.concat(defaultMatchSelectorList);
+  const concatMatchSelectorList = customMatchSelectorList.concat(
+    defaultMatchSelectorList
+  );
   console.debug("concatMatchSelectorList", concatMatchSelectorList);
   return concatMatchSelectorList;
 };
 
 const getNotSelector = (selector) => {
-  return `:not(${selector})`
-}
+  return `:not(${selector})`;
+};
 
 const mapSelector = async (selectorSuffix) => {
   const matchSelectorList = await getMatchSelectorList();
@@ -41,7 +50,6 @@ const mapSelector = async (selectorSuffix) => {
 export const notRenderSelector = async () => {
   return mapSelector(getNotSelector(HadRenderedSelector));
 };
-
 
 export const renderedSelector = async () => {
   return mapSelector(HadRenderedSelector);

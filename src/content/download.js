@@ -23,7 +23,7 @@ const svgToPng = async (svgContainer, callback) => {
   canvasDom.width = parseInt(window.getComputedStyle(svgDom).maxWidth);
   canvasDom.height = svgSize.height;
   const ctx = canvasDom.getContext("2d");
-  imgDom.onload = async function() {
+  imgDom.onload = async function () {
     ctx.drawImage(imgDom, 0, 0);
     const pngSrc = canvasDom.toDataURL("image/png");
     await callback(svgDom.id + ".png", pngSrc);
@@ -49,7 +49,7 @@ const watchToastMessage = async () => {
  * 增强右键上下文菜单
  */
 const watchRightClick = async () => {
-  window.oncontextmenu = async function(e) {
+  window.oncontextmenu = async function (e) {
     // 寻找父级最近的符合selector的元素
     const parentMermaidDom = e.target.closest(await renderedSelector());
     console.debug("oncontextmenu", e.target, parentMermaidDom);
@@ -73,4 +73,4 @@ export const initDownload = async () => {
    * 监听toast消息
    */
   await watchToastMessage();
-}
+};

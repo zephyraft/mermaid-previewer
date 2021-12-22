@@ -13,7 +13,7 @@ export const downloadSuccessMessage = (tabId) => {
   sendMessage(tabId, {
     type: MESSAGE_TYPE_TOAST,
     level: MESSAGE_TOAST_LEVEL_INFO,
-    text: "Export Success"
+    text: "Export Success",
   });
 };
 
@@ -21,7 +21,7 @@ export const downloadFailMessage = (tabId) => {
   sendMessage(tabId, {
     type: MESSAGE_TYPE_TOAST,
     level: MESSAGE_TOAST_LEVEL_ERROR,
-    text: "Please use it above the specific mermaid diagram"
+    text: "Please use it above the specific mermaid diagram",
   });
 };
 
@@ -35,6 +35,6 @@ export const sendMenuMessage = async (name, src) => {
   chrome.runtime.sendMessage({
     type: MESSAGE_TYPE_MENU,
     name: name,
-    src: src
+    src: src,
   });
 };

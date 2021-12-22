@@ -1,4 +1,9 @@
-import { installedListener, menuClickListener, menuMessageListener, tabsUpdateListener } from "./listener";
+import {
+  installedListener,
+  menuClickListener,
+  menuMessageListener,
+  tabsUpdateListener,
+} from "./listener";
 
 // tab改变
 // noinspection JSUnresolvedVariable
@@ -15,4 +20,3 @@ chrome.runtime.onMessage.addListener(menuMessageListener);
 // 扩展安装完成回调
 // noinspection JSUnresolvedVariable
 chrome.runtime.onInstalled.addListener(installedListener);
-

@@ -10,11 +10,11 @@ import { HadRenderedKey, queryContainers, renderedSelector } from "./selectors";
  * 加载缓存的原始mermaid，重新进行渲染
  * @param mutation
  */
-const bitbucketPreviewHack = async mutation => {
+const bitbucketPreviewHack = async (mutation) => {
   console.debug(`mutation=${JSON.stringify(mutation)}`);
   if (
     mutation.target ===
-    document.querySelector("div#editor-container.maskable") &&
+      document.querySelector("div#editor-container.maskable") &&
     mutation.removedNodes.length !== 0
   ) {
     console.debug("hack render for bitbucket preview cancel");
@@ -80,6 +80,6 @@ export const watchDomMutation = async () => {
   // observe
   window.mermaidPreviewerMutationObserver.observe(document, {
     childList: true,
-    subtree: true
+    subtree: true,
   });
 };

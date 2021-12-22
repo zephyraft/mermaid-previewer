@@ -1,7 +1,7 @@
-export const STORAGE_KEY_EXCLUDE_DOMAIN = "excludeDomainList"
-export const STORAGE_KEY_MATCH_SELECTOR = "matchSelectorList"
-export const STORAGE_KEY_DEFAULT_EXCLUDE_DOMAIN = "defaultExcludeDomainList"
-export const STORAGE_KEY_DEFAULT_MATCH_SELECTOR = "defaultMatchSelectorList"
+export const STORAGE_KEY_EXCLUDE_DOMAIN = "excludeDomainList";
+export const STORAGE_KEY_MATCH_SELECTOR = "matchSelectorList";
+export const STORAGE_KEY_DEFAULT_EXCLUDE_DOMAIN = "defaultExcludeDomainList";
+export const STORAGE_KEY_DEFAULT_MATCH_SELECTOR = "defaultMatchSelectorList";
 
 // 默认配置
 export const defaultExcludeDomainList = [

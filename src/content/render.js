@@ -14,13 +14,12 @@ export const rawDataKey = "data-mermaid-previewer-raw";
 const mermaidRegex =
   /^\s*(graph\s+\w{2}|graph|graph\s+.|flowchart\s+\w{2}|flowchart|flowchart\s+.|sequenceDiagram|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|pie\s+title\s.+|requirementDiagram|gitGraph:)\s*\n/gm;
 
-
 /**
  * 匹配符合条件的dom
  * @param mermaidDomList dom列表
  * @return NodeList 符合条件的dom结点数组
  */
-const matchMermaidExp = async mermaidDomList => {
+const matchMermaidExp = async (mermaidDomList) => {
   // 过滤不符合正则的dom
   return Array.from(mermaidDomList).filter((mermaidDom) => {
     console.debug("" + mermaidDom.innerText);
@@ -32,7 +31,7 @@ const matchMermaidExp = async mermaidDomList => {
  * 缓存mermaid原始code
  * @param mermaidDomList
  */
-const saveRawCode = async mermaidDomList => {
+const saveRawCode = async (mermaidDomList) => {
   for (const mermaidDom of mermaidDomList) {
     // 缓存mermaid原始内容
     mermaidDom.setAttribute(rawDataKey, mermaidDom.innerHTML);
@@ -44,17 +43,13 @@ const saveRawCode = async mermaidDomList => {
  * @param dom 从这个dom结点搜索
  * @return NodeList 符合条件的dom结点数组
  */
-export const queryAndSaveRaw = async dom => {
+export const queryAndSaveRaw = async (dom) => {
   const notRenderSelectors = await notRenderSelector();
-  const mermaidDomList = await queryContainers(
-    dom,
-    notRenderSelectors
-  );
+  const mermaidDomList = await queryContainers(dom, notRenderSelectors);
   const filteredDomList = await matchMermaidExp(mermaidDomList);
   await saveRawCode(filteredDomList);
   return filteredDomList;
 };
-
 
 /**
  * 渲染mermaid图

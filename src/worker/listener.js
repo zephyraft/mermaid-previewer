@@ -1,8 +1,18 @@
 import {
-  defaultExcludeDomainList, defaultMatchSelectorList, getLocal, getSync, setLocal,
-  STORAGE_KEY_DEFAULT_EXCLUDE_DOMAIN, STORAGE_KEY_DEFAULT_MATCH_SELECTOR, STORAGE_KEY_EXCLUDE_DOMAIN
+  defaultExcludeDomainList,
+  defaultMatchSelectorList,
+  getLocal,
+  getSync,
+  setLocal,
+  STORAGE_KEY_DEFAULT_EXCLUDE_DOMAIN,
+  STORAGE_KEY_DEFAULT_MATCH_SELECTOR,
+  STORAGE_KEY_EXCLUDE_DOMAIN,
 } from "../utils/storage";
-import { downloadFailMessage, downloadSuccessMessage, MESSAGE_TYPE_MENU } from "../utils/message";
+import {
+  downloadFailMessage,
+  downloadSuccessMessage,
+  MESSAGE_TYPE_MENU,
+} from "../utils/message";
 
 const initOptions = async () => {
   const defaultOptions = {};
@@ -17,21 +27,25 @@ const initMenu = () => {
   chrome.contextMenus.create({
     id: "exportPNG", // 唯一id
     title: "Export png",
-    contexts: ["all"] // 配置菜单可以出现的上下文
+    contexts: ["all"], // 配置菜单可以出现的上下文
   });
 };
 
 const downloadContext = {
   src: null,
-  name: null
+  name: null,
 };
 
 const getExcludeDomainList = async () => {
   const customExcludeDomainList = await getSync(STORAGE_KEY_EXCLUDE_DOMAIN);
   console.debug("customExcludeDomainList", customExcludeDomainList);
-  const defaultExcludeDomainList = await getLocal(STORAGE_KEY_DEFAULT_EXCLUDE_DOMAIN);
+  const defaultExcludeDomainList = await getLocal(
+    STORAGE_KEY_DEFAULT_EXCLUDE_DOMAIN
+  );
   console.debug("defaultExcludeDomainList", defaultExcludeDomainList);
-  const excludeDomainList = customExcludeDomainList.concat(defaultExcludeDomainList);
+  const excludeDomainList = customExcludeDomainList.concat(
+    defaultExcludeDomainList
+  );
   console.debug("concatExcludeDomainList", excludeDomainList);
   return excludeDomainList;
 };
@@ -67,7 +81,10 @@ export const menuMessageListener = (message) => {
 export const menuClickListener = async (info, tab) => {
   if (downloadContext.src) {
     // noinspection JSUnresolvedVariable
-    chrome.downloads.download({ filename: downloadContext.name, url: downloadContext.src });
+    chrome.downloads.download({
+      filename: downloadContext.name,
+      url: downloadContext.src,
+    });
     downloadSuccessMessage(tab.id);
   } else {
     console.debug("downloadContext", downloadContext);
@@ -86,7 +103,7 @@ export const tabsUpdateListener = async (tabId, changeInfo, tab) => {
     // noinspection JSUnresolvedVariable, JSUnresolvedFunction
     await chrome.scripting.executeScript({
       target: { tabId: tabId },
-      files: ["src/content/content.js"]
+      files: ["src/content/content.js"],
     });
   }
 };
