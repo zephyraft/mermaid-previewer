@@ -58,6 +58,6 @@ describe("mermaid-render", () => {
   });
 
   test("github-render", async () => {
-    await renderTest("https://github.com/zephyraft/mermaid-previewer/blob/master/test/example.md");
+    await renderTest("https://github.com/zephyraft/mermaid-previewer/blob/master/assets/example.md");
   });
 })

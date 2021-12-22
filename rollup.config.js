@@ -79,14 +79,11 @@ let configs = [
     },
     plugins: [
       postcss({
-        plugins: [
-          tailwindcss(tailwindConfig),
-          autoprefixer(),
-        ],
+        plugins: [tailwindcss(tailwindConfig), autoprefixer()],
         extensions: [".css"],
         extract: true,
         minimize: disableDebug,
-      })
+      }),
     ],
   },
 ];

@@ -1,5 +1,5 @@
 // noinspection JSUnusedGlobalSymbols
 export default {
   // ...
-  testTimeout: 20000
+  testTimeout: 20000,
 };
