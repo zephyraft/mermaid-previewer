@@ -1,8 +1,7 @@
 import {
-  getLocal,
+  defaultMatchSelectorList,
   getSync,
-  STORAGE_KEY_DEFAULT_MATCH_SELECTOR,
-  STORAGE_KEY_MATCH_SELECTOR,
+  STORAGE_KEY_MATCH_SELECTOR
 } from "../utils/storage";
 
 /**
@@ -18,9 +17,7 @@ export const HadRenderedSelector = `[${HadRenderedKey}=true]`;
 const getMatchSelectorList = async () => {
   const customMatchSelectorList = await getSync(STORAGE_KEY_MATCH_SELECTOR);
   console.debug("customMatchSelectorList", customMatchSelectorList);
-  const defaultMatchSelectorList = await getLocal(
-    STORAGE_KEY_DEFAULT_MATCH_SELECTOR
-  );
+  const defaultMatchSelectorList = defaultMatchSelectorList;
   console.debug("defaultMatchSelectorList", defaultMatchSelectorList);
   const concatMatchSelectorList = customMatchSelectorList.concat(
     defaultMatchSelectorList

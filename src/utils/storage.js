@@ -1,7 +1,5 @@
 export const STORAGE_KEY_EXCLUDE_DOMAIN = "excludeDomainList";
 export const STORAGE_KEY_MATCH_SELECTOR = "matchSelectorList";
-export const STORAGE_KEY_DEFAULT_EXCLUDE_DOMAIN = "defaultExcludeDomainList";
-export const STORAGE_KEY_DEFAULT_MATCH_SELECTOR = "defaultMatchSelectorList";
 
 // 默认配置
 export const defaultExcludeDomainList = [
@@ -43,15 +41,4 @@ export async function getSync(key) {
 export async function setSync(obj) {
   // noinspection JSUnresolvedVariable
   await chrome.storage.sync.set(obj);
-}
-
-export async function getLocal(key) {
-  // noinspection JSUnresolvedVariable
-  const storage = await chrome.storage.local.get([key]);
-  return storage[key] || [];
-}
-
-export async function setLocal(obj) {
-  // noinspection JSUnresolvedVariable
-  await chrome.storage.local.set(obj);
 }

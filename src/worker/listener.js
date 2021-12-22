@@ -1,11 +1,6 @@
 import {
   defaultExcludeDomainList,
-  defaultMatchSelectorList,
-  getLocal,
   getSync,
-  setLocal,
-  STORAGE_KEY_DEFAULT_EXCLUDE_DOMAIN,
-  STORAGE_KEY_DEFAULT_MATCH_SELECTOR,
   STORAGE_KEY_EXCLUDE_DOMAIN,
 } from "../utils/storage";
 import {
@@ -13,23 +8,6 @@ import {
   downloadSuccessMessage,
   MESSAGE_TYPE_MENU,
 } from "../utils/message";
-
-const initOptions = async () => {
-  const defaultOptions = {};
-  defaultOptions[STORAGE_KEY_DEFAULT_EXCLUDE_DOMAIN] = defaultExcludeDomainList;
-  defaultOptions[STORAGE_KEY_DEFAULT_MATCH_SELECTOR] = defaultMatchSelectorList;
-  await setLocal(defaultOptions);
-  console.debug("set default settings");
-};
-
-const initMenu = () => {
-  // noinspection JSUnresolvedVariable
-  chrome.contextMenus.create({
-    id: "exportPNG", // 唯一id
-    title: "Export png",
-    contexts: ["all"], // 配置菜单可以出现的上下文
-  });
-};
 
 const downloadContext = {
   src: null,
@@ -39,9 +17,7 @@ const downloadContext = {
 const getExcludeDomainList = async () => {
   const customExcludeDomainList = await getSync(STORAGE_KEY_EXCLUDE_DOMAIN);
   console.debug("customExcludeDomainList", customExcludeDomainList);
-  const defaultExcludeDomainList = await getLocal(
-    STORAGE_KEY_DEFAULT_EXCLUDE_DOMAIN
-  );
+  const defaultExcludeDomainList = defaultExcludeDomainList;
   console.debug("defaultExcludeDomainList", defaultExcludeDomainList);
   const excludeDomainList = customExcludeDomainList.concat(
     defaultExcludeDomainList
@@ -63,11 +39,13 @@ const judgeExec = (excludeDomainList, url) => {
 };
 
 export const installedListener = async () => {
-  // 初始化配置
-  // TODO 默认配置不需要存storage里
-  await initOptions();
   // 初始化菜单
-  initMenu();
+  // noinspection JSUnresolvedVariable
+  chrome.contextMenus.create({
+    id: "exportPNG", // 唯一id
+    title: "Export png",
+    contexts: ["all"], // 配置菜单可以出现的上下文
+  });
 };
 
 // 监听ContextMenuPngSrc消息
