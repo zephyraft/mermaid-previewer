@@ -17,7 +17,6 @@ export const HadRenderedSelector = `[${HadRenderedKey}=true]`;
 const getMatchSelectorList = async () => {
   const customMatchSelectorList = await getSync(STORAGE_KEY_MATCH_SELECTOR);
   console.debug("customMatchSelectorList", customMatchSelectorList);
-  const defaultMatchSelectorList = defaultMatchSelectorList;
   console.debug("defaultMatchSelectorList", defaultMatchSelectorList);
   const concatMatchSelectorList = customMatchSelectorList.concat(
     defaultMatchSelectorList

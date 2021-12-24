@@ -5,10 +5,11 @@ export const waitTimeout = 10000;
 export const initDriver = async () => {
   console.log("init driver");
   const chromeCapabilities = Capabilities.chrome();
+  const path = process.cwd();
   // 加载插件
   chromeCapabilities.set("goog:chromeOptions", {
     args: [
-      "--load-extension=./dist",
+      `--load-extension=${path}/dist`,
     ]
   });
   return new Builder()

@@ -17,7 +17,6 @@ const downloadContext = {
 const getExcludeDomainList = async () => {
   const customExcludeDomainList = await getSync(STORAGE_KEY_EXCLUDE_DOMAIN);
   console.debug("customExcludeDomainList", customExcludeDomainList);
-  const defaultExcludeDomainList = defaultExcludeDomainList;
   console.debug("defaultExcludeDomainList", defaultExcludeDomainList);
   const excludeDomainList = customExcludeDomainList.concat(
     defaultExcludeDomainList
