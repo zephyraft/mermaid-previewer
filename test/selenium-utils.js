@@ -38,6 +38,13 @@ export const waitElementMatchText = async (driver, element, pattern) => {
   return await driver.wait(until.elementTextMatches(element, pattern), waitTimeout);
 };
 
+export const findShadowElement = async (element, locator) => {
+  const shadowRoot = await element.getShadowRoot();
+  return await shadowRoot.findElement(locator);
+}
 
-
+export const findShadowElements = async (element, locator) => {
+  const shadowRoot = await element.getShadowRoot();
+  return await shadowRoot.findElements(locator);
+}
 
