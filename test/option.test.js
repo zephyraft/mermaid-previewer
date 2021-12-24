@@ -22,15 +22,16 @@ const getExtensionId = async () => {
   const extensionsItem = await findShadowElement(extensionsList, By.tagName("extensions-item"));
   // 只有一个扩展
   const extensionId = await extensionsItem.getAttribute("id");
+
+  console.log(await (await findShadowElement(extensionsItem,By.id("name"))).getAttribute("innerHTML"));
   console.log("extensionId", extensionId);
+  return extensionId;
 };
 
 test("popup", async () => {
   const extensionId = await getExtensionId();
-  await sleep(3000);
   // 跳转
-  // await driver.get(`chrome-extension://${extensionId}/public/html/options.html`);
-  await driver.get(`chrome-extension://${extensionId}`);
+  await driver.get(`chrome-extension://${extensionId}/public/html/options.html`);
   console.log(await (await driver.findElement(By.tagName("body"))).getAttribute("innerHTML"));
 
   const excludeDomains = await waitElementLocated(driver, By.id("ExcludeDomains"));
@@ -39,4 +40,5 @@ test("popup", async () => {
   console.log(await excludeDomains.getText());
   console.log(await matchSelectors.getText());
 
+  // TODO 测试配置页
 });
