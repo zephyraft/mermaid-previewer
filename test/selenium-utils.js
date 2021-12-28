@@ -28,9 +28,14 @@ export const waitElementLocated = async (driver, locator) => {
   return await driver.wait(until.elementLocated(locator), waitTimeout);
 }
 
-export const waitElementEnableAndVisible = async (driver, locator) => {
+export const waitElementVisible = async (driver,  locator) => {
   const element = await waitElementLocated(driver, locator);
   await driver.wait(until.elementIsVisible(element), waitTimeout);
+  return element;
+}
+
+export const waitElementEnableAndVisible = async (driver, locator) => {
+  const element = await waitElementEnableAndVisible(driver, locator);
   await driver.wait(until.elementIsEnabled(element), waitTimeout);
   return element;
 };
@@ -49,3 +54,14 @@ export const findShadowElements = async (element, locator) => {
   return await shadowRoot.findElements(locator);
 }
 
+export const getValue = async (element) => {
+  return await element.getAttribute("value");
+}
+
+export const getInnerHTML = async (element) => {
+  return await element.getAttribute("innerHTML");
+}
+
+export const getOuterHTML = async (element) => {
+  return await element.getAttribute("outerHTML");
+}

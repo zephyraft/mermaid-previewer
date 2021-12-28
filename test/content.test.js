@@ -61,7 +61,7 @@ describe("mermaid-edit-preview", () => {
     await driver.navigate().refresh();
     // 编辑
     const editButton = await waitElementLocated(driver, By.css("form[action='/zephyraft/mermaid-previewer/edit/master/assets/example.md'] > button"));
-    const form = await driver.findElement(By.css("form[action='/zephyraft/mermaid-previewer/edit/master/assets/example.md']"));
+    // const form = await driver.findElement(By.css("form[action='/zephyraft/mermaid-previewer/edit/master/assets/example.md']"));
     // console.log(await form.getAttribute("innerHTML"));
     // 点击preview按钮
     await editButton.click();
@@ -82,9 +82,9 @@ describe("mermaid-edit-preview", () => {
     // 输入内容
     const codeEditorContainer = await waitElementLocated(driver, By.className("CodeMirror-code"));
     const lines = await codeEditorContainer.findElements(By.className("CodeMirror-line"));
-    for (const line of lines) {
-      console.log(await line.getAttribute("innerHTML"));
-    }
+    // for (const line of lines) {
+    //   console.log(await line.getAttribute("innerHTML"));
+    // }
     const firstLine = lines[0];
     await driver.actions({async: true}).move({origin:firstLine}).click().perform();
     await driver.actions().sendKeys(" ").perform();
