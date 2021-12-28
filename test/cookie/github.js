@@ -1,4 +1,5 @@
-export const addGithubCookie = async (driver, env) => {
+export const addGithubCookie = async (driver) => {
+  const env = process.env;
   console.log("env", env);
 
   await driver.manage().addCookie({

@@ -1,4 +1,4 @@
-import { Builder, Capabilities, until } from "selenium-webdriver";
+import { Builder, Capabilities, until, WebElement, WebDriver } from "selenium-webdriver";
 
 export const waitTimeout = 10000;
 
@@ -9,59 +9,67 @@ export const initDriver = async () => {
   // 加载插件
   chromeCapabilities.set("goog:chromeOptions", {
     args: [
-      `--load-extension=${path}/dist`,
+      `--load-extension=${path}/dist`
     ]
   });
-  return new Builder()
+  const driver = new Builder()
     .withCapabilities(chromeCapabilities)
     .build();
-}
+  console.log("init driver finished");
+  return driver
+};
 
-export const destroyDriver = async (driver) => {
+WebDriver.prototype.destroy = async function() {
   console.log("destroy driver");
-  await driver.quit();
-}
+  await this.quit();
+  console.log("destroy driver finished");
+};
 
 export const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
-export const waitElementLocated = async (driver, locator) => {
-  return await driver.wait(until.elementLocated(locator), waitTimeout);
-}
+WebDriver.prototype.waitElementLocated = async function(locator) {
+  return await this.wait(until.elementLocated(locator), waitTimeout);
+};
 
-export const waitElementVisible = async (driver,  locator) => {
-  const element = await waitElementLocated(driver, locator);
-  await driver.wait(until.elementIsVisible(element), waitTimeout);
-  return element;
-}
-
-export const waitElementEnableAndVisible = async (driver, locator) => {
-  const element = await waitElementEnableAndVisible(driver, locator);
-  await driver.wait(until.elementIsEnabled(element), waitTimeout);
+WebDriver.prototype.waitElementVisible = async function(locator) {
+  const element = await this.waitElementLocated(locator);
+  await this.wait(until.elementIsVisible(element), waitTimeout);
   return element;
 };
 
-export const waitElementMatchText = async (driver, element, pattern) => {
-  return await driver.wait(until.elementTextMatches(element, pattern), waitTimeout);
+WebDriver.prototype.waitElementEnableAndVisible = async function(locator) {
+  const element = await this.waitElementVisible(locator);
+  await this.wait(until.elementIsEnabled(element), waitTimeout);
+  return element;
 };
 
-export const findShadowElement = async (element, locator) => {
-  const shadowRoot = await element.getShadowRoot();
-  return await shadowRoot.findElement(locator);
-}
+WebDriver.prototype.waitElementMatchText = async function(element, pattern) {
+  return await this.wait(until.elementTextMatches(element, pattern), waitTimeout);
+};
 
-export const findShadowElements = async (element, locator) => {
-  const shadowRoot = await element.getShadowRoot();
-  return await shadowRoot.findElements(locator);
-}
+WebElement.prototype.findShadowElement = async function(locator) {
+  // noinspection JSUnresolvedFunction
+  const shadowRoot = await this.getShadowRoot();
+  return shadowRoot.findElement(locator);
+};
 
-export const getValue = async (element) => {
-  return await element.getAttribute("value");
-}
+WebElement.prototype.findShadowElements = async function(locator) {
+  // noinspection JSUnresolvedFunction
+  const shadowRoot = await this.getShadowRoot();
+  return shadowRoot.findElements(locator);
+};
 
-export const getInnerHTML = async (element) => {
-  return await element.getAttribute("innerHTML");
-}
+WebElement.prototype.getValue = async function() {
+  // noinspection JSUnresolvedFunction
+  return this.getAttribute("value");
+};
 
-export const getOuterHTML = async (element) => {
-  return await element.getAttribute("outerHTML");
-}
+WebElement.prototype.getInnerHTML = async function() {
+  // noinspection JSUnresolvedFunction
+  return this.getAttribute("innerHTML");
+};
+
+WebElement.prototype.getOuterHTML = async function() {
+  // noinspection JSUnresolvedFunction
+  return this.getAttribute("outerHTML");
+};

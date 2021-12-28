@@ -1,4 +1,5 @@
-export const addBitbucketCookie = async (driver, env) => {
+export const addBitbucketCookie = async (driver) => {
+  const env = process.env;
   console.log("env", env);
 
   await driver.manage().addCookie({
