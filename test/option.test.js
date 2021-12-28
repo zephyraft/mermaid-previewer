@@ -1,6 +1,6 @@
 // chrome-extension://<扩展id>/public/html/options.html
 // chrome-extension://oidjnlhbegipkcklbdfnbkikplpghfdl/public/html/options.html
-import { destroyDriver, findShadowElement, initDriver, sleep, waitElementLocated } from "./selenium-utils";
+import { destroyDriver, findShadowElement, initDriver, waitElementLocated } from "./selenium-utils";
 import { By } from "selenium-webdriver";
 
 let driver;
