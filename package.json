@@ -40,6 +40,7 @@
     "jest": "^27.4.7",
     "postcss": "^8.4.5",
     "prettier": "2.4.1",
+    "robotjs": "^0.6.0",
     "rollup": "^2.63.0",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-delete": "^2.0.0",

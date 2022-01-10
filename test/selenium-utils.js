@@ -44,7 +44,7 @@ WebDriver.prototype.waitElementEnableAndVisible = async function(locator) {
 };
 
 WebDriver.prototype.waitElementMatchText = async function(element, pattern) {
-  return await this.wait(until.elementTextMatches(element, pattern), waitTimeout);
+  return this.wait(until.elementTextMatches(element, pattern), waitTimeout);
 };
 
 WebElement.prototype.findShadowElement = async function(locator) {
