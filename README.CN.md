@@ -65,6 +65,7 @@ div.codehilite > pre
 ```
 
 ## 改动日志
+- [1.2.6]  更新mermaid版本到8.13.8, 优化配置页交互与样式.
 - [1.2.5]  更新mermaid版本到8.13.5. 修复bitbucket预览问题.
 - [1.2.4]  新增popup配置页, 提供域名排除列表以及dom selector配置.
 - [1.2.3]  更新mermaid版本到8.13.3.
@@ -77,7 +78,7 @@ div.codehilite > pre
 
 ## TODO
 
-- [ ] 自动化测试套件
+- [x] 自动化测试套件
 - [ ] ...
 
 ## 供应商列表

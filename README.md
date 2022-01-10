@@ -65,6 +65,7 @@ div.codehilite > pre
 ```
 
 ## Changelog
+- [1.2.6]  Update mermaid version to 8.13.8, optimize configuration page interaction and style.
 - [1.2.5]  Update mermaid version to 8.13.5, fix preview issue of Bitbucket.
 - [1.2.4]  Added popup options page, providing domain exclusion and dom selector configuration.
 - [1.2.3]  Update mermaid version to 8.13.3.
@@ -77,7 +78,7 @@ div.codehilite > pre
 
 ## TODO
 
-- [ ] autotest suit
+- [x] autotest suit
 - [ ] ...
 
 ## Vendor List
