@@ -79,6 +79,8 @@ div.codehilite > pre
 ## TODO
 
 - [x] 自动化测试套件
+- [ ] 改进toast样式
+- [ ] 增加hover菜单，用于下载/复制code
 - [ ] ...
 
 ## 供应商列表

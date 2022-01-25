@@ -78,7 +78,9 @@ div.codehilite > pre
 
 ## TODO
 
-- [x] autotest suit
+- [x] autotest suit.
+- [ ] modify toast style.
+- [ ] added hover menu for downloading/copying code.
 - [ ] ...
 
 ## Vendor List
