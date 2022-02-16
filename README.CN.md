@@ -16,17 +16,14 @@ A --> B
 ## 支持列表
 
 - [x] GitHub
-  - [x] readme
-  - [x] markdown preview
-  - [x] edit preview
   - [x] gist(需要名称匹配*.md)
-  - [x] comment
-  - [x] issue
+  - [x] gist评论
+  - [x] 原生mermaid下载
   - [x] ...
 - [x] Bitbucket
   - [x] readme
-  - [x] markdown preview
-  - [x] edit preview
+  - [x] markdown预览
+  - [x] 编辑预览
   - [x] ...
 - [x] mermaid图片导出.
 - [x] 提供自定义排除列表和规则列表配置能力.
@@ -67,6 +64,7 @@ div.codehilite > pre
 ```
 
 ## 改动日志
+- [1.2.7]  更新mermaid版本到8.14.0, 支持GitHub原生mermaid下载.
 - [1.2.6]  更新mermaid版本到8.13.8, 优化配置页交互与样式.
 - [1.2.5]  更新mermaid版本到8.13.5. 修复bitbucket预览问题.
 - [1.2.4]  新增popup配置页, 提供域名排除列表以及dom selector配置.
@@ -81,7 +79,7 @@ div.codehilite > pre
 ## TODO
 
 - [x] 自动化测试套件
-- [ ] 下载github原生mermaid
+- [x] 下载github原生mermaid
 - [ ] 改进toast样式
 - [ ] 增加hover菜单，用于下载/复制code
 - [ ] ...

@@ -15,12 +15,9 @@ Right-click on the rendered mermaid image and select "Export png" to export the 
 ## Support list
 
 - [x] GitHub
-  - [x] readme
-  - [x] markdown preview
-  - [x] edit preview
   - [x] gist(need to match *.md)
-  - [x] comment
-  - [x] issue
+  - [x] gist comment
+  - [x] native mermaid download
   - [x] ...
 - [x] Bitbucket
   - [x] readme
@@ -67,6 +64,7 @@ div.codehilite > pre
 ```
 
 ## Changelog
+- [1.2.7]  Update mermaid version to 8.14.0, support GitHub native mermaid download
 - [1.2.6]  Update mermaid version to 8.13.8, optimize configuration page interaction and style.
 - [1.2.5]  Update mermaid version to 8.13.5, fix preview issue of Bitbucket.
 - [1.2.4]  Added popup options page, providing domain exclusion and dom selector configuration.
@@ -81,7 +79,7 @@ div.codehilite > pre
 ## TODO
 
 - [x] autotest suit.
-- [ ] download for GitHub native mermaid.
+- [x] download for GitHub native mermaid.
 - [ ] modify toast style.
 - [ ] added hover menu for downloading/copying code.
 - [ ] ...
