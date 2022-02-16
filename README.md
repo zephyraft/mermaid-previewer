@@ -1,5 +1,7 @@
 # Mermaid Previewer
 
+##github has started to support mermaid on 2022-02-14 [link](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/)
+
 A chrome extension for previewing and exporting mermaid in github/bitbucket.
 
 Set the code block language to mermaid in markdown:

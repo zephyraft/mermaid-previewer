@@ -1,5 +1,7 @@
 # Mermaid Previewer
 
+## github已经于2022-02-14开始原生支持mermaid [链接](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/)
+
 一款用于预览markdown中mermaid图的chrome插件, 本地渲染mermaid图, 不涉及远程api调用.
 目前支持github和bitbucket.
 
