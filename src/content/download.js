@@ -50,10 +50,17 @@ const watchToastMessage = async () => {
  */
 const watchRightClick = async () => {
   window.oncontextmenu = async function (e) {
+    console.debug(e.target);
+    // github原生mermaid
+    const githubNativeMermaidDom = e.target.closest("div.mermaid-view div.mermaid");
+    console.debug("github native dom", githubNativeMermaidDom);
     // 寻找父级最近的符合selector的元素
     const parentMermaidDom = e.target.closest(await renderedSelector());
     console.debug("oncontextmenu", e.target, parentMermaidDom);
-    if (parentMermaidDom) {
+    if (inIframe() && githubNativeMermaidDom) {
+      // 发送png url
+      await svgToPng(githubNativeMermaidDom, sendMenuMessage);
+    } else if (parentMermaidDom) {
       // 发送png url
       await svgToPng(parentMermaidDom, sendMenuMessage);
     } else {
@@ -63,6 +70,14 @@ const watchRightClick = async () => {
     return true; // 不阻止默认事件
   };
 };
+
+const inIframe = () => {
+  try {
+    return window.self !== window.top;
+  } catch (e) {
+    return true;
+  }
+}
 
 export const initDownload = async () => {
   /**

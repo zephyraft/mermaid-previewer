@@ -79,7 +79,7 @@ export const tabsUpdateListener = async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && needExecute) {
     // noinspection JSUnresolvedVariable, JSUnresolvedFunction
     await chrome.scripting.executeScript({
-      target: { tabId: tabId },
+      target: { tabId: tabId, allFrames: true }, // 注入所有iframe
       files: ["src/content/content.js"],
     });
   }
