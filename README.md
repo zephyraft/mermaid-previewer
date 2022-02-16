@@ -1,6 +1,6 @@
 # Mermaid Previewer
 
-## github has started to support mermaid on 2022-02-14 [link](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/)
+## github has natively supported mermaid since 2022-02-14 (except gist) [link](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/)
 
 A chrome extension for previewing and exporting mermaid in github/bitbucket.
 
@@ -81,6 +81,7 @@ div.codehilite > pre
 ## TODO
 
 - [x] autotest suit.
+- [ ] download for GitHub native mermaid.
 - [ ] modify toast style.
 - [ ] added hover menu for downloading/copying code.
 - [ ] ...
