@@ -4,6 +4,7 @@
  */
 import { queryAndSaveRaw, rawDataKey, render } from "./render";
 import { HadRenderedKey, queryContainers, renderedSelector } from "./selectors";
+import { escapeHtml } from "../utils/escape.js";
 
 /**
  * 解决bitbucket预览加载问题
@@ -27,7 +28,7 @@ const bitbucketPreviewHack = async (mutation) => {
       // 恢复原始mermaid
       for (const mermaidDom of mermaidDomList) {
         console.debug(mermaidDom);
-        mermaidDom.innerHTML = mermaidDom.getAttribute(rawDataKey);
+        mermaidDom.innerHTML = escapeHtml(mermaidDom.getAttribute(rawDataKey));
         mermaidDom.removeAttribute(HadRenderedKey);
       }
       // 重新渲染

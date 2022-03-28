@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "rollup -c -w --environment DEBUG",
     "build": "rollup -c",
-    "pack": "pnpm run build; rm release/mermaid-perviewer.zip; cd dist; zip -r -X mermaid-perviewer.zip *; mv mermaid-perviewer.zip ../release",
+    "pack": "pnpm run build; rm release/mermaid-perviewer.zip; cd dist; zip -r -X mermaid-perviewer.zip *; mv mermaid-perviewer.zip ../release/",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "repository": {

@@ -3,6 +3,7 @@ import {
   getSync,
   STORAGE_KEY_MATCH_SELECTOR
 } from "../utils/storage";
+import { escapeHtml } from "../utils/escape.js";
 
 /**
  * 用于判断是否已被渲染的key，由mermaid jsapi定义
@@ -61,8 +62,8 @@ export const queryContainers = async (dom, selectors) => {
   const mermaidDomList = dom.querySelectorAll(selectors);
   for (const mermaidDom of mermaidDomList) {
     // 去除内部多余的html tag，主要是为了兼容bitbucket
-    mermaidDom.innerHTML = mermaidDom.innerText;
-    console.debug("mermaid-debug", mermaidDom.innerText);
+    mermaidDom.innerHTML = escapeHtml(mermaidDom.innerText);
+    console.debug("innerHTML", mermaidDom.innerHTML, "innerText", mermaidDom.innerText);
   }
   return mermaidDomList;
 };
