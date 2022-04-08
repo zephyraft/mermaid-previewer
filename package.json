@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/zephyraft/mermaid-perviewer#readme",
   "dependencies": {
-    "mermaid": "^8.14.0",
+    "mermaid": "^9.0.0",
     "toastify-js": "^1.11.2"
   },
   "devDependencies": {
