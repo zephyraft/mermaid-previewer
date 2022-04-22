@@ -18,10 +18,7 @@ afterAll(async () => {
 
 test("selenium-check", async () => {
   await driver.get("https://www.baidu.com/");
-  await driver.findElement(By.id("kw")).sendKeys("cheese", Key.ENTER);
-  // 等待结果
-  await driver.waitElementLocated(By.className("result-molecule"));
   // 检查当前页面标题
   const title = await driver.getTitle();
-  expect(title).toBe("cheese_百度搜索");
+  expect(title).toBe("百度一下，你就知道");
 });
