@@ -28,7 +28,7 @@ WebDriver.prototype.destroy = async function() {
 export const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
 WebDriver.prototype.waitElementLocated = async function(locator) {
-  return await this.wait(until.elementLocated(locator), waitTimeout);
+  return this.wait(until.elementLocated(locator), waitTimeout);
 };
 
 WebDriver.prototype.waitElementVisible = async function(locator) {

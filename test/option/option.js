@@ -1,21 +1,8 @@
-// chrome-extension://<扩展id>/public/html/options.html
-// chrome-extension://oidjnlhbegipkcklbdfnbkikplpghfdl/public/html/options.html
-import {
-  initDriver,
-} from "./selenium-utils";
 import { By } from "selenium-webdriver";
 
-let driver;
-
-beforeAll(async () => {
-  driver = await initDriver();
-});
-
-afterAll(async () => {
-  driver.destroy();
-});
-
-const getExtensionId = async () => {
+// chrome-extension://<扩展id>/public/html/options.html
+// chrome-extension://oidjnlhbegipkcklbdfnbkikplpghfdl/public/html/options.html
+const getExtensionId = async (driver) => {
   await driver.get("chrome://extensions/");
 
   const extensionsManager = await driver.waitElementLocated(By.tagName("extensions-manager"));
@@ -29,11 +16,10 @@ const getExtensionId = async () => {
   return extensionId;
 };
 
-test("popup", async () => {
-  const extensionId = await getExtensionId();
+export const testOptionPopup = async (driver) => {
+  const extensionId = await getExtensionId(driver);
   // 跳转
   await driver.get(`chrome-extension://${extensionId}/public/html/options.html`);
-  // console.log(await (await driver.findElement(By.tagName("body"))).getAttribute("innerHTML"));
 
   const excludeDomainsLocator = By.id("ExcludeDomains");
   const matchSelectorsLocator = By.id("MatchSelectors");
@@ -65,4 +51,4 @@ test("popup", async () => {
   expect(await excludeDomains.getValue()).toBe(excludeDomainInput);
   expect(await matchSelectors.getValue()).toBe(matchSelectorInput);
 
-});
+}
