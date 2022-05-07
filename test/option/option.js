@@ -5,9 +5,9 @@ import { By } from "selenium-webdriver";
 const getExtensionId = async (driver) => {
   await driver.get("chrome://extensions/");
 
-  const extensionsManager = await driver.waitElementLocated(By.tagName("extensions-manager"));
-  const extensionsList = await extensionsManager.findShadowElement(By.tagName("extensions-item-list"));
-  const extensionsItem = await extensionsList.findShadowElement(By.tagName("extensions-item"));
+  const extensionsManager = await driver.waitElementLocated(By.css("extensions-manager"));
+  const extensionsList = await extensionsManager.findShadowElement(By.css("extensions-item-list"));
+  const extensionsItem = await extensionsList.findShadowElement(By.css("extensions-item"));
   // 只有一个扩展
   const extensionId = await extensionsItem.getAttribute("id");
 

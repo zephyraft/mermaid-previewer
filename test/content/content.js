@@ -47,7 +47,7 @@ const checkMermaid = async (driver, count, elements) => {
   expect(mermaids.length).toBe(count);
   for (const mermaid of mermaids) {
     // console.log(await mermaid.getAttribute("data-mermaid-previewer-raw"));
-    const svg = await mermaid.findElement(By.tagName("svg"));
+    const svg = await mermaid.findElement(By.css("svg"));
     expect(svg).toBeDefined();
   }
 };

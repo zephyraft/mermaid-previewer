@@ -1,8 +1,10 @@
 // jest https://jestjs.io/docs/getting-started
 // selenium https://www.selenium.dev/documentation
+// js api文档 https://www.selenium.dev/selenium/docs/api/javascript/index.html
 // 需要安装依赖
 // https://geekflare.com/install-chromium-ubuntu-centos/
 // https://www.selenium.dev/documentation/webdriver/getting_started/
+// chrome浏览器驱动 https://chromedriver.storage.googleapis.com/index.html
 // bitbucket 需要环境变量 BB_SESSION = 取自{cookie=cloud.session.token}
 import { initDriver } from "./util/selenium-utils";
 import { testOptionPopup } from "./option/option.js";
