@@ -9,7 +9,7 @@ specifiers:
   autoprefixer: ^10.4.7
   cypress: ^4.12.1
   jest: ^26.6.3
-  mermaid: ^9.1.0
+  mermaid: ^9.1.1
   postcss: ^8.4.13
   prettier: 2.4.1
   robotjs: ^0.6.0
@@ -22,7 +22,7 @@ specifiers:
   toastify-js: ^1.11.2
 
 dependencies:
-  mermaid: 9.1.0
+  mermaid: 9.1.1
   toastify-js: 1.11.2
 
 devDependencies:
@@ -51,7 +51,7 @@ packages:
     engines: {node: '>=6.0.0'}
     dependencies:
       '@jridgewell/gen-mapping': 0.1.1
-      '@jridgewell/trace-mapping': 0.3.11
+      '@jridgewell/trace-mapping': 0.3.13
     dev: true
 
   /@babel/code-frame/7.16.7:
@@ -642,8 +642,8 @@ packages:
     resolution: {integrity: sha512-GryiOJmNcWbovBxTfZSF71V/mXbgcV3MewDe3kIMCLyIh5e7SKAeUZs+rMnJ8jkMolZ/4/VsdBmMrw3l+VdZ3w==}
     dev: true
 
-  /@jridgewell/trace-mapping/0.3.11:
-    resolution: {integrity: sha512-RllI476aSMsxzeI9TtlSMoNTgHDxEmnl6GkkHwhr0vdL8W+0WuesyI8Vd3rBOfrwtPXbPxdT9ADJdiOKgzxPQA==}
+  /@jridgewell/trace-mapping/0.3.13:
+    resolution: {integrity: sha512-o1xbKhp9qnIAoHJSWd6KlCZfqslL4valSF81H8ImioOAxluWYWOpWkpyktY2vnt4tbrX9XYaxovq6cgowaJp2w==}
     dependencies:
       '@jridgewell/resolve-uri': 3.0.7
       '@jridgewell/sourcemap-codec': 1.4.13
@@ -4376,8 +4376,8 @@ packages:
     engines: {node: '>= 8'}
     dev: true
 
-  /mermaid/9.1.0:
-    resolution: {integrity: sha512-yltuGFfVJcWTT93DdGUdUhNQyS0PFmCRsXFtgV+Fsz8MiJmkrAQRDQMGpBR4z6riXBHnWyAMjFR8aMxx5HHQqg==}
+  /mermaid/9.1.1:
+    resolution: {integrity: sha512-2RVD+WkzZ4VDyO9gQvQAuQ/ux2gLigJtKDTlbwjYqOR/NwsVzTSfGm/kx648/qWJsg6Sv04tE9BWCO8s6a+pFA==}
     dependencies:
       '@braintree/sanitize-url': 6.0.0
       d3: 7.4.4
