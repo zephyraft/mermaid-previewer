@@ -27,26 +27,26 @@
   },
   "homepage": "https://github.com/zephyraft/mermaid-perviewer#readme",
   "dependencies": {
-    "mermaid": "^9.1.1",
+    "mermaid": "^9.1.2",
     "toastify-js": "^1.11.2"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^21.1.0",
+    "@rollup/plugin-commonjs": "^22.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-strip": "^2.1.0",
-    "@tailwindcss/forms": "^0.4.1",
+    "@tailwindcss/forms": "^0.5.2",
     "autoprefixer": "^10.4.7",
     "cypress": "^4.12.1",
     "jest": "^26.6.3",
     "postcss": "^8.4.14",
     "prettier": "2.4.1",
     "robotjs": "^0.6.0",
-    "rollup": "^2.75.6",
+    "rollup": "^2.75.7",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-postcss": "^4.0.2",
     "selenium-webdriver": "^4.2.0",
-    "tailwindcss": "^3.0.24"
+    "tailwindcss": "^3.1.3"
   }
 }
