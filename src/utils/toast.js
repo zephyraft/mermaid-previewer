@@ -36,7 +36,7 @@ export const toast = async (text, level) => {
 
   Toastify({
     text: text,
-    duration: 13000,
+    duration: 5000,
     style: css.style,
     close: true,
     position: "center",

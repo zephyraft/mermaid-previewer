@@ -64,6 +64,7 @@ div.codehilite > pre
 ```
 
 ## 改动日志
+- [1.2.8]  更新mermaid版本到9.1.3, 改进toast样式.
 - [1.2.7]  更新mermaid版本到8.14.0, 支持GitHub原生mermaid下载.
 - [1.2.6]  更新mermaid版本到8.13.8, 优化配置页交互与样式.
 - [1.2.5]  更新mermaid版本到8.13.5. 修复bitbucket预览问题.
@@ -80,7 +81,8 @@ div.codehilite > pre
 
 - [x] 自动化测试套件
 - [x] 下载github原生mermaid
-- [ ] 改进toast样式
+- [x] 改进toast样式
+- [ ] 修复github下载toast重复问题(分离渲染，contextmenu，toast脚本，仅contextmenu脚本需要allFrames执行)
 - [ ] 增加hover菜单，用于下载/复制code
 - [ ] ...
 

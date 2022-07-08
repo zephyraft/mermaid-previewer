@@ -1,6 +1,6 @@
 # Mermaid Previewer
 
-## github has natively supported mermaid since 2022-02-14 (except gist) [link](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/)
+## github has natively supported mermaid since 2022-02-14 [link](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/)
 
 A chrome extension for previewing and exporting mermaid in github/bitbucket.
 
@@ -15,18 +15,14 @@ Right-click on the rendered mermaid image and select "Export png" to export the 
 ## Support list
 
 - [x] GitHub
-  - [x] gist(need to match *.md)
-  - [x] gist comment
-  - [x] native mermaid download
-  - [x] ...
+  - [x] mermaid export
 - [x] Bitbucket
   - [x] readme
   - [x] markdown preview
   - [x] edit preview
   - [x] ...
-- [x] mermaid picture export.
+- [x] mermaid export.
 - [x] Provide custom exclusion list and rule list configuration capabilities.
-
 
 At the same time, the following pages with dom structure are supported:
 ```html
@@ -64,7 +60,8 @@ div.codehilite > pre
 ```
 
 ## Changelog
-- [1.2.7]  Update mermaid version to 8.14.0, support GitHub native mermaid download
+- [1.2.8]  Update mermaid version to 9.1.3, fix repeat toast & modify toast style.
+- [1.2.7]  Update mermaid version to 8.14.0, support GitHub native mermaid download.
 - [1.2.6]  Update mermaid version to 8.13.8, optimize configuration page interaction and style.
 - [1.2.5]  Update mermaid version to 8.13.5, fix preview issue of Bitbucket.
 - [1.2.4]  Added popup options page, providing domain exclusion and dom selector configuration.
@@ -80,7 +77,8 @@ div.codehilite > pre
 
 - [x] autotest suit.
 - [x] download for GitHub native mermaid.
-- [ ] modify toast style.
+- [x] modify toast style.
+- [ ] Fix github download toast duplication problem (separate rendering, contextmenu, toast script, only contextmenu script needs allFrames to execute)
 - [ ] added hover menu for downloading/copying code.
 - [ ] ...
 

@@ -13,7 +13,7 @@ const svgToPng = async (svgContainer, callback) => {
   const imgDom = document.createElement("img");
   imgDom.setAttribute(
     "src",
-    "data:image/svg+xml;base64," + btoa(decodeURI(encodeURIComponent(svgData)))
+    "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)))
   );
 
   const canvasDom = document.createElement("canvas");
@@ -34,7 +34,7 @@ const svgToPng = async (svgContainer, callback) => {
  * 监听Toast类型的message
  */
 const watchToastMessage = async () => {
-  if (!window.mermaidPreviewerHadWatchToast) {
+  if (!window.mermaidPreviewerHadWatchToast && !inIframe()) {
     // noinspection JSUnresolvedVariable
     chrome.runtime.onMessage.addListener(async (message) => {
       if (message?.type === MESSAGE_TYPE_TOAST) {
