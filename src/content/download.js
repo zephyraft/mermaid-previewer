@@ -13,7 +13,7 @@ const svgToPng = async (svgContainer, callback) => {
   const imgDom = document.createElement("img");
   imgDom.setAttribute(
     "src",
-    "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)))
+    "data:image/svg+xml;base64," + btoa(decodeURI(encodeURIComponent(svgData)))
   );
 
   const canvasDom = document.createElement("canvas");
