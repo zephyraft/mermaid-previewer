@@ -6,79 +6,67 @@
 </head>
 <body>
 
-<div class="w-96">
-  <div class="bg-stone-50">
-    <div class="px-4 py-3">
-      <h3 class="text-lg leading-6 font-medium text-gray-900">
-        Mermaid Previewer Options
-      </h3>
-    </div>
-    <div class="border-t border-gray-200">
-      <div class="shadow">
-        <div class="px-4 py-2 space-y-6">
-          <div>
-            <div class="text-base font-medium text-gray-700">
-              Exclude Domains
-            </div>
-            <p class="my-1 text-xs text-gray-500">
-              List of domain names that need to be excluded from execution
-            </p>
-            <div class="mt-2 text-sm text-gray-700">
-              Default
-            </div>
-            <p class="pl-3 my-1 text-xs text-gray-500">
-              chrome.google.com
-            </p>
-            <p class="pl-3 my-1 text-xs text-gray-500">
-              gitlab.com
-            </p>
-            <label for="ExcludeDomains" class="block text-sm text-gray-700">
-              Customize
-            </label>
-            <div class="mt-1">
-              <textarea id="ExcludeDomains" name="ExcludeDomains" rows="3"
-                        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full border border-gray-300 rounded-md text-sm"
-                        placeholder="example.com"></textarea>
-            </div>
-          </div>
-
-          <div>
-            <div class="col-span-3">
-              <div class="text-base font-medium text-gray-700">
-                Match Selectors
-              </div>
-              <p class="my-1 text-xs text-gray-500">
-                Set <a class="text-blue-500" href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors">selectors</a>
-                to Match the DOM that needs to be rendered
-              </p>
-              <div class="mt-2 text-sm text-gray-700">
-                Default
-              </div>
-              <p class="pl-3 my-1 text-xs text-gray-500">
-                pre[lang='mermaid'] > code
-              </p>
-              <p class="pl-3 my-1 text-xs text-gray-500">
-                div.codehilite > pre
-              </p>
-              <label for="MatchSelectors" class="block text-sm text-gray-700">
-                Customize
-              </label>
-              <div class="mt-1">
-                  <textarea id="MatchSelectors" name="MatchSelectors" rows="3"
-                            class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full border border-gray-300 rounded-md text-sm"
-                            placeholder="pre > code"></textarea>
-              </div>
-            </div>
-          </div>
-          <div class="px-4 text-right">
-            <div id="Status" class="inline-block text-sm text-gray-700 pr-10"></div>
-            <button id="SaveButton" type="submit"
-                    class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              Save
-            </button>
+<div class="w-80 bg-stone-50">
+  <div class="p-2 text-base text-center font-medium text-gray-900 border-b">
+    Mermaid Previewer Options
+  </div>
+  <div class="px-4 py-2 text-gray-700">
+    <div class="border-b pb-2">
+      <label for="ExcludeDomains" class="text-base font-medium my-1">Exclude Domains</label>
+      <div class="dropdown dropdown-hover dropdown-end float-right">
+        <label tabindex="0" class="btn btn-circle btn-ghost btn-xs text-info">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-4 h-4 stroke-current">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </label>
+        <div tabindex="0" class="card compact dropdown-content shadow rounded-box w-64 bg-primary text-primary-content">
+          <div class="card-body">
+            Disable Mermaid Previewer for the following domains.
           </div>
         </div>
       </div>
+      <div class="text-sm my-1">Default</div>
+      <div class="text-gray-500 pl-4">chrome.google.com</div>
+      <div class="text-gray-500 pl-4">gitlab.com</div>
+      <div class="text-sm my-1">Customize</div>
+      <textarea id="ExcludeDomains"
+                name="ExcludeDomains"
+                rows="3"
+                class="w-full border border-gray-300 rounded-md text-sm py-2 px-4"
+                placeholder="example.com"></textarea>
+    </div>
+    <div class="pt-2">
+      <label for="MatchSelectors" class="text-base font-medium my-1">Match Selectors</label>
+      <div class="dropdown dropdown-hover dropdown-end float-right">
+        <label tabindex="0" class="btn btn-circle btn-ghost btn-xs text-info">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-4 h-4 stroke-current">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </label>
+        <div tabindex="0" class="card compact dropdown-content shadow rounded-box w-64 bg-primary text-primary-content">
+          <div class="card-body">
+            CSS selector for the container where the Mermaid Graph is located.
+          </div>
+        </div>
+      </div>
+      <div class="text-sm my-1">Default</div>
+      <div class="text-gray-500 pl-4">pre[lang='mermaid'] > code</div>
+      <div class="text-gray-500 pl-4">div.codehilite > pre</div>
+      <div class="text-sm my-1">Customize</div>
+      <textarea id="MatchSelectors"
+                name="MatchSelectors"
+                rows="3"
+                class="w-full border border-gray-300 rounded-md text-sm py-2 px-4"
+                placeholder="example > code"></textarea>
+    </div>
+    <div class="text-right">
+      <div id="Status" class="inline-block text-sm text-gray-700 pr-10"></div>
+      <button id="SaveButton" type="submit"
+              class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        Save
+      </button>
     </div>
   </div>
 </div>
