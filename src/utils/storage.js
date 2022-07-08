@@ -19,7 +19,7 @@ export function optionsArrayToStr(array) {
   for (const element of array) {
     res += element + "\n";
   }
-  return res.substr(0, res.length - 1);
+  return res.substring(0, res.length - 1);
 }
 
 /**
