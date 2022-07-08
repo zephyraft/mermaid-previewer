@@ -12,6 +12,15 @@ const outputDir = "dist";
 const format = "esm";
 const disableDebug = !(process.env.DEBUG === "true");
 
+const copyOption = {
+  targets: [
+    { src: "src/manifest.json", dest: outputDir },
+    { src: "public/icon", dest: `${outputDir}/public` },
+    { src: "public/html", dest: `${outputDir}/public` },
+  ],
+  verbose: true,
+}
+
 let configs = [
   // 内容
   {
@@ -34,14 +43,6 @@ let configs = [
       commonjs(),
       // bundle css import
       postcss(),
-      // 复制静态资源
-      copy({
-        targets: [
-          { src: "src/manifest.json", dest: outputDir },
-          { src: "public/icon", dest: `${outputDir}/public` },
-          { src: "public/html", dest: `${outputDir}/public` },
-        ],
-      }),
     ],
   },
   // 设置
@@ -55,6 +56,8 @@ let configs = [
       // resolve dependencies
       nodeResolve(),
       commonjs(),
+      // 复制静态资源
+      copy(copyOption),
     ],
   },
   // 后台
@@ -84,6 +87,8 @@ let configs = [
         extract: true,
         minimize: disableDebug,
       }),
+      // 复制静态资源
+      copy(copyOption),
     ],
   },
 ];
