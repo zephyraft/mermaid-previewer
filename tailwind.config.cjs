@@ -1,4 +1,5 @@
-export default {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   content: ["./public/**/*.{html,js}"],
   theme: {
     extend: {},
@@ -7,4 +8,4 @@ export default {
   daisyui: {
     themes: false
   }
-};
+}

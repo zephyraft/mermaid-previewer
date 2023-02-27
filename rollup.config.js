@@ -6,7 +6,7 @@ import postcss from "rollup-plugin-postcss";
 import strip from "@rollup/plugin-strip";
 import tailwindcss from "tailwindcss";
 import autoprefixer from "autoprefixer";
-import tailwindConfig from "./tailwind.config";
+import tailwindConfig from "./tailwind.config.cjs";
 
 const outputDir = "dist";
 const format = "esm";
@@ -26,6 +26,7 @@ let configs = [
   {
     input: "src/content/content.js",
     output: {
+      inlineDynamicImports: true,
       dir: `${outputDir}/src/content`,
       format: format,
       banner: "{",
@@ -49,6 +50,7 @@ let configs = [
   {
     input: "src/option/options.js",
     output: {
+      inlineDynamicImports: true,
       dir: `${outputDir}/src/option`,
       format: format,
     },
@@ -64,6 +66,7 @@ let configs = [
   {
     input: "src/worker/background.js",
     output: {
+      inlineDynamicImports: true,
       dir: `${outputDir}/src/worker`,
       format: format,
     },
