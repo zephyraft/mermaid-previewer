@@ -41,7 +41,7 @@
     "daisyui": "^2.49.0",
     "jest": "^29.4.1",
     "postcss": "^8.4.21",
-    "prettier": "2.8.3",
+    "prettier": "2.8.4",
     "robotjs": "^0.6.0",
     "rollup": "^3.11.0",
     "rollup-plugin-copy": "^3.4.0",
