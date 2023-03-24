@@ -82,9 +82,10 @@ div.codehilite > pre
 - [x] 自动化测试套件
 - [x] 下载github原生mermaid
 - [x] 改进toast样式
+- [ ] 考虑支持mmd格式文件(https://github.com/mermaid-js/mermaid-cli)
+- [ ] 支持fontawesome(https://mermaid.js.org/syntax/flowchart.html#basic-support-for-fontawesome)
 - [ ] 修复github下载toast重复问题(分离渲染，contextmenu，toast脚本，仅contextmenu脚本需要allFrames执行)
 - [ ] 增加hover菜单，用于下载/复制code
-- [ ] ...
 
 ## 供应商列表
 
