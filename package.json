@@ -1,6 +1,6 @@
 {
   "name": "mermaid-previewer",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "Preview and export mermaid in github/bitbucket.",
   "directories": {
     "test": "test"

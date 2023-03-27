@@ -60,6 +60,7 @@ div.codehilite > pre
 ```
 
 ## Changelog
+- [1.2.9]  Update mermaid version to 10.0.2, support font-awesome and gitGraph.
 - [1.2.8]  Update mermaid version to 9.1.3, fix repeat toast & modify toast style.
 - [1.2.7]  Update mermaid version to 8.14.0, support GitHub native mermaid download.
 - [1.2.6]  Update mermaid version to 8.13.8, optimize configuration page interaction and style.
@@ -78,6 +79,8 @@ div.codehilite > pre
 - [x] autotest suit.
 - [x] download for GitHub native mermaid.
 - [x] modify toast style.
+- [x] support fontawesome.
+- [ ] Consider supporting mmd format files.(https://github.com/mermaid-js/mermaid-cli)
 - [ ] Fix github download toast duplication problem (separate rendering, contextmenu, toast script, only contextmenu script needs allFrames to execute)
 - [ ] added hover menu for downloading/copying code.
 - [ ] ...
