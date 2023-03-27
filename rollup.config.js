@@ -9,14 +9,18 @@ import autoprefixer from "autoprefixer";
 import tailwindConfig from "./tailwind.config.cjs";
 
 const outputDir = "dist";
+const publicOutputDir = `${outputDir}/public`;
+const cssOutputDir = `${publicOutputDir}/css`;
 const format = "esm";
 const disableDebug = !(process.env.DEBUG === "true");
 
 const copyOption = {
   targets: [
     { src: "src/manifest.json", dest: outputDir },
-    { src: "public/icon", dest: `${outputDir}/public` },
-    { src: "public/html", dest: `${outputDir}/public` },
+    { src: "public/css/all.min.css", dest: cssOutputDir },
+    { src: "public/webfonts", dest: publicOutputDir },
+    { src: "public/icon", dest: publicOutputDir },
+    { src: "public/html", dest: publicOutputDir },
   ],
   verbose: true,
 }

@@ -24,5 +24,15 @@
   "icons": {
     "16": "public/icon/128.png",
     "128": "public/icon/128.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "public/webfonts/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
 }

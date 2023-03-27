@@ -1,17 +1,17 @@
 import {
   defaultExcludeDomainList,
   getSync,
-  STORAGE_KEY_EXCLUDE_DOMAIN,
+  STORAGE_KEY_EXCLUDE_DOMAIN
 } from "../utils/storage";
 import {
   downloadFailMessage,
   downloadSuccessMessage,
-  MESSAGE_TYPE_MENU,
+  MESSAGE_TYPE_MENU
 } from "../utils/message";
 
 const downloadContext = {
   src: null,
-  name: null,
+  name: null
 };
 
 const getExcludeDomainList = async () => {
@@ -43,7 +43,7 @@ export const installedListener = async () => {
   chrome.contextMenus.create({
     id: "exportPNG", // 唯一id
     title: "Export png",
-    contexts: ["all"], // 配置菜单可以出现的上下文
+    contexts: ["all"] // 配置菜单可以出现的上下文
   });
 };
 
@@ -60,7 +60,7 @@ export const menuClickListener = async (info, tab) => {
     // noinspection JSUnresolvedVariable
     chrome.downloads.download({
       filename: downloadContext.name,
-      url: downloadContext.src,
+      url: downloadContext.src
     });
     downloadSuccessMessage(tab.id);
   } else {
@@ -77,10 +77,18 @@ export const tabsUpdateListener = async (tabId, changeInfo, tab) => {
 
   // tab加载完成，执行内容脚本
   if (changeInfo.status === "complete" && needExecute) {
+    // font-awesome
+    // noinspection JSUnresolvedVariable, JSUnresolvedFunction
+    await chrome.scripting.insertCSS({
+      target: { tabId: tabId, allFrames: true }, // 注入所有iframe
+      files: [
+        "public/css/all.min.css",
+      ]
+    });
     // noinspection JSUnresolvedVariable, JSUnresolvedFunction
     await chrome.scripting.executeScript({
       target: { tabId: tabId, allFrames: true }, // 注入所有iframe
-      files: ["src/content/content.js"],
+      files: ["src/content/content.js"]
     });
   }
 };
