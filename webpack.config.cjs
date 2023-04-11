@@ -1,0 +1,59 @@
+const path = require('path');
+const CopyPlugin = require("copy-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+module.exports = {
+    cache: {
+        type: 'filesystem',
+    },
+    entry: {
+        background: './src/worker/background.ts',
+        popup: './src/popup/popup.ts',
+        content: './src/content/content.ts',
+    },
+    output: {
+        publicPath: '',
+        path: path.resolve(__dirname, 'dist'),
+        filename: '[name].js',
+        clean: true,
+        asyncChunks: false,
+    },
+    resolve: {
+        extensions: ['.ts', '.js'],
+    },
+    module: {
+        rules: [
+            {
+                test: /\.ts$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'ts-loader',
+                },
+            },
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader', 'postcss-loader'],
+            },
+        ]
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: "public/html/popup.html",
+            filename: "public/html/popup.html",
+            chunks: ['popup'],
+            hash: true,
+            inject: true,
+        }),
+        new CopyPlugin({
+            patterns: [
+                "src/manifest.json",
+                {from: "public/icons", to: "public/icons"},
+                {from: "public/css", to: "public/css"},
+                {from: "public/webfonts", to: "public/webfonts"},
+            ],
+        }),
+    ],
+    optimization: {
+        splitChunks: false
+    }
+};
