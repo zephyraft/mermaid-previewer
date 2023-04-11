@@ -1,6 +1,9 @@
 const path = require('path');
 const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+
+const debug = process.env.DEBUG === "true";
 
 module.exports = {
     cache: {
@@ -54,6 +57,14 @@ module.exports = {
         }),
     ],
     optimization: {
-        splitChunks: false
+        splitChunks: false,
+        minimize: !debug,
+        minimizer: [new TerserPlugin({
+            terserOptions: {
+                compress: {
+                    drop_console: true
+                }
+            }
+        })]
     }
 };

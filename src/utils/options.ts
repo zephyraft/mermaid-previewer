@@ -4,7 +4,9 @@ import { type Options } from '../types'
 const defaultOptions: Options = {
   excludeDomainList: [
     'chrome.google.com', // chrome官网无法execute
-    'gitlab.com' // https://gitlab.com/zzzzzzzephyr/test
+    'gitlab.com', // https://gitlab.com/zzzzzzzephyr/test
+    'file://',
+    'chrome://'
   ],
   matchSelectorList: [
     "pre[lang='mermaid'] > code", // github

@@ -1,4 +1,4 @@
-import { contextMenus, downloads, type Menus, type Scripting, scripting, type Tabs } from 'webextension-polyfill'
+import { contextMenus, downloads, type Menus, scripting, type Tabs } from 'webextension-polyfill'
 import { getExcludeDomainList } from '../utils/options'
 import { type DownloadContext, type MenuMessage, MessageType } from '../types'
 import { sendDownloadFailMessage, sendDownloadSuccessMessage } from '../utils/message'
@@ -9,13 +9,18 @@ const downloadContext: DownloadContext = {
 }
 
 const isNeedExecute = async (tab: Tabs.Tab): Promise<boolean> => {
+  const url = tab.url ?? ''
+  console.debug('tab url', url)
+  if ((url === '')) {
+    return false
+  }
+
   // 域名排除列表
   const excludeDomainList = await getExcludeDomainList()
-  const url = tab.url
 
   let needExecute = true
   for (const excludeItem of excludeDomainList) {
-    if ((url == null) || url.includes(excludeItem)) {
+    if (url.includes(excludeItem)) {
       needExecute = false
       console.debug('domain match excludeItem', excludeItem)
       break
@@ -25,20 +30,18 @@ const isNeedExecute = async (tab: Tabs.Tab): Promise<boolean> => {
 }
 
 export const tabsUpdateListener = async (tabId: number, changeInfo: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab): Promise<void> => {
-  const cssInjection: Scripting.CSSInjection = {
-    target: { tabId, allFrames: true }, // 注入所有iframe
-    files: [
-      'public/css/font-awesome.min.css'
-    ]
-  }
-
   // 判断是否需要执行脚本
   const needExecute = await isNeedExecute(tab)
 
   // tab加载完成，执行内容脚本
   if (changeInfo.status === 'complete' && needExecute) {
     // font-awesome
-    await scripting.insertCSS(cssInjection)
+    await scripting.insertCSS({
+      target: { tabId, allFrames: true }, // 注入所有iframe
+      files: [
+        'public/css/font-awesome.min.css'
+      ]
+    })
     await scripting.executeScript({
       target: { tabId, allFrames: true }, // 注入所有iframe
       files: ['content.js']
