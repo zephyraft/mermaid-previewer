@@ -1,28 +1,25 @@
 # Mermaid Previewer
 
-## github has natively supported mermaid since 2022-02-14 [link](https://github.blog/2022-02-14-include-diagrams-markdown-files-mermaid/)
+A chrome extension for previewing and exporting mermaid images in markdown, supports bitbucket and github, fully renders mermaid locally, and does not involve remote api calls.
 
-A chrome extension for previewing and exporting mermaid in github/bitbucket.
-
-Set the code block language to mermaid in markdown:
+On eligible websites, the preview can be realized by setting the code block language in markdown to mermaid:
 ```mermaid
 graph LR
 A --> B
 ```
 
-Right-click on the rendered mermaid image and select "Export SVG" to export the SVG image.
+Click the right mouse button on the rendered mermaid image and select "Export SVG" to export the svg file.
 
-## Support list
+## Feature List
 
-- [x] GitHub
-  - [x] mermaid export
 - [x] Bitbucket
   - [x] readme
   - [x] markdown preview
   - [x] edit preview
-  - [x] ...
-- [x] mermaid export.
-- [x] Provide custom exclusion list and rule list configuration capabilities.
+  - [x] svg export
+- [x] GitHub
+  - [x] svg export
+- [x] custom exclusion lists and rule lists
 
 At the same time, the following pages with dom structure are supported:
 ```html
@@ -60,6 +57,7 @@ div.codehilite > pre
 ```
 
 ## Changelog
+- [1.3.0]  Update mermaid version to 10.1.0, the export function is changed to export svg to support more styles and font-awesome.
 - [1.2.9]  Update mermaid version to 10.0.2, support font-awesome and gitGraph.
 - [1.2.8]  Update mermaid version to 9.1.3, fix repeat toast & modify toast style.
 - [1.2.7]  Update mermaid version to 8.14.0, support GitHub native mermaid download.
@@ -69,7 +67,7 @@ div.codehilite > pre
 - [1.2.3]  Update mermaid version to 8.13.3.
 - [1.2.2]  Update mermaid version to 8.13.2.
 - [1.2.1]  Fix Toast.
-- [1.2.0]  Mermaid picture export.
+- [1.2.0]  Mermaid graph export.
 - [1.1.0]  Added bitbucket support, updated mermaid version to 8.12.1.
 - [1.0.1]  Update mermaid version to 8.12.0.
 - [1.0.0]  First released, mermaid version 8.11.5.
@@ -80,8 +78,8 @@ div.codehilite > pre
 - [x] download for GitHub native mermaid.
 - [x] modify toast style.
 - [x] support fontawesome.
+- [ ] fix autotest.
 - [ ] Consider supporting mmd format files.(https://github.com/mermaid-js/mermaid-cli)
-- [ ] Fix github download toast duplication problem (separate rendering, contextmenu, toast script, only contextmenu script needs allFrames to execute)
 - [ ] added hover menu for downloading/copying code.
 - [ ] ...
 
@@ -96,3 +94,4 @@ div.codehilite > pre
    </a>
   </p>
 - https://github.com/tailwindlabs/tailwindcss
+- https://github.com/mozilla/webextension-polyfill
