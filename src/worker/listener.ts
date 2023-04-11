@@ -75,8 +75,8 @@ export const menuMessageListener = (message: any): void => {
 export const installedListener = (): void => {
   // 初始化菜单
   contextMenus.create({
-    id: 'exportPNG', // 唯一id
-    title: 'Export png',
+    id: 'exportSVG', // 唯一id
+    title: 'Export SVG',
     contexts: ['all'] // 配置菜单可以出现的上下文
   })
 }

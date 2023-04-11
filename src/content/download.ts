@@ -4,6 +4,10 @@ import { runtime } from 'webextension-polyfill'
 import { type Message, MessageType, type ToastMessage } from '../types'
 import { toast } from '../utils/toast'
 
+const containsFontAwesome = (svgData: string): boolean => {
+  return svgData.includes('<i class="fa')
+}
+
 const svgToPng = async (svgContainer: Element, callback: (name: string, src: string) => void): Promise<void> => {
   const svgDom = svgContainer.querySelector('svg')
   if (svgDom == null) {
@@ -11,26 +15,15 @@ const svgToPng = async (svgContainer: Element, callback: (name: string, src: str
     return
   }
 
-  const svgData = new XMLSerializer().serializeToString(svgDom)
-  const imgDom = document.createElement('img')
-  imgDom.setAttribute(
-    'src',
-    'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData)
-  )
-
-  const canvasDom = document.createElement('canvas')
-  const svgSize = svgDom.getBoundingClientRect()
-  // canvasDom.width = svgSize.width;
-  // 使用maxWidth避免导出图片宽度不够被截断
-  canvasDom.width = parseInt(window.getComputedStyle(svgDom).maxWidth)
-  canvasDom.height = svgSize.height
-  const ctx = canvasDom.getContext('2d')
-  imgDom.onload = async function () {
-    ctx?.drawImage(imgDom, 0, 0)
-    const name = svgDom.id + '.png'
-    const url = canvasDom.toDataURL('image/png')
-    callback(name, url)
+  let svgData = new XMLSerializer().serializeToString(svgDom)
+  if (containsFontAwesome(svgData)) {
+    const styleIndex = svgData.indexOf('<style>')
+    const fontAwesomeCSS = '<link xmlns="http://www.w3.org/1999/xhtml" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" type="text/css"/>'
+    svgData = `${svgData.substring(0, styleIndex)}${fontAwesomeCSS}${svgData.substring(styleIndex)}`
   }
+  const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData)
+  const name = svgDom.id + '.svg'
+  callback(name, url)
 }
 
 /**

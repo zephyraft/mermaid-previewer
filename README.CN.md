@@ -11,7 +11,7 @@ graph LR
 A --> B
 ```
 
-在渲染好的mermaid图上点击鼠标右键，选择"Export png"可导出png图片.
+在渲染好的mermaid图上点击鼠标右键，选择"Export SVG"可导出SVG图片.
 
 ## 支持列表
 

@@ -10,7 +10,7 @@ graph LR
 A --> B
 ```
 
-Right-click on the rendered mermaid image and select "Export png" to export the png image.
+Right-click on the rendered mermaid image and select "Export SVG" to export the SVG image.
 
 ## Support list
 
