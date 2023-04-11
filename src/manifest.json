@@ -16,7 +16,7 @@
     "<all_urls>"
   ],
   "action": {
-    "default_popup": "public/html/popup.html",
+    "default_popup": "popup.html",
     "default_icon": {
       "128": "public/icons/128.png"
     }

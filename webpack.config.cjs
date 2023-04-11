@@ -41,8 +41,8 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: "public/html/popup.html",
-            filename: "public/html/popup.html",
+            template: "src/popup/popup.html",
+            filename: "popup.html",
             chunks: ['popup'],
             hash: true,
             inject: true,
