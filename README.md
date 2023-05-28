@@ -6,63 +6,35 @@
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/users/oidjnlhbegipkcklbdfnbkikplpghfdl)](https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)
 [![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/zephyraft/mermaid-previewer)](https://github.com/zephyraft/mermaid-previewer/security)
 
-A chrome extension for previewing and exporting mermaid images in markdown, supports bitbucket and github, fully renders mermaid locally, and does not involve remote api calls.
+A chrome extension for previewing and exporting mermaid images in web pages, fully rendering mermaid locally without involving remote api calls.
 
-On eligible websites, the preview can be realized by setting the code block language in markdown to mermaid:
+On websites that meet the preset rules, you can preview or export by setting the code block language in markdown to mermaid:
 ```mermaid
 graph LR
 A --> B
 ```
 
-Click the right mouse button on the rendered mermaid image and select "Export SVG" to export the svg file.
+At the same time, it also provides the function of custom rule configuration.
 
-## Feature List
+## Preset Rules
 
-- [x] Bitbucket
-  - [x] readme
-  - [x] markdown preview
-  - [x] edit preview
-  - [x] svg export
-- [x] GitHub
-  - [x] svg export
-- [x] custom exclusion lists and rule lists
-
-At the same time, the following pages with dom structure are supported:
-```html
-<pre lang="mermaid">
-  <code>
-    graph LR
-    A --> B
-  </code>
-</pre>
-```
-or
-```html
-<div class="codehilite">
-  <pre>
-    graph LR
-    A --> B
-  </pre>
-</div>
-```
-
-
-## Config
-
-You can customize the configuration to support and exclude more websites. The default configuration of the extension is as follows:
-
-Exclude Domain:
-```
-chrome.google.com
-gitlab.com
-```
-Match Selectors:
-```
-pre[lang='mermaid'] > code
-div.codehilite > pre
-```
+- Exclude Urls
+  - `https:\/\/.*chrome\.google\.com.*`
+  - `chrome:\/\/.*`
+  - `chrome-extension:\/\/.*`
+- Matching Selectors
+  - `div.codehilite > pre` under `.*bitbucket\.org.*`
+    - Support Bitbucket preview and export
+  - `body > pre` under `file:\/\/.*.mmd`
+    - Support preview and export of `.mmd` files
+- Download Selectors
+  - `div.mermaid-view div.mermaid` under `https:\/\/viewscreen\.githubusercontent\.com.*`
+    - Support GitHub export
+  - `div#app` under `https:\/\/.*gitlab\.com.*`
+    - Support Gitlab export
 
 ## Changelog
+- [1.4.0] Update the mermaid version to 10.2.0, use the plasmo framework to refactor the code, adjust the configuration page, and use the floating button to provide the export function.
 - [1.3.0]  Update mermaid version to 10.1.0, the export function is changed to export svg to support more styles and font-awesome.
 - [1.2.9]  Update mermaid version to 10.0.2, support font-awesome and gitGraph.
 - [1.2.8]  Update mermaid version to 9.1.3, fix repeat toast & modify toast style.
@@ -80,24 +52,16 @@ div.codehilite > pre
 
 ## TODO
 
-- [x] autotest suit.
-- [x] download for GitHub native mermaid.
-- [x] modify toast style.
-- [x] support fontawesome.
-- [ ] fix autotest.
-- [ ] Consider supporting mmd format files.(https://github.com/mermaid-js/mermaid-cli)
-- [ ] added hover menu for downloading/copying code.
-- [ ] ...
+- [x] Support fontawesome.
+- [x] Support [mmd format](https://github.com/mermaid-js/mermaid-cli) files.
+- [x] Add floating button for export.
+- [ ] Add a floating button for copying code.
+- [ ] Add test cases.
 
-## Vendor List
-
-- https://github.com/mermaid-js/mermaid
-- https://github.com/apvarun/toastify-js
-- Thanks to [JetBrains](https://www.jetbrains.com/?from=ferry) open source license authorization
-  <p>
-   <a href="https://www.jetbrains.com/?from=ferry">
-     <img height="100" src="https://www.jetbrains.com/company/brand/img/logo6.svg" alt="">
-   </a>
-  </p>
-- https://github.com/tailwindlabs/tailwindcss
-- https://github.com/mozilla/webextension-polyfill
+## Thanks
+Thanks to [JetBrains](https://www.jetbrains.com/?from=ferry) open source license authorization
+<p>
+ <a href="https://www.jetbrains.com/?from=ferry">
+   <img height="100" src="https://www.jetbrains.com/company/brand/img/logo6.svg" alt="">
+ </a>
+</p>

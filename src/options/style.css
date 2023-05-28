@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    overflow: hidden;
+}
+
+/* Add left side background color splash */
+#__plasmo > div:before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    left: -200px;
+    width: 400px;
+    height: 400px;
+    background: #c989e8;
+    opacity: 0.5;
+    filter: blur(150px);
+}
+
+/* Add right side background color splash */
+#__plasmo > div:after {
+    content: '';
+    position: absolute;
+    top: -200px;
+    right: -200px;
+    width: 400px;
+    height: 400px;
+    background: #b3d4ff;
+    opacity: 0.5;
+    filter: blur(150px);
+}

@@ -6,62 +6,35 @@
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/users/oidjnlhbegipkcklbdfnbkikplpghfdl)](https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)
 [![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/zephyraft/mermaid-previewer)](https://github.com/zephyraft/mermaid-previewer/security)
 
-一款用于预览和导出markdown中mermaid图的chrome扩展，支持bitbucket和github，完全本地渲染mermaid，不涉及远程api调用。
+一款用于预览和导出网页中mermaid图的chrome扩展，完全本地渲染mermaid，不涉及远程api调用。
 
-在符合条件的网站中，markdown中设置代码块语言为mermaid即可实现预览:
+在符合预设规则的网站中，markdown中设置代码块语言为mermaid即可实现预览或导出：
 ```mermaid
 graph LR
 A --> B
 ```
 
-在渲染好的mermaid图上点击鼠标右键，选择"Export SVG"可导出svg文件。
+同时，还提供了自定义规则配置的功能。
 
-## 功能列表
+## 预设规则
 
-- [x] Bitbucket
-  - [x] readme
-  - [x] markdown预览
-  - [x] 编辑预览
-  - [x] svg导出
-- [x] GitHub
-  - [x] svg导出
-- [x] 自定义排除列表和规则列表
-
-同时支持以下dom结构的页面:
-```html
-<pre lang="mermaid">
-  <code>
-    graph LR
-    A --> B
-  </code>
-</pre>
-```
-或者
-```html
-<div class="codehilite">
-  <pre>
-    graph LR
-    A --> B
-  </pre>
-</div>
-```
-
-
-## 配置
-你可以自定义配置以支持和排除更多网站，扩展的默认配置如下
-
-排除域名:
-```
-chrome.google.com
-gitlab.com
-```
-dom匹配的css选择器:
-```
-pre[lang='mermaid'] > code
-div.codehilite > pre
-```
+- 排除url
+  - `https:\/\/.*chrome\.google\.com.*`
+  - `chrome:\/\/.*`
+  - `chrome-extension:\/\/.*`
+- 匹配选择器
+  - `.*bitbucket\.org.*` 下的 `div.codehilite > pre`
+    - 支持Bitbucket的预览和导出
+  - `file:\/\/.*.mmd` 下的 `body > pre`
+    - 支持`.mmd`文件的预览和导出
+- 下载选择器
+  - `https:\/\/viewscreen\.githubusercontent\.com.*` 下的 `div.mermaid-view div.mermaid`
+    - 支持GitHub的导出
+  - `https:\/\/.*gitlab\.com.*` 下的 `div#app`
+    - 支持Gitlab的导出
 
 ## 改动日志
+- [1.4.0]  更新mermaid版本到10.2.0，使用plasmo框架重构代码，调整配置页面，导出功能使用浮动按钮提供。
 - [1.3.0]  更新mermaid版本到10.1.0，导出功能改为导出svg，以支持更多样式和font-awesome。
 - [1.2.9]  更新mermaid版本到10.0.2，支持font-awesome和gitGraph。
 - [1.2.8]  更新mermaid版本到9.1.3，改进toast样式。
@@ -79,23 +52,16 @@ div.codehilite > pre
 
 ## TODO
 
-- [x] 自动化测试套件
-- [x] 下载github原生mermaid
-- [x] 改进toast样式
-- [x] 支持fontawesome
-- [ ] 修复自动化测试套件
-- [ ] 考虑支持mmd格式文件(https://github.com/mermaid-js/mermaid-cli)
-- [ ] 增加hover菜单，替换当前的上下文菜单，用于下载/复制code
+- [x] 支持fontawesome。
+- [x] 支持[mmd格式](https://github.com/mermaid-js/mermaid-cli)文件。
+- [x] 增加浮动按钮，用于导出。
+- [ ] 增加浮动按钮，用于复制code。
+- [ ] 增加测试用例。
 
-## 供应商列表
-
-- https://github.com/mermaid-js/mermaid
-- https://github.com/apvarun/toastify-js
-- 感谢 [JetBrains](https://www.jetbrains.com/?from=ferry) 开源license授权
-  <p>
-   <a href="https://www.jetbrains.com/?from=ferry">
-     <img height="100" src="https://www.jetbrains.com/company/brand/img/logo6.svg" alt="">
-   </a>
-  </p>
-- https://github.com/tailwindlabs/tailwindcss
-- https://github.com/mozilla/webextension-polyfill
+## 鸣谢
+感谢 [JetBrains](https://www.jetbrains.com/?from=ferry) 开源license授权
+<p>
+ <a href="https://www.jetbrains.com/?from=ferry">
+   <img height="100" src="https://www.jetbrains.com/company/brand/img/logo6.svg" alt="">
+ </a>
+</p>
