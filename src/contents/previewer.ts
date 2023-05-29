@@ -1,8 +1,8 @@
 import mermaid from "mermaid/dist/mermaid.min.js"
 import type { PlasmoCSConfig } from "plasmo"
 
-import { mermaidHover } from "~core/downloads"
 import { isExclude } from "~core/filter"
+import { mermaidHover } from "~core/hover"
 import { watchDomMutation } from "~core/mutation"
 import { getDownloadSelectorList } from "~core/options"
 import { queryAndSaveRaw, render } from "~core/render"
@@ -43,7 +43,7 @@ isExclude().then((isExclude) => {
           if (downloadSelector !== "") {
             const downloadDomList =
               document.querySelectorAll<HTMLElement>(downloadSelector)
-            await mermaidHover(Array.from(downloadDomList))
+            await mermaidHover(Array.from(downloadDomList), true)
           }
         }, 1000)
       }

@@ -1,4 +1,4 @@
-import { autoUpdate, computePosition, offset } from "@floating-ui/dom"
+import { computePosition, offset } from "@floating-ui/dom"
 import type { MiddlewareState } from "@floating-ui/dom/src/types"
 
 const getExporterContainer = (): HTMLElement => {
@@ -8,21 +8,41 @@ const getExporterContainer = (): HTMLElement => {
     .firstElementChild as HTMLElement
 }
 
+const getCopyButton = (): HTMLElement => {
+  // noinspection CssInvalidHtmlTagReference
+  const shadowRoot = document.querySelector("plasmo-csui").shadowRoot
+  return shadowRoot.getElementById("copy")
+}
+
 const exporterWidth: number = 20
+const scrollWidth: number = 20
 // 记录当前已添加监听事件的dom元素，避免重复监听
 const watchDomList: HTMLElement[] = []
 export let mermaidPreviewerExporterDom: HTMLElement | undefined = undefined
+let hideTimeout: number | undefined = undefined
 
-export const mermaidHover = async (domList: HTMLElement[]) => {
+export const mermaidHover = async (
+  domList: HTMLElement[],
+  forDownloadSelector: boolean
+) => {
   domList
     .map((dom) => dom.firstElementChild)
     .filter((dom: HTMLElement) => !watchDomList.includes(dom))
     .forEach((svg: HTMLElement) => {
       watchDomList.push(svg)
-      let hideTimeout
       const exporterContainer = getExporterContainer()
 
-      autoUpdate(svg, exporterContainer, () => {
+      const showExporter = () => {
+        clearTimeout(hideTimeout)
+        exporterContainer.parentElement.style.display = "block"
+        getCopyButton().style.display = forDownloadSelector ? "none" : "block"
+      }
+      const hideExporter = () => {
+        exporterContainer.parentElement.style.display = "none"
+      }
+
+      svg.onmouseenter = (_) => {
+        mermaidPreviewerExporterDom = svg
         computePosition(svg, exporterContainer, {
           placement: "right",
           middleware: [
@@ -30,9 +50,10 @@ export const mermaidHover = async (domList: HTMLElement[]) => {
               // 超过window宽度时，进行偏移（如github的iframe）
               if (
                 window.innerWidth <
-                svg.getBoundingClientRect().width + exporterWidth
+                svg.getBoundingClientRect().width +
+                  (exporterWidth + scrollWidth)
               ) {
-                return -exporterWidth
+                return -(exporterWidth + scrollWidth)
               }
               return 0
             })
@@ -43,21 +64,10 @@ export const mermaidHover = async (domList: HTMLElement[]) => {
             top: `${y}px`
           })
         })
-      })
-
-      const showExporter = () => {
-        clearTimeout(hideTimeout)
-        exporterContainer.parentElement.style.display = "block"
-        mermaidPreviewerExporterDom = svg
-      }
-      const hideExporter = () => {
-        exporterContainer.parentElement.style.display = "none"
-      }
-
-      svg.onmouseenter = (_) => {
         showExporter()
       }
       svg.onmouseleave = (_) => {
+        // @ts-ignore
         hideTimeout = setTimeout(() => {
           hideExporter()
         }, 500)

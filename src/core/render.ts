@@ -1,6 +1,6 @@
 import mermaid from "mermaid/dist/mermaid.min.js"
 
-import { mermaidHover } from "~core/downloads"
+import { mermaidHover } from "~core/hover"
 
 import { notRenderSelector, queryContainers } from "./selectors"
 
@@ -64,5 +64,5 @@ export const render = async (domList: HTMLElement[]): Promise<void> => {
   await mermaid.run({
     nodes: domList
   })
-  await mermaidHover(domList)
+  await mermaidHover(domList, false)
 }
