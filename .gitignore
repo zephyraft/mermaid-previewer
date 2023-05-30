@@ -43,3 +43,8 @@ keys.json
 
 # jetbrains
 .idea
+
+# playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
