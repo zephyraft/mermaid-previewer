@@ -15,7 +15,7 @@ export const rawDataKey = "data-mermaid-previewer-raw"
  * @type {RegExp}
  */
 const mermaidRegex =
-  /^\s*(graph\s+\w{2}|graph|graph\s+.|flowchart\s+\w{2}|flowchart|flowchart\s+.|sequenceDiagram|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|pie\s+title\s.+|requirementDiagram|gitGraph)\s*\n/gm
+  /^\s*(graph\s+\w{2}|graph|graph\s+.|flowchart\s+\w{2}|flowchart|flowchart\s+.|sequenceDiagram|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|pie\s+showData|pie\s+title\s.+|requirementDiagram|gitGraph|quadrantChart|C4Context|C4Container|C4Component|C4Dynamic|C4Deployment|mindmap|timeline)\s*\n/gm
 
 /**
  * 匹配符合条件的dom
