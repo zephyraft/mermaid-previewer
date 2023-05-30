@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "plasmo dev --verbose",
     "test": "playwright test",
-    "test-ui": "playwright test --ui --debug",
+    "test-ui": "playwright test --ui",
     "test-report": "playwright show-report",
     "build": "plasmo build",
     "package": "rm build/mermaid-previewer.zip && plasmo package && mv build/chrome-mv3-prod.zip build/mermaid-previewer.zip"

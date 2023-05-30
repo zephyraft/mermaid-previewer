@@ -10,10 +10,11 @@ export const test = base.extend<{
     console.log(__dirname)
     // const pathToExtension =
     // "/Users/zhonghaoyuan/IdeaProjects/mermaid-previewer/build/chrome-mv3-prod"
-    const pathToExtension = process.env.EXTENSION_DIR
+    const pathToExtension = process.env.PLAYWRIGHT_EXTENSION_DIR
     const context = await chromium.launchPersistentContext("", {
       headless: false,
       args: [
+        `--headless=new`, // the new headless arg for chrome v109+. Use '--headless=chrome' as arg for browsers v94-108.
         `--disable-extensions-except=${pathToExtension}`,
         `--load-extension=${pathToExtension}`
       ]
