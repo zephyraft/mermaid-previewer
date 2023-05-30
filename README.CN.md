@@ -34,6 +34,7 @@ A --> B
     - 支持Gitlab的导出
 
 ## 改动日志
+- [1.4.1]  修复浮动按钮显示bug，增加复制code按钮。
 - [1.4.0]  更新mermaid版本到10.2.0，使用plasmo框架重构代码，调整配置页面，导出功能使用浮动按钮提供。
 - [1.3.0]  更新mermaid版本到10.1.0，导出功能改为导出svg，以支持更多样式和font-awesome。
 - [1.2.9]  更新mermaid版本到10.0.2，支持font-awesome和gitGraph。
@@ -55,7 +56,7 @@ A --> B
 - [x] 支持fontawesome。
 - [x] 支持[mmd格式](https://github.com/mermaid-js/mermaid-cli)文件。
 - [x] 增加浮动按钮，用于导出。
-- [ ] 增加浮动按钮，用于复制code。
+- [x] 增加浮动按钮，用于复制code。
 - [ ] 增加测试用例。
 
 ## 鸣谢
