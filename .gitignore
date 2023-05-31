@@ -48,4 +48,5 @@ keys.json
 /test-results/
 /playwright-report/
 /playwright/.cache/
-/playwright/.auth
+/playwright/.auth/
+/playwright/.download/

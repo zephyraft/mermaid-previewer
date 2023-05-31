@@ -4,7 +4,6 @@
 [![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/zephyraft/mermaid-previewer/mermaid)](https://github.com/mermaid-js/mermaid)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/oidjnlhbegipkcklbdfnbkikplpghfdl)](https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/users/oidjnlhbegipkcklbdfnbkikplpghfdl)](https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)
-[![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/zephyraft/mermaid-previewer)](https://github.com/zephyraft/mermaid-previewer/security)
 
 一款用于预览和导出网页中mermaid图的chrome扩展，完全本地渲染mermaid，不涉及远程api调用。
 
@@ -57,7 +56,9 @@ A --> B
 - [x] 支持[mmd格式](https://github.com/mermaid-js/mermaid-cli)文件。
 - [x] 增加浮动按钮，用于导出。
 - [x] 增加浮动按钮，用于复制code。
-- [ ] 增加测试用例。
+- [x] 自动化测试。
+- [ ] 更多测试用例。
+- [ ] 支持gist评论。
 
 ## 鸣谢
 感谢 [JetBrains](https://www.jetbrains.com/?from=ferry) 开源license授权

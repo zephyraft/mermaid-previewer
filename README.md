@@ -4,7 +4,6 @@
 [![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/zephyraft/mermaid-previewer/mermaid)](https://github.com/mermaid-js/mermaid)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/oidjnlhbegipkcklbdfnbkikplpghfdl)](https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/users/oidjnlhbegipkcklbdfnbkikplpghfdl)](https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)
-[![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/zephyraft/mermaid-previewer)](https://github.com/zephyraft/mermaid-previewer/security)
 
 A chrome extension for previewing and exporting mermaid images in web pages, fully rendering mermaid locally without involving remote api calls.
 
@@ -34,7 +33,7 @@ At the same time, it also provides the function of custom rule configuration.
     - Support Gitlab export
 
 ## Changelog
-- [1.4.1]  Fix floating button display bug, add copy code button
+- [1.4.1]  Fix floating button display bug, add copy code button.
 - [1.4.0]  Update the mermaid version to 10.2.0, use the plasmo framework to refactor the code, adjust the configuration page, and use the floating button to provide the export function.
 - [1.3.0]  Update mermaid version to 10.1.0, the export function is changed to export svg to support more styles and font-awesome.
 - [1.2.9]  Update mermaid version to 10.0.2, support font-awesome and gitGraph.
@@ -56,8 +55,10 @@ At the same time, it also provides the function of custom rule configuration.
 - [x] Support fontawesome.
 - [x] Support [mmd format](https://github.com/mermaid-js/mermaid-cli) files.
 - [x] Add floating button for export.
-- [x] Add a floating button for copying code.
-- [ ] Add test cases.
+- [x] Add floating button for copying code.
+- [x] Automation test.
+- [ ] More test cases.
+- [ ] Support comment for gist.
 
 ## Thanks
 Thanks to [JetBrains](https://www.jetbrains.com/?from=ferry) open source license authorization

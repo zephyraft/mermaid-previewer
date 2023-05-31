@@ -33,8 +33,6 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    // Setup project
-    { name: "setup", testMatch: /.*\.setup\.ts/ },
     // {
     //   name: 'chromium',
     //   use: { ...devices['Desktop Chrome'] },
@@ -70,9 +68,8 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         channel: "chrome",
-        storageState: "playwright/.auth/user.json"
-      },
-      dependencies: ["setup"]
+        permissions: ["clipboard-read", "clipboard-write"]
+      }
     }
   ]
 
