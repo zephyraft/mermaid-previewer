@@ -33,7 +33,7 @@
     "@plasmohq/storage": "^1.6.1",
     "mermaid": "10.2.0",
     "nanoid": "^4.0.2",
-    "plasmo": "0.74.1",
+    "plasmo": "0.74.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "webextension-polyfill": "^0.10.0"
