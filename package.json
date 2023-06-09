@@ -9,7 +9,7 @@
     "test-ui": "playwright test --ui",
     "test-report": "playwright show-report",
     "build": "plasmo build",
-    "package": "rm build/mermaid-previewer.zip && plasmo package && mv build/chrome-mv3-prod.zip build/mermaid-previewer.zip",
+    "package": "plasmo package",
     "gcp-token": "pnpm dlx gcp-refresh-token"
   },
   "repository": {
