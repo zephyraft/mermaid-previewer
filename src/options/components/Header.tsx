@@ -7,8 +7,10 @@ import {
 } from "@fluentui/react-components"
 import React from "react"
 
+import * as packageJson from "../../../package.json"
 import Github from "../icons/Github"
 
+const version = packageJson.version
 export default (): JSX.Element => {
   const [githubIconRef, setGithubIconRef] =
     React.useState<HTMLSpanElement | null>(null)
@@ -32,7 +34,7 @@ export default (): JSX.Element => {
               target="_blank"
               appearance="subtle"
               className="hover:no-underline">
-              v{process.env.PLASMO_PUBLIC_VERSION}
+              v{version}
             </Link>
           </Tooltip>
         </Body1>

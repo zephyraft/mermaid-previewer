@@ -2,8 +2,10 @@ import type { Locator, Page } from "@playwright/test"
 
 import { buyMeACoffeeQRCode } from "~options/pages/Coffee"
 
+import * as packageJson from "../package.json"
 import { expect, test } from "./fixtures"
 
+const version = packageJson.version
 test("配置页正常加载", async ({ page, extensionId }) => {
   await gotoOptionPage(page, extensionId)
   await expect(page.locator("body")).toContainText("Mermaid Previewer")
@@ -24,9 +26,7 @@ test("外链正常跳转", async ({ context, page, extensionId }) => {
   )
 
   const releasePagePromise = context.waitForEvent("page")
-  await page
-    .getByText(`v${process.env.PLASMO_PUBLIC_VERSION}`, { exact: true })
-    .click()
+  await page.getByText(`v${version}`, { exact: true }).click()
   const releasePage = await releasePagePromise
   await expect(releasePage).toHaveURL(
     "https://github.com/zephyraft/mermaid-previewer/releases"
