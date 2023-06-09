@@ -1,0 +1,38 @@
+name: "Release"
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      - uses: pnpm/action-setup@v2.2.4
+        with:
+          version: latest
+          run_install: true
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 18.x
+          cache: "pnpm"
+      - name: Build the extension
+        run: pnpm build
+      - name: Package the extension into a zip artifact
+        run: pnpm package
+      - name: Rename zip
+        run: mv build/chrome-mv3-prod.zip mermaid-previewer.zip
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          files: mermaid-previewer.zip
