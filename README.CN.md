@@ -33,6 +33,7 @@ A --> B
     - 支持Gitlab的导出
 
 ## 改动日志
+- [1.4.3]  修复bug。
 - [1.4.2]  更新mermaid版本到10.2.3，并适配quadrantChart，C4，mindmap，timeline图表。
 - [1.4.1]  修复浮动按钮显示bug，增加复制code按钮。
 - [1.4.0]  更新mermaid版本到10.2.0，使用plasmo框架重构代码，调整配置页面，导出功能使用浮动按钮提供。
