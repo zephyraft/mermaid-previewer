@@ -33,8 +33,9 @@ At the same time, it also provides the function of custom rule configuration.
     - Support Gitlab export
 
 ## Changelog
+- [1.4.2]  Update mermaid version to 10.2.3, and adapt to quadrantChart, C4, mindmap, timeline charts.
 - [1.4.1]  Fix floating button display bug, add copy code button.
-- [1.4.0]  Update the mermaid version to 10.2.0, use the plasmo framework to refactor the code, adjust the configuration page, and use the floating button to provide the export function.
+- [1.4.0]  Update mermaid version to 10.2.0, use the plasmo framework to refactor the code, adjust the configuration page, and use the floating button to provide the export function.
 - [1.3.0]  Update mermaid version to 10.1.0, the export function is changed to export svg to support more styles and font-awesome.
 - [1.2.9]  Update mermaid version to 10.0.2, support font-awesome and gitGraph.
 - [1.2.8]  Update mermaid version to 9.1.3, fix repeat toast & modify toast style.
