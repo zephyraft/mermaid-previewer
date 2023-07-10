@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@floating-ui/dom':
-    specifier: ^1.2.9
-    version: 1.2.9
+    specifier: ^1.4.4
+    version: 1.4.4
   '@fluentui/react-components':
     specifier: ^9.21.0
     version: 9.21.0(@types/react-dom@18.2.4)(@types/react@18.2.9)(react-dom@18.2.0)(react@18.2.0)(scheduler@0.19.1)
@@ -488,14 +488,14 @@ packages:
       cross-spawn: 7.0.3
     dev: false
 
-  /@floating-ui/core@1.2.6:
-    resolution: {integrity: sha512-EvYTiXet5XqweYGClEmpu3BoxmsQ4hkj3QaYA6qEnigCWffTP3vNRwBReTdrwDwo7OoJ3wM8Uoe9Uk4n+d4hfg==}
+  /@floating-ui/core@1.3.1:
+    resolution: {integrity: sha512-Bu+AMaXNjrpjh41znzHqaz3r2Nr8hHuHZT6V2LBKMhyMl0FgKA62PNYbqnfgmzOhoWZj70Zecisbo4H1rotP5g==}
     dev: false
 
-  /@floating-ui/dom@1.2.9:
-    resolution: {integrity: sha512-sosQxsqgxMNkV3C+3UqTS6LxP7isRLwX8WMepp843Rb3/b0Wz8+MdUkxJksByip3C2WwLugLHN1b4ibn//zKwQ==}
+  /@floating-ui/dom@1.4.4:
+    resolution: {integrity: sha512-21hhDEPOiWkGp0Ys4Wi6Neriah7HweToKra626CIK712B5m9qkdz54OP9gVldUg+URnBTpv/j/bi/skmGdstXQ==}
     dependencies:
-      '@floating-ui/core': 1.2.6
+      '@floating-ui/core': 1.3.1
     dev: false
 
   /@fluentui/keyboard-keys@9.0.3:
@@ -1163,7 +1163,7 @@ packages:
       react: '>=16.8.0 <19.0.0'
       react-dom: '>=16.8.0 <19.0.0'
     dependencies:
-      '@floating-ui/dom': 1.2.9
+      '@floating-ui/dom': 1.4.4
       '@fluentui/react-shared-contexts': 9.5.0(@types/react@18.2.9)(react@18.2.0)
       '@fluentui/react-theme': 9.1.8
       '@fluentui/react-utilities': 9.9.2(@types/react@18.2.9)(react@18.2.0)
