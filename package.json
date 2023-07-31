@@ -30,7 +30,7 @@
   "dependencies": {
     "@floating-ui/dom": "^1.4.5",
     "@fluentui/react-components": "^9.27.0",
-    "@fluentui/react-icons": "^2.0.208",
+    "@fluentui/react-icons": "^2.0.209",
     "@plasmohq/messaging": "^0.5.0",
     "@plasmohq/storage": "^1.7.2",
     "mermaid": "^10.2.4",
