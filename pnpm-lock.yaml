@@ -42,7 +42,7 @@ dependencies:
 devDependencies:
   '@plasmohq/prettier-plugin-sort-imports':
     specifier: ^4.0.1
-    version: 4.0.1(prettier@3.0.1)
+    version: 4.0.1(prettier@3.0.2)
   '@playwright/test':
     specifier: ^1.37.0
     version: 1.37.0
@@ -71,8 +71,8 @@ devDependencies:
     specifier: ^8.4.28
     version: 8.4.28
   prettier:
-    specifier: ^3.0.1
-    version: 3.0.1
+    specifier: ^3.0.2
+    version: 3.0.2
   tailwindcss:
     specifier: ^3.3.3
     version: 3.3.3
@@ -3234,7 +3234,7 @@ packages:
       - whiskers
     dev: false
 
-  /@plasmohq/prettier-plugin-sort-imports@4.0.1(prettier@3.0.1):
+  /@plasmohq/prettier-plugin-sort-imports@4.0.1(prettier@3.0.2):
     resolution: {integrity: sha512-pEIkcMZVqqqnFWoe3xiVGpXCq8rf+6EVGGSJqUMvD3zMAzHNu0pR1hdKjlhdwPYEzi3naResRJzfwmRU8hRzkA==}
     peerDependencies:
       prettier: 3.x
@@ -3247,7 +3247,7 @@ packages:
       javascript-natural-sort: 0.7.1
       lodash.clone: 4.5.0
       lodash.isequal: 4.5.0
-      prettier: 3.0.1
+      prettier: 3.0.2
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -6684,8 +6684,8 @@ packages:
       tunnel-agent: 0.6.0
     dev: false
 
-  /prettier@3.0.1:
-    resolution: {integrity: sha512-fcOWSnnpCrovBsmFZIGIy9UqK2FaI7Hqax+DIO0A9UxeVoY4iweyaFjS5TavZN97Hfehph0nhsZnjlVKzEQSrQ==}
+  /prettier@3.0.2:
+    resolution: {integrity: sha512-o2YR9qtniXvwEZlOKbveKfDQVyqxbEIWn48Z8m3ZJjBjcCmUy3xZGIv+7AkaeuaTr6yPXJjwv07ZWlsWbEy1rQ==}
     engines: {node: '>=14'}
     hasBin: true
     dev: true
