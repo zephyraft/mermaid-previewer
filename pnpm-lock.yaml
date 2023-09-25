@@ -50,8 +50,8 @@ devDependencies:
     specifier: ^0.0.243
     version: 0.0.243
   '@types/node':
-    specifier: ^20.5.1
-    version: 20.5.1
+    specifier: ^20.6.5
+    version: 20.6.5
   '@types/react':
     specifier: ^18.2.20
     version: 18.2.20
@@ -3269,7 +3269,7 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
-      '@types/node': 20.5.1
+      '@types/node': 20.6.5
       playwright-core: 1.37.0
     optionalDependencies:
       fsevents: 2.3.2
@@ -3749,8 +3749,8 @@ packages:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: false
 
-  /@types/node@20.5.1:
-    resolution: {integrity: sha512-4tT2UrL5LBqDwoed9wZ6N3umC4Yhz3W3FloMmiiG4JwmUJWpie0c7lcnUNd4gtMKuDEO4wRVS8B6Xa0uMRsMKg==}
+  /@types/node@20.6.5:
+    resolution: {integrity: sha512-2qGq5LAOTh9izcc0+F+dToFigBWiK1phKPt7rNhOqJSr35y8rlIBjDwGtFSgAI6MGIhjwOVNSQZVdJsZJ2uR1w==}
     dev: true
 
   /@types/parse-json@4.0.0:
