@@ -1,4 +1,11 @@
-import { Subtitle2 } from "@fluentui/react-components"
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionPanel,
+  Subtitle2,
+  Switch
+} from "@fluentui/react-components";
 import { InfoLabel } from "@fluentui/react-components/unstable"
 import React from "react"
 
@@ -14,9 +21,9 @@ import ExcludeConfigTable from "~options/components/ExcludeConfig/ExcludeConfigT
 import ExcludeConfigToolbar from "~options/components/ExcludeConfig/ExcludeConfigToolbar"
 import SelectorConfigTable from "~options/components/SelectorConfig/SelectorConfigTable"
 import SelectorConfigToolbar from "~options/components/SelectorConfig/SelectorConfigToolbar"
-import type { ExcludeConfig, SelectorConfig } from "~types"
+import type { ExcludeConfig, Experimental, SelectorConfig } from "~types";
 
-export default (): JSX.Element => {
+export default (): React.JSX.Element => {
   const [customExcludeConfigs, setCustomExcludeConfigs] = useStorage<
     ExcludeConfig[]
   >(storageKey.excludeURLs, [])
@@ -28,6 +35,12 @@ export default (): JSX.Element => {
   const [customDownloadSelectors, setCustomDownloadSelectors] = useStorage<
     SelectorConfig[]
   >(storageKey.downloadSelectors, [])
+
+  const [experimental, setExperimental] = useStorage<
+    Experimental
+  >(storageKey.experimental, {
+    sandbox: false,
+  })
 
   return (
     <div>
@@ -90,6 +103,29 @@ export default (): JSX.Element => {
           customConfigs={customDownloadSelectors}
           setCustomConfigs={setCustomDownloadSelectors}
         />
+      </div>
+      <div className={"mt-8"}>
+        <Accordion collapsible>
+          <AccordionItem value="1">
+            <AccordionHeader>Experimental</AccordionHeader>
+            <AccordionPanel>
+              <Switch
+                checked={experimental.sandbox}
+                onChange={async (ev) => {
+                  await setExperimental({
+                    sandbox: ev.currentTarget.checked,
+                  });
+                }}
+                label={
+                  <InfoLabel
+                    info="Use sandbox mode to render mermaid, which has better security and style isolation, but does not support fontawesome.">
+                    Sandbox
+                  </InfoLabel>
+                 }
+              />
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
       </div>
     </div>
   )

@@ -3,6 +3,7 @@ import mermaid from "mermaid/dist/mermaid.min.js"
 import { mermaidHover } from "~core/hover"
 
 import { notRenderSelector, queryContainers } from "./selectors"
+import { enableSandbox } from "~core/options";
 
 /**
  * 用于保存原始mermaid code的key
@@ -61,6 +62,10 @@ export const queryAndSaveRaw = async (
  * 渲染mermaid图
  */
 export const render = async (domList: HTMLElement[]): Promise<void> => {
+  mermaid.initialize({
+    securityLevel: await enableSandbox() ? 'sandbox' : 'strict',
+    startOnLoad: false
+  });
   await mermaid.run({
     nodes: domList
   })

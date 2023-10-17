@@ -1,7 +1,7 @@
 {
   "name": "mermaid-previewer",
   "displayName": "Mermaid Previewer",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "Preview and export mermaid.",
   "scripts": {
     "dev": "plasmo dev --verbose",

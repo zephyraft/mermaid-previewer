@@ -1,6 +1,6 @@
 import { Storage } from "@plasmohq/storage"
 
-import type { ExcludeConfig, SelectorConfig } from "~types"
+import type { ExcludeConfig, Experimental, SelectorConfig } from "~types";
 
 const storage = new Storage()
 const storageKeyPrefix = "mermaid-previewer."
@@ -8,7 +8,8 @@ const storageKeyPrefix = "mermaid-previewer."
 export const storageKey = {
   excludeURLs: `${storageKeyPrefix}excludeURLs`,
   matchSelectors: `${storageKeyPrefix}matchSelectors`,
-  downloadSelectors: `${storageKeyPrefix}downloadSelectors`
+  downloadSelectors: `${storageKeyPrefix}downloadSelectors`,
+  experimental: `${storageKeyPrefix}experimental`,
 }
 
 export const defaultExcludes: ExcludeConfig[] = [
@@ -31,6 +32,10 @@ export const defaultMatchSelectors: SelectorConfig[] = [
   {
     regex: "file:\\/\\/.*.mmd",
     selector: "body > pre"
+  },
+  {
+    regex: ".*gist\\.github\\.com.*",
+    selector: "div.highlight-source-mermaid > pre.notranslate"
   }
 ]
 
@@ -75,4 +80,11 @@ export const getDownloadSelectorList = async (): Promise<SelectorConfig[]> => {
       storageKey.downloadSelectors
     )) ?? []
   return customSelectors.concat(defaultDownloadSelectors)
+}
+
+export const enableSandbox = async (): Promise<boolean> => {
+  const experimental: Experimental | undefined = await storage.get<Experimental | undefined>(
+    storageKey.experimental
+  );
+  return experimental ? experimental.sandbox : false;
 }

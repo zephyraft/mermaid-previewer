@@ -26,6 +26,8 @@ At the same time, it also provides the function of custom rule configuration.
     - Support Bitbucket preview and export
   - `body > pre` under `file:\/\/.*.mmd`
     - Support preview and export of `.mmd` files
+  - `div.highlight-source-mermaid > pre.notranslate` under `.*gist\.github\.com.*`
+    - Support preview and export of gist comment
 - Download Selectors
   - `div.mermaid-view div.mermaid` under `https:\/\/viewscreen\.githubusercontent\.com.*`
     - Support GitHub export
@@ -33,6 +35,7 @@ At the same time, it also provides the function of custom rule configuration.
     - Support Gitlab export
 
 ## Changelog
+- [1.4.4]  Updated mermaid version to 10.5.0. Added experimental feature sandbox mode. Added preset rules for gist comment.
 - [1.4.3]  Fix bug.
 - [1.4.2]  Update mermaid version to 10.2.3, and adapt to quadrantChart, C4, mindmap, timeline charts.
 - [1.4.1]  Fix floating button display bug, add copy code button.
@@ -59,8 +62,8 @@ At the same time, it also provides the function of custom rule configuration.
 - [x] Add floating button for export.
 - [x] Add floating button for copying code.
 - [x] Automation test.
+- [x] Support comment for gist.
 - [ ] More test cases.
-- [ ] Support comment for gist.
 
 ## Thanks
 Thanks to [JetBrains](https://www.jetbrains.com/?from=ferry) open source license authorization

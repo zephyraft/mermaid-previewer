@@ -7,6 +7,7 @@ import { sendToBackground } from "@plasmohq/messaging"
 
 import { mermaidPreviewerExporterDom } from "~core/hover"
 import { rawDataKey } from "~core/render"
+import { enableSandbox } from "~core/options";
 
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"],
@@ -23,7 +24,73 @@ const containsFontAwesome = (svgData: string): boolean => {
   return svgData.includes('<i class="fa')
 }
 
-const getSvgDataUrl = () => {
+// 将base64字符串解析为二进制数据
+function base64ToBinary(base64: string) {
+  const binaryString = atob(base64);
+  const bytes = new Uint8Array(binaryString.length);
+
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+
+  return bytes;
+}
+
+// 将二进制数据转换为文本
+function binaryToText(binaryData: Uint8Array) {
+  const decoder = new TextDecoder();
+  return decoder.decode(binaryData);
+}
+
+function parseDOM(domString: string) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(domString, "text/html");
+  return doc.body.firstChild;
+}
+
+const getSvgDataUrl = async () => {
+  if (await enableSandbox()) {
+    return getSvgDataUrlFromIframe();
+  } else {
+    return getSvgDataUrlFromSvgDom();
+  }
+}
+
+const getSvgDataUrlFromIframe = () => {
+  const iframeDom = mermaidPreviewerExporterDom
+  if (iframeDom == null) {
+    console.warn("Cannot found iframe dom.")
+    return
+  }
+
+  try {
+    const htmlBase64 = iframeDom.getAttribute("src");
+    const base64 = htmlBase64.substring("data:text/html;base64,".length);
+    const binary = base64ToBinary(base64);
+    const domString = binaryToText(binary);
+    const dom = parseDOM(domString) as HTMLElement;
+
+    let svgData = new XMLSerializer().serializeToString(dom)
+    console.log("svgData", svgData);
+
+    if (containsFontAwesome(svgData)) {
+      const styleIndex = svgData.indexOf("<style>")
+      // noinspection JSUnresolvedLibraryURL
+      const fontAwesomeCSS =
+        '<link xmlns="http://www.w3.org/1999/xhtml" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" type="text/css"/>'
+      svgData = `${svgData.substring(
+        0,
+        styleIndex
+      )}${fontAwesomeCSS}${svgData.substring(styleIndex)}`
+    }
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgData)
+  } catch (e) {
+    let svgData = new XMLSerializer().serializeToString(iframeDom)
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgData)
+  }
+}
+
+const getSvgDataUrlFromSvgDom = () => {
   const svgDom = mermaidPreviewerExporterDom
   if (svgDom == null) {
     console.warn("Cannot found svg dom.")
@@ -64,12 +131,12 @@ const ExportButton = () => {
       <button
         id={"download"}
         title={"download"}
-        onClick={() => {
+        onClick={async () => {
           // 发送消息到background service
           sendToBackground({
             name: "download",
             body: {
-              url: getSvgDataUrl(),
+              url: await getSvgDataUrl(),
               filename: `${nanoid(10)}.svg`
             }
           }).then((_) => {})
