@@ -45,7 +45,7 @@
     "@playwright/test": "^1.40.0",
     "@types/chrome": "^0.0.251",
     "@types/node": "^20.10.0",
-    "@types/react": "^18.2.39",
+    "@types/react": "^18.2.41",
     "@types/react-dom": "^18.2.17",
     "@types/webextension-polyfill": "^0.10.7",
     "autoprefixer": "^10.4.16",
