@@ -15,8 +15,8 @@ dependencies:
     specifier: ^2.0.223
     version: 2.0.223(react@18.2.0)
   '@plasmohq/messaging':
-    specifier: ^0.6.0
-    version: 0.6.0(react@18.2.0)
+    specifier: ^0.6.1
+    version: 0.6.1(react@18.2.0)
   '@plasmohq/storage':
     specifier: ^1.9.0
     version: 1.9.0(react@18.2.0)
@@ -3226,15 +3226,15 @@ packages:
     resolution: {integrity: sha512-P75g48dqOGneJ+n0AcqnLE/TYflcaPc3B7h6EopnCBBYUDnCNBMwYmKAkaf5pnhsEB0ybPS6TU1C2DTGfqaW7A==}
     dev: false
 
-  /@plasmohq/messaging@0.6.0(react@18.2.0):
-    resolution: {integrity: sha512-iRyhtoWuS96YKZyga/nsBESXVzVrTQbyGRwR1/aNyWvuvt68G00Gtb6+zcWXd2uLSs5ExU/gYxakHYBbWqy2QA==}
+  /@plasmohq/messaging@0.6.1(react@18.2.0):
+    resolution: {integrity: sha512-/nn1k8SG5z++o/NnZu+byHWcC9MhPLxfmvj+AP3buqMn7uwfYDcYWURLuMW2Knw08HBg+wku2v1Ltt4evN0nzA==}
     peerDependencies:
       react: ^16.8.6 || ^17 || ^18
     peerDependenciesMeta:
       react:
         optional: true
     dependencies:
-      nanoid: 4.0.2
+      nanoid: 5.0.3
       react: 18.2.0
     dev: false
 
@@ -6358,9 +6358,9 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  /nanoid@4.0.2:
-    resolution: {integrity: sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==}
-    engines: {node: ^14 || ^16 || >=18}
+  /nanoid@5.0.3:
+    resolution: {integrity: sha512-I7X2b22cxA4LIHXPSqbBCEQSL+1wv8TuoefejsX4HFWyC6jc5JG7CEaxOltiKjc1M+YCS2YkrZZcj4+dytw9GA==}
+    engines: {node: ^18 || >=20}
     hasBin: true
     dev: false
 
