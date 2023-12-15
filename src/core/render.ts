@@ -7,16 +7,14 @@ import { enableSandbox } from "~core/options";
 
 /**
  * 用于保存原始mermaid code的key
- * @type {string}
  */
-export const rawDataKey = "data-mermaid-previewer-raw"
+export const rawDataKey: string = "data-mermaid-previewer-raw"
 
 /**
  * mermaid图表正则匹配
- * @type {RegExp}
  */
-const mermaidRegex =
-  /^\s*(graph\s+\w{2}|graph|graph\s+.|flowchart\s+\w{2}|flowchart|flowchart\s+.|sequenceDiagram|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|pie\s+showData|pie\s+title\s.+|requirementDiagram|gitGraph|quadrantChart|C4Context|C4Container|C4Component|C4Dynamic|C4Deployment|mindmap|timeline)\s*\n/gm
+const mermaidRegex: RegExp =
+  /^\s*(graph\s+\w{2}|graph|graph\s+.|flowchart\s+\w{2}|flowchart|flowchart\s+.|sequenceDiagram|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|pie\s+showData|pie\s+title\s.+|quadrantChart|requirementDiagram|gitGraph|C4Context|C4Container|C4Component|C4Dynamic|C4Deployment|mindmap|timeline|zenuml|sankey-beta|xychart-beta|)\s*\n/gm
 
 /**
  * 匹配符合条件的dom
