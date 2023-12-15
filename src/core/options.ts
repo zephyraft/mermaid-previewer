@@ -34,6 +34,10 @@ export const defaultMatchSelectors: SelectorConfig[] = [
     selector: "body > pre"
   },
   {
+    regex: "file:\\/\\/.*.mermaid",
+    selector: "body > pre"
+  },
+  {
     regex: ".*gist\\.github\\.com.*",
     selector: "div.highlight-source-mermaid > pre.notranslate"
   }
