@@ -22,7 +22,7 @@ test("外链正常跳转", async ({ context, page, extensionId }) => {
   await page.getByText("Mermaid Previewer", { exact: true }).click()
   const storePage = await storePagePromise
   await expect(storePage).toHaveURL(
-    "https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl"
+    "https://chromewebstore.google.com/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl"
   )
 
   const releasePagePromise = context.waitForEvent("page")
