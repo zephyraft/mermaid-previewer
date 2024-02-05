@@ -24,8 +24,8 @@ dependencies:
     specifier: ^10.7.0
     version: 10.7.0
   nanoid:
-    specifier: ^5.0.4
-    version: 5.0.4
+    specifier: ^5.0.5
+    version: 5.0.5
   plasmo:
     specifier: ^0.84.1
     version: 0.84.1(postcss@8.4.33)(react-dom@18.2.0)(react@18.2.0)
@@ -6468,8 +6468,8 @@ packages:
     hasBin: true
     dev: false
 
-  /nanoid@5.0.4:
-    resolution: {integrity: sha512-vAjmBf13gsmhXSgBrtIclinISzFFy22WwCYoyilZlsrRXNIHSwgFQ1bEdjRwMT3aoadeIF6HMuDRlOxzfXV8ig==}
+  /nanoid@5.0.5:
+    resolution: {integrity: sha512-/Veqm+QKsyMY3kqi4faWplnY1u+VuKO3dD2binyPIybP31DRO29bPF+1mszgLnrR2KqSLceFLBNw0zmvDzN1QQ==}
     engines: {node: ^18 || >=20}
     hasBin: true
     dev: false
