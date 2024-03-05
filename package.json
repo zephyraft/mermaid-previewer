@@ -29,7 +29,7 @@
   "homepage": "https://github.com/zephyraft/mermaid-perviewer#readme",
   "dependencies": {
     "@floating-ui/dom": "^1.6.3",
-    "@fluentui/react-components": "^9.46.5",
+    "@fluentui/react-components": "^9.46.7",
     "@fluentui/react-icons": "^2.0.230",
     "@plasmohq/messaging": "^0.6.2",
     "@plasmohq/storage": "^1.9.3",
@@ -43,9 +43,9 @@
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.1.1",
     "@playwright/test": "^1.42.1",
-    "@types/chrome": "^0.0.260",
+    "@types/chrome": "^0.0.262",
     "@types/node": "^20.11.24",
-    "@types/react": "^18.2.60",
+    "@types/react": "^18.2.62",
     "@types/react-dom": "^18.2.19",
     "@types/webextension-polyfill": "^0.10.7",
     "autoprefixer": "^10.4.18",
