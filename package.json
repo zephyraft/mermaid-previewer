@@ -29,13 +29,13 @@
   "homepage": "https://github.com/zephyraft/mermaid-perviewer#readme",
   "dependencies": {
     "@floating-ui/dom": "^1.6.3",
-    "@fluentui/react-components": "^9.47.1",
-    "@fluentui/react-icons": "^2.0.232",
+    "@fluentui/react-components": "^9.47.2",
+    "@fluentui/react-icons": "^2.0.233",
     "@plasmohq/messaging": "^0.6.2",
     "@plasmohq/storage": "^1.9.3",
     "mermaid": "^10.9.0",
     "nanoid": "^5.0.6",
-    "plasmo": "^0.85.0",
+    "plasmo": "^0.85.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "webextension-polyfill": "^0.10.0"
@@ -44,16 +44,16 @@
     "@ianvs/prettier-plugin-sort-imports": "^4.2.1",
     "@playwright/test": "^1.42.1",
     "@types/chrome": "^0.0.263",
-    "@types/node": "^20.11.29",
-    "@types/react": "^18.2.67",
+    "@types/node": "^20.11.30",
+    "@types/react": "^18.2.72",
     "@types/react-dom": "^18.2.22",
     "@types/webextension-polyfill": "^0.10.7",
-    "autoprefixer": "^10.4.18",
+    "autoprefixer": "^10.4.19",
     "dotenv": "^16.4.5",
-    "postcss": "^8.4.36",
+    "postcss": "^8.4.38",
     "prettier": "^3.2.5",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.3"
   },
   "manifest": {
     "host_permissions": [
