@@ -29,7 +29,7 @@
   "homepage": "https://github.com/zephyraft/mermaid-perviewer#readme",
   "dependencies": {
     "@floating-ui/dom": "^1.6.5",
-    "@fluentui/react-components": "^9.49.1",
+    "@fluentui/react-components": "^9.50.0",
     "@fluentui/react-icons": "^2.0.239",
     "@plasmohq/messaging": "^0.6.2",
     "@plasmohq/storage": "^1.10.0",
