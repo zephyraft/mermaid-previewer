@@ -33,7 +33,7 @@
     "@fluentui/react-icons": "^2.0.239",
     "@plasmohq/messaging": "^0.6.2",
     "@plasmohq/storage": "^1.10.0",
-    "mermaid": "^10.9.0",
+    "mermaid": "^10.9.1",
     "nanoid": "^5.0.7",
     "plasmo": "^0.86.2",
     "react": "^18.3.1",
