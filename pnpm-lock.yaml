@@ -44,16 +44,16 @@ importers:
     devDependencies:
       '@ianvs/prettier-plugin-sort-imports':
         specifier: ^4.4.0
-        version: 4.4.0(@vue/compiler-sfc@3.3.4)(prettier@3.3.3)
+        version: 4.4.0(@vue/compiler-sfc@3.3.4)(prettier@3.4.0)
       '@playwright/test':
         specifier: ^1.49.0
         version: 1.49.0
       '@types/chrome':
-        specifier: ^0.0.284
-        version: 0.0.284
+        specifier: ^0.0.286
+        version: 0.0.286
       '@types/node':
-        specifier: ^22.9.3
-        version: 22.9.3
+        specifier: ^22.10.0
+        version: 22.10.0
       '@types/react':
         specifier: ^18.3.12
         version: 18.3.12
@@ -73,8 +73,8 @@ importers:
         specifier: ^8.4.49
         version: 8.4.49
       prettier:
-        specifier: ^3.3.3
-        version: 3.3.3
+        specifier: ^3.4.0
+        version: 3.4.0
       tailwindcss:
         specifier: ^3.4.15
         version: 3.4.15
@@ -1912,8 +1912,8 @@ packages:
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
     engines: {node: '>=10.13.0'}
 
-  '@types/chrome@0.0.284':
-    resolution: {integrity: sha512-nQwZQVfepZcUvKKGByOh/p4ZKaaNP1BaLaVjcAXO4jr81z3JBehyXBc/RqS30+D6W7RrMYKNKBCFsQLuhX0OSA==}
+  '@types/chrome@0.0.286':
+    resolution: {integrity: sha512-Valy/wWWAwfnxLL1zPM3KJEUM3xbO3O67sNT4SjHUSn39QwIhnXBfIQuJNchJfmb+5qKV+zv9O6fy6nq8cO+aQ==}
 
   '@types/d3-array@3.2.1':
     resolution: {integrity: sha512-Y2Jn2idRrLzUfAKV2LyRImR+y4oa2AntrgID95SHJxuMUrkNXmanDSed71sRNZysveJVt1hLLemQZIady0FpEg==}
@@ -2032,8 +2032,8 @@ packages:
   '@types/json-schema@7.0.12':
     resolution: {integrity: sha512-Hr5Jfhc9eYOQNPYO5WLDq/n4jqijdHNlDXjuAQkkt+mWdQR+XJToOHrsD4cPaMXpn6KO7y2+wM8AZEs8VpBLVA==}
 
-  '@types/node@22.9.3':
-    resolution: {integrity: sha512-F3u1fs/fce3FFk+DAxbxc78DF8x0cY09RRL8GnXLmkJ1jvx3TtPdWoTT5/NiYfI5ASqXBmfqJi9dZ3gxMx4lzw==}
+  '@types/node@22.10.0':
+    resolution: {integrity: sha512-XC70cRZVElFHfIUB40FgZOBbgJYFKKMa5nb9lxcwYstFG/Mi+/Y0bGS+rs6Dmhmkpq4pnNiLiuZAbc02YCOnmA==}
 
   '@types/parse-json@4.0.0':
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
@@ -3675,8 +3675,8 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  prettier@3.3.3:
-    resolution: {integrity: sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==}
+  prettier@3.4.0:
+    resolution: {integrity: sha512-/OXNZcLyWkfo13ofOW5M7SLh+k5pnIs07owXK2teFpnfaOEcycnSy7HQxldaVX1ZP/7Q8oO1eDuQJNwbomQq5Q==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -4105,8 +4105,8 @@ packages:
   ufo@1.5.4:
     resolution: {integrity: sha512-UsUk3byDzKd04EyoZ7U4DOlxQaD14JUKQl6/P7wiX4FNvUfm3XL246n9W5AmqwW5RSFJ27NAuM0iLscAOYUiGQ==}
 
-  undici-types@6.19.8:
-    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
+  undici-types@6.20.0:
+    resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
 
   unique-string@3.0.0:
     resolution: {integrity: sha512-VGXBUVwxKMBUznyffQweQABPRRW1vHZAbadFZud4pLFAqRGvv/96vafgjWFqzourzr8YonlQiPgH0YCJfawoGQ==}
@@ -5619,13 +5619,13 @@ snapshots:
     dependencies:
       csstype: 3.1.3
 
-  '@ianvs/prettier-plugin-sort-imports@4.4.0(@vue/compiler-sfc@3.3.4)(prettier@3.3.3)':
+  '@ianvs/prettier-plugin-sort-imports@4.4.0(@vue/compiler-sfc@3.3.4)(prettier@3.4.0)':
     dependencies:
       '@babel/generator': 7.26.2
       '@babel/parser': 7.26.2
       '@babel/traverse': 7.25.9
       '@babel/types': 7.26.0
-      prettier: 3.3.3
+      prettier: 3.4.0
       semver: 7.5.4
     optionalDependencies:
       '@vue/compiler-sfc': 3.3.4
@@ -6984,7 +6984,7 @@ snapshots:
 
   '@trysound/sax@0.2.0': {}
 
-  '@types/chrome@0.0.284':
+  '@types/chrome@0.0.286':
     dependencies:
       '@types/filesystem': 0.0.32
       '@types/har-format': 1.2.11
@@ -7126,9 +7126,9 @@ snapshots:
 
   '@types/json-schema@7.0.12': {}
 
-  '@types/node@22.9.3':
+  '@types/node@22.10.0':
     dependencies:
-      undici-types: 6.19.8
+      undici-types: 6.20.0
 
   '@types/parse-json@4.0.0': {}
 
@@ -8871,7 +8871,7 @@ snapshots:
       tar-fs: 2.1.1
       tunnel-agent: 0.6.0
 
-  prettier@3.3.3: {}
+  prettier@3.4.0: {}
 
   process@0.11.10: {}
 
@@ -9343,7 +9343,7 @@ snapshots:
 
   ufo@1.5.4: {}
 
-  undici-types@6.19.8: {}
+  undici-types@6.20.0: {}
 
   unique-string@3.0.0:
     dependencies:
