@@ -49,8 +49,8 @@ importers:
         specifier: ^1.49.0
         version: 1.49.0
       '@types/chrome':
-        specifier: ^0.0.286
-        version: 0.0.286
+        specifier: ^0.0.287
+        version: 0.0.287
       '@types/node':
         specifier: ^22.10.0
         version: 22.10.0
@@ -1912,8 +1912,8 @@ packages:
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
     engines: {node: '>=10.13.0'}
 
-  '@types/chrome@0.0.286':
-    resolution: {integrity: sha512-Valy/wWWAwfnxLL1zPM3KJEUM3xbO3O67sNT4SjHUSn39QwIhnXBfIQuJNchJfmb+5qKV+zv9O6fy6nq8cO+aQ==}
+  '@types/chrome@0.0.287':
+    resolution: {integrity: sha512-wWhBNPNXZHwycHKNYnexUcpSbrihVZu++0rdp6GEk5ZgAglenLx+RwdEouh6FrHS0XQiOxSd62yaujM1OoQlZQ==}
 
   '@types/d3-array@3.2.1':
     resolution: {integrity: sha512-Y2Jn2idRrLzUfAKV2LyRImR+y4oa2AntrgID95SHJxuMUrkNXmanDSed71sRNZysveJVt1hLLemQZIady0FpEg==}
@@ -6984,7 +6984,7 @@ snapshots:
 
   '@trysound/sax@0.2.0': {}
 
-  '@types/chrome@0.0.286':
+  '@types/chrome@0.0.287':
     dependencies:
       '@types/filesystem': 0.0.32
       '@types/har-format': 1.2.11
