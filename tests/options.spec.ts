@@ -50,7 +50,7 @@ test("打赏页显示和跳转外链正常", async ({ context, page, extensionId
   const coffeePagePromise = context.waitForEvent("page")
   await page.locator("a[role='button']", { hasText: "buy me a coffee" }).click()
   const coffeePage = await coffeePagePromise
-  await expect(coffeePage).toHaveURL("https://www.buymeacoffee.com/zephyraft")
+  await expect(coffeePage).toHaveURL("https://buymeacoffee.com/zephyraft")
 })
 
 test("配置ExcludeURL", async ({ page, extensionId }) => {
