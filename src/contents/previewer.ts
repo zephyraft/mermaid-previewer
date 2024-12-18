@@ -1,4 +1,4 @@
-import mermaid from "mermaid/dist/mermaid.min.js"
+import mermaid from "mermaid"
 import type { PlasmoCSConfig } from "plasmo"
 
 import { isExclude } from "~core/filter"
