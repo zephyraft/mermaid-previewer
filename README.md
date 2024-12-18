@@ -65,10 +65,3 @@ At the same time, it also provides the function of custom rule configuration.
 - [x] Support comment for gist.
 - [ ] More test cases.
 
-## Thanks
-Thanks to [JetBrains](https://www.jetbrains.com/?from=ferry) open source license authorization
-<p>
- <a href="https://www.jetbrains.com/?from=ferry">
-   <img height="100" src="https://www.jetbrains.com/company/brand/img/logo6.svg" alt="">
- </a>
-</p>

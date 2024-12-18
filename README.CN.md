@@ -65,10 +65,3 @@ A --> B
 - [x] 支持gist评论。需要搭配sandbox模式使用。
 - [ ] 更多测试用例。
 
-## 鸣谢
-感谢 [JetBrains](https://www.jetbrains.com/?from=ferry) 开源license授权
-<p>
- <a href="https://www.jetbrains.com/?from=ferry">
-   <img height="100" src="https://www.jetbrains.com/company/brand/img/logo6.svg" alt="">
- </a>
-</p>
