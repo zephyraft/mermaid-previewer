@@ -1,4 +1,6 @@
-import mermaid from "mermaid/dist/mermaid.min.js"
+import type MermaidType from "mermaid/dist/mermaid.d.ts";
+import MermaidJS from "mermaid/dist/mermaid.min.js"
+
 import type { PlasmoCSConfig } from "plasmo"
 
 import { isExclude } from "~core/filter"
@@ -7,6 +9,8 @@ import { watchDomMutation } from "~core/mutation"
 import { getDownloadSelectorList } from "~core/options"
 import { queryAndSaveRaw, render } from "~core/render"
 import { inMatchURLs, matchURL } from "~core/selectors"
+
+export const mermaid = MermaidJS as typeof MermaidType;
 
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"],

@@ -1,9 +1,8 @@
-import mermaid from "mermaid/dist/mermaid.min.js"
-
 import { mermaidHover } from "~core/hover"
 
 import { notRenderSelector, queryContainers } from "./selectors"
 import { enableSandbox } from "~core/options";
+import { mermaid } from "~contents/previewer";
 
 /**
  * 用于保存原始mermaid code的key
