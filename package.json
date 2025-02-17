@@ -44,7 +44,7 @@
     "@ianvs/prettier-plugin-sort-imports": "^4.4.0",
     "@playwright/test": "^1.49.1",
     "@types/chrome": "^0.0.287",
-    "@types/node": "^22.10.2",
+    "@types/node": "^22.13.4",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@types/webextension-polyfill": "^0.12.1",
