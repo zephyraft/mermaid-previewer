@@ -1,6 +1,5 @@
 import { DocumentCopyFilled } from "@fluentui/react-icons"
 import cssText from "data-text:./style.css"
-import { nanoid } from "nanoid"
 import type { PlasmoCSConfig } from "plasmo"
 
 import { sendToBackground } from "@plasmohq/messaging"
@@ -137,7 +136,7 @@ const ExportButton = () => {
             name: "download",
             body: {
               url: await getSvgDataUrl(),
-              filename: `${nanoid(10)}.svg`
+              filename: `${crypto.randomUUID()}.svg`
             }
           }).then((_) => {})
         }}

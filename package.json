@@ -34,7 +34,6 @@
     "@plasmohq/messaging": "0.7.1",
     "@plasmohq/storage": "1.15.0",
     "mermaid": "10.9.3",
-    "nanoid": "5.0.2",
     "plasmo": "0.90.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
