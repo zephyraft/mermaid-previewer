@@ -1,7 +1,9 @@
+import plasmoPrettierPlugin from "@plasmohq/prettier-plugin-sort-imports";
+
 /**
- * @type {import('prettier').Options}
+ * @type {import("prettier").Options}
  */
-module.exports = {
+export default {
   printWidth: 80,
   tabWidth: 2,
   useTabs: false,
@@ -10,8 +12,8 @@ module.exports = {
   trailingComma: "none",
   bracketSpacing: true,
   bracketSameLine: true,
-  plugins: [require.resolve("@plasmohq/prettier-plugin-sort-imports")],
+  plugins: [plasmoPrettierPlugin],
   importOrder: ["^@plasmohq/(.*)$", "^~(.*)$", "^[./]"],
   importOrderSeparation: true,
   importOrderSortSpecifiers: true
-}
+};

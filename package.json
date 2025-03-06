@@ -3,12 +3,13 @@
   "displayName": "Mermaid Previewer",
   "version": "1.4.4",
   "description": "Preview and export mermaid.",
+  "type": "module",
   "scripts": {
     "dev": "plasmo dev --verbose",
     "test": "playwright test",
     "test-ui": "playwright test --ui",
     "test-report": "playwright show-report",
-    "build": "plasmo build",
+    "build": "plasmo build --verbose",
     "package": "plasmo package",
     "gcp-token": "pnpm dlx gcp-refresh-token",
     "dep-outdate": "pnpm outdated"
