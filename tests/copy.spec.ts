@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test"
+import type { Page } from "@playwright/test";
 
 import {
   BITBUCKET_MERMAID_COUNT,
@@ -6,9 +6,9 @@ import {
   MMD_URL,
   getCopyButtonLocator,
   getFloatButtonContainerLocator,
-  getMermaidSVGLocator
-} from "./content.utils"
-import { expect, test } from "./fixtures"
+  getMermaidSVGLocator,
+} from "./content.utils";
+import { expect, test } from "./fixtures";
 
 // noinspection HttpUrlsUsage
 const FLOW_CODE = `flowchart LR
@@ -23,7 +23,7 @@ const FLOW_CODE = `flowchart LR
     B --> C{Decision}
     C -->|One| D[Result one]
     C -->|Two| E[Result two]
-`
+`;
 
 const GIT_CODE = `---
 title: Example Git diagram
@@ -39,51 +39,51 @@ gitGraph
    merge develop
    commit
    commit
-`
+`;
 
 const MMD_CODE = `flowchart TD
     B["fab:fa-twitter for peace"]
     B-->C[fa:fa-ban forbidden]
     B-->D(fa:fa-spinner)
     B-->E(A fa:fa-camera-retro perhaps?)
-`
+`;
 
 test("bitbucket复制", async ({ page }) => {
-  await page.goto(BITBUCKET_URL)
-  await page.waitForLoadState()
-  const floatButtonContainerLocator = getFloatButtonContainerLocator(page)
-  const copyButtonLocator = getCopyButtonLocator(floatButtonContainerLocator)
-  await prepareCopy(page, 0)
-  await copyButtonLocator.click()
-  await checkClipboard(page, FLOW_CODE)
+  await page.goto(BITBUCKET_URL);
+  await page.waitForLoadState();
+  const floatButtonContainerLocator = getFloatButtonContainerLocator(page);
+  const copyButtonLocator = getCopyButtonLocator(floatButtonContainerLocator);
+  await prepareCopy(page, 0);
+  await copyButtonLocator.click();
+  await checkClipboard(page, FLOW_CODE);
 
-  await prepareCopy(page, BITBUCKET_MERMAID_COUNT - 1)
-  await expect(floatButtonContainerLocator).toBeInViewport()
-  await copyButtonLocator.click()
-  await checkClipboard(page, GIT_CODE)
-})
+  await prepareCopy(page, BITBUCKET_MERMAID_COUNT - 1);
+  await expect(floatButtonContainerLocator).toBeInViewport();
+  await copyButtonLocator.click();
+  await checkClipboard(page, GIT_CODE);
+});
 
 test("mmd复制", async ({ page }) => {
-  await page.goto(MMD_URL)
-  await page.waitForLoadState()
-  const floatButtonContainerLocator = getFloatButtonContainerLocator(page)
-  const copyButtonLocator = getCopyButtonLocator(floatButtonContainerLocator)
-  await prepareCopy(page, 0)
-  await copyButtonLocator.click()
-  await checkClipboard(page, MMD_CODE)
-})
+  await page.goto(MMD_URL);
+  await page.waitForLoadState();
+  const floatButtonContainerLocator = getFloatButtonContainerLocator(page);
+  const copyButtonLocator = getCopyButtonLocator(floatButtonContainerLocator);
+  await prepareCopy(page, 0);
+  await copyButtonLocator.click();
+  await checkClipboard(page, MMD_CODE);
+});
 
 async function checkClipboard(page: Page, expectValue: string) {
   const actualValue = await page.evaluate(async () => {
-    return navigator.clipboard.readText()
-  })
-  await expect(actualValue).toEqual(expectValue)
+    return navigator.clipboard.readText();
+  });
+  await expect(actualValue).toEqual(expectValue);
 }
 
 async function prepareCopy(page: Page, index: number) {
-  const floatButtonContainerLocator = getFloatButtonContainerLocator(page)
-  const mermaidSVGLocator = getMermaidSVGLocator(page)
+  const floatButtonContainerLocator = getFloatButtonContainerLocator(page);
+  const mermaidSVGLocator = getMermaidSVGLocator(page);
 
-  await mermaidSVGLocator.nth(index).hover()
-  await expect(floatButtonContainerLocator).toBeInViewport()
+  await mermaidSVGLocator.nth(index).hover();
+  await expect(floatButtonContainerLocator).toBeInViewport();
 }

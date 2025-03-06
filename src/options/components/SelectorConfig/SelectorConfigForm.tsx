@@ -1,28 +1,27 @@
-import { Button, Input, Link } from "@fluentui/react-components"
-import { InfoLabel } from "@fluentui/react-components/unstable"
+import { Button, Input, Link, InfoLabel } from "@fluentui/react-components";
 import {
   DocumentTableSearchRegular,
   GlobeRegular,
-  OpenRegular
-} from "@fluentui/react-icons"
-import React from "react"
+  OpenRegular,
+} from "@fluentui/react-icons";
+import React from "react";
 
-import type { SelectorConfig } from "~types"
+import type { SelectorConfig } from "~types";
 
-import Close from "../../icons/Close"
+import Close from "../../icons/Close";
 
 interface Props {
-  defaultValue?: SelectorConfig
+  defaultValue?: SelectorConfig;
 }
 
 export default ({
   defaultValue = {
     regex: ".*example\\.com.*",
-    selector: "pre > code"
-  }
+    selector: "pre > code",
+  },
 }: Props): JSX.Element => {
-  const regexInputRef = React.createRef<HTMLInputElement>()
-  const selectorInputRef = React.createRef<HTMLInputElement>()
+  const regexInputRef = React.createRef<HTMLInputElement>();
+  const selectorInputRef = React.createRef<HTMLInputElement>();
 
   return (
     <>
@@ -53,8 +52,8 @@ export default ({
             icon={<Close />}
             appearance={"transparent"}
             onClick={() => {
-              regexInputRef.current!.value = ""
-              regexInputRef.current?.focus()
+              regexInputRef.current!.value = "";
+              regexInputRef.current?.focus();
             }}
           />
         }
@@ -86,12 +85,12 @@ export default ({
             icon={<Close />}
             appearance={"transparent"}
             onClick={() => {
-              selectorInputRef.current!.value = ""
-              selectorInputRef.current?.focus()
+              selectorInputRef.current!.value = "";
+              selectorInputRef.current?.focus();
             }}
           />
         }
       />
     </>
-  )
-}
+  );
+};

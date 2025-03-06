@@ -3,26 +3,26 @@ import {
   DrinkCoffeeRegular,
   SettingsFilled,
   SettingsRegular,
-  bundleIcon
-} from "@fluentui/react-icons"
-import React from "react"
+  bundleIcon,
+} from "@fluentui/react-icons";
+import React from "react";
 
-import Coffee from "../pages/Coffee"
-import Settings from "../pages/Settings"
+import Coffee from "../pages/Coffee";
+import Settings from "../pages/Settings";
 
-const SettingsIcon = bundleIcon(SettingsFilled, SettingsRegular)
-const DrinkCoffeeIcon = bundleIcon(DrinkCoffeeFilled, DrinkCoffeeRegular)
+const SettingsIcon = bundleIcon(SettingsFilled, SettingsRegular);
+const DrinkCoffeeIcon = bundleIcon(DrinkCoffeeFilled, DrinkCoffeeRegular);
 
 interface Route {
-  key: string
-  title: string
-  icon: JSX.Element
-  page: JSX.Element
+  key: string;
+  title: string;
+  icon: JSX.Element;
+  page: JSX.Element;
 }
 
 interface RouteContextProps {
-  route: Route
-  setRoute: React.Dispatch<React.SetStateAction<Route>>
+  route: Route;
+  setRoute: React.Dispatch<React.SetStateAction<Route>>;
 }
 
 export const routes: Record<string, Route> = {
@@ -30,14 +30,14 @@ export const routes: Record<string, Route> = {
     key: "Settings",
     title: "Settings",
     icon: <SettingsIcon />,
-    page: <Settings />
+    page: <Settings />,
   },
   Coffee: {
     key: "Coffee",
     title: "Buy me a coffee",
     icon: <DrinkCoffeeIcon />,
-    page: <Coffee />
-  }
-}
+    page: <Coffee />,
+  },
+};
 
-export const RouteContext = React.createContext<RouteContextProps>(null as any)
+export const RouteContext = React.createContext<RouteContextProps>(null as any);

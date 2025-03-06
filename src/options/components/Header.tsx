@@ -3,17 +3,17 @@ import {
   Button,
   Link,
   Title3,
-  Tooltip
-} from "@fluentui/react-components"
-import React from "react"
+  Tooltip,
+} from "@fluentui/react-components";
+import React from "react";
 
-import * as packageJson from "../../../package.json"
-import Github from "../icons/Github"
+import * as packageJson from "../../../package.json";
+import Github from "../icons/Github";
 
-const version = packageJson.version
+const version = packageJson.version;
 export default (): JSX.Element => {
   const [githubIconRef, setGithubIconRef] =
-    React.useState<HTMLSpanElement | null>(null)
+    React.useState<HTMLSpanElement | null>(null);
 
   return (
     <div className="flex items-center h-16 px-6 border-b border-gray-30">
@@ -47,7 +47,7 @@ export default (): JSX.Element => {
         <Button
           icon={{
             ref: setGithubIconRef,
-            children: <Github />
+            children: <Github />,
           }}
           as="a"
           href="https://www.github.com/zephyraft/mermaid-previewer"
@@ -57,5 +57,5 @@ export default (): JSX.Element => {
         />
       </Tooltip>
     </div>
-  )
-}
+  );
+};

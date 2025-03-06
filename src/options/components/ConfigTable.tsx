@@ -9,61 +9,61 @@ import {
   TableCellLayout,
   TableHeader,
   TableHeaderCell,
-  TableRow
-} from "@fluentui/react-components"
+  TableRow,
+} from "@fluentui/react-components";
 import {
   DeleteFilled,
   DeleteRegular,
   EditFilled,
   EditRegular,
-  bundleIcon
-} from "@fluentui/react-icons"
-import React from "react"
+  bundleIcon,
+} from "@fluentui/react-icons";
+import React from "react";
 
-import SimpleDialog from "./SimpleDialog"
+import SimpleDialog from "./SimpleDialog";
 
 // 行
 export type Row = {
-  key: number
-  cells: Cell[]
-}
+  key: number;
+  cells: Cell[];
+};
 
 // 列
 export type Cell = {
-  key: string
-  value: string
-  icon: JSX.Element
-  default: boolean
-}
+  key: string;
+  value: string;
+  icon: JSX.Element;
+  default: boolean;
+};
 
 // 表头
 export type Column = {
-  key: string
-  label: string
-}
-const EditIcon = bundleIcon(EditFilled, EditRegular)
-const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular)
+  key: string;
+  label: string;
+};
+const EditIcon = bundleIcon(EditFilled, EditRegular);
+const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);
 
 interface TableProps {
-  columns: Column[]
-  rows: Row[]
-  editFormTitle: string
-  editForm: (row: Row) => JSX.Element
+  columns: Column[];
+  rows: Row[];
+  editFormTitle: string;
+  editForm: (row: Row) => JSX.Element;
   onDelete: (
     row: Row,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    ev: React.FormEvent
-  ) => void
+    ev: React.FormEvent,
+  ) => void;
   onEdit: (
     row: Row,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    ev: React.FormEvent
-  ) => void
-  onEditCancel?: () => void
+    ev: React.FormEvent,
+  ) => void;
+  onEditCancel?: () => void;
 }
 
 function isLastCell(row: Row, cellIndex: number) {
-  return row.cells.length - 1 === cellIndex
+  return row.cells.length - 1 === cellIndex;
 }
 
 export default ({
@@ -73,7 +73,7 @@ export default ({
   editForm,
   onDelete,
   onEdit,
-  onEditCancel
+  onEditCancel,
 }: TableProps): JSX.Element => {
   return (
     <Table>
@@ -137,5 +137,5 @@ export default ({
         ))}
       </TableBody>
     </Table>
-  )
-}
+  );
+};

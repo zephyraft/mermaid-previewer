@@ -1,22 +1,21 @@
-import { Button, Input, Link } from "@fluentui/react-components"
-import { InfoLabel } from "@fluentui/react-components/unstable"
-import { GlobeRegular, OpenRegular } from "@fluentui/react-icons"
-import React from "react"
+import { Button, Input, Link, InfoLabel } from "@fluentui/react-components";
+import { GlobeRegular, OpenRegular } from "@fluentui/react-icons";
+import React from "react";
 
-import type { ExcludeConfig } from "~types"
+import type { ExcludeConfig } from "~types";
 
-import Close from "../../icons/Close"
+import Close from "../../icons/Close";
 
 interface Props {
-  defaultValue?: ExcludeConfig
+  defaultValue?: ExcludeConfig;
 }
 
 export default ({
   defaultValue = {
-    regex: ".*example\\.com.*"
-  }
+    regex: ".*example\\.com.*",
+  },
 }: Props): JSX.Element => {
-  const inputRef = React.createRef<HTMLInputElement>()
+  const inputRef = React.createRef<HTMLInputElement>();
 
   return (
     <>
@@ -47,12 +46,12 @@ export default ({
             icon={<Close />}
             appearance={"transparent"}
             onClick={() => {
-              inputRef.current!.value = ""
-              inputRef.current?.focus()
+              inputRef.current!.value = "";
+              inputRef.current?.focus();
             }}
           />
         }
       />
     </>
-  )
-}
+  );
+};

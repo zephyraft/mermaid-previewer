@@ -5,21 +5,21 @@ import {
   DialogBody,
   DialogSurface,
   DialogTitle,
-  DialogTrigger
-} from "@fluentui/react-components"
-import React from "react"
+  DialogTrigger,
+} from "@fluentui/react-components";
+import React from "react";
 
 interface SecondConfirmButtonProps {
-  trigger: JSX.Element
+  trigger: JSX.Element;
   onConfirm: (
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    ev: React.FormEvent
-  ) => void
-  onClose?: () => void
-  dialogTitle: string | JSX.Element
-  dialogContent?: string | JSX.Element
-  dialogConfirm: string | JSX.Element
-  dialogCancel?: string | JSX.Element
+    ev: React.FormEvent,
+  ) => void;
+  onClose?: () => void;
+  dialogTitle: string | JSX.Element;
+  dialogContent?: string | JSX.Element;
+  dialogConfirm: string | JSX.Element;
+  dialogCancel?: string | JSX.Element;
 }
 
 export default ({
@@ -29,22 +29,22 @@ export default ({
   dialogTitle,
   dialogContent,
   dialogConfirm,
-  dialogCancel = "Cancel"
+  dialogCancel = "Cancel",
 }: SecondConfirmButtonProps): JSX.Element => {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
 
   const handleSubmit = (ev: React.FormEvent) => {
-    ev.preventDefault()
-    onConfirm(setOpen, ev)
-  }
+    ev.preventDefault();
+    onConfirm(setOpen, ev);
+  };
 
   return (
     <Dialog
       open={open}
       onOpenChange={(event, data) => {
-        setOpen(data.open)
+        setOpen(data.open);
         if (!data.open) {
-          onClose?.()
+          onClose?.();
         }
       }}>
       <DialogTrigger disableButtonEnhancement>{trigger}</DialogTrigger>
@@ -65,5 +65,5 @@ export default ({
         </form>
       </DialogSurface>
     </Dialog>
-  )
-}
+  );
+};

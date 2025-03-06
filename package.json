@@ -12,7 +12,8 @@
     "build": "plasmo build --verbose",
     "package": "plasmo package",
     "gcp-token": "pnpm dlx gcp-refresh-token",
-    "dep-outdate": "pnpm outdated"
+    "dep-outdate": "pnpm outdated",
+    "format": "pnpm exec prettier '**/*.{js,ts,jsx,tsx,cjs,cts,mjs,mts,vue,astro}' --write --ignore-unknown"
   },
   "repository": {
     "type": "git",

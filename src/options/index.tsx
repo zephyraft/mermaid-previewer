@@ -1,15 +1,15 @@
-import { useState } from "react"
+import { useState } from "react";
 
-import "./style.css"
+import "./style.css";
 
-import { FluentProvider, webLightTheme } from "@fluentui/react-components"
+import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 
-import Header from "~options/components/Header"
-import Sidebar from "~options/components/Sidebar"
-import { RouteContext, routes } from "~options/routes/routes"
+import Header from "~options/components/Header";
+import Sidebar from "~options/components/Sidebar";
+import { RouteContext, routes } from "~options/routes/routes";
 
 function OptionsIndex() {
-  const [route, setRoute] = useState(routes.Settings)
+  const [route, setRoute] = useState(routes.Settings);
 
   return (
     <FluentProvider theme={webLightTheme}>
@@ -23,7 +23,7 @@ function OptionsIndex() {
         </div>
       </div>
     </FluentProvider>
-  )
+  );
 }
 
-export default OptionsIndex
+export default OptionsIndex;

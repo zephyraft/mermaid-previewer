@@ -1,27 +1,27 @@
-import { DocumentCopyFilled } from "@fluentui/react-icons"
-import cssText from "data-text:./style.css"
-import type { PlasmoCSConfig } from "plasmo"
+import { DocumentCopyFilled } from "@fluentui/react-icons";
+import cssText from "data-text:./style.css";
+import type { PlasmoCSConfig } from "plasmo";
 
-import { sendToBackground } from "@plasmohq/messaging"
+import { sendToBackground } from "@plasmohq/messaging";
 
-import { mermaidPreviewerExporterDom } from "~core/hover"
-import { rawDataKey } from "~core/render"
+import { mermaidPreviewerExporterDom } from "~core/hover";
+import { rawDataKey } from "~core/render";
 import { enableSandbox } from "~core/options";
 
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"],
-  all_frames: true
-}
+  all_frames: true,
+};
 
 export const getStyle = () => {
-  const style = document.createElement("style")
-  style.textContent = cssText
-  return style
-}
+  const style = document.createElement("style");
+  style.textContent = cssText;
+  return style;
+};
 
 const containsFontAwesome = (svgData: string): boolean => {
-  return svgData.includes('<i class="fa')
-}
+  return svgData.includes('<i class="fa');
+};
 
 // 将base64字符串解析为二进制数据
 function base64ToBinary(base64: string) {
@@ -53,13 +53,13 @@ const getSvgDataUrl = async () => {
   } else {
     return getSvgDataUrlFromSvgDom();
   }
-}
+};
 
 const getSvgDataUrlFromIframe = () => {
-  const iframeDom = mermaidPreviewerExporterDom
+  const iframeDom = mermaidPreviewerExporterDom;
   if (iframeDom == null) {
-    console.warn("Cannot found iframe dom.")
-    return
+    console.warn("Cannot found iframe dom.");
+    return;
   }
 
   try {
@@ -69,60 +69,60 @@ const getSvgDataUrlFromIframe = () => {
     const domString = binaryToText(binary);
     const dom = parseDOM(domString) as HTMLElement;
 
-    let svgData = new XMLSerializer().serializeToString(dom)
+    let svgData = new XMLSerializer().serializeToString(dom);
     console.log("svgData", svgData);
 
     if (containsFontAwesome(svgData)) {
-      const styleIndex = svgData.indexOf("<style>")
+      const styleIndex = svgData.indexOf("<style>");
       // noinspection JSUnresolvedLibraryURL
       const fontAwesomeCSS =
-        '<link xmlns="http://www.w3.org/1999/xhtml" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" type="text/css"/>'
+        '<link xmlns="http://www.w3.org/1999/xhtml" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" type="text/css"/>';
       svgData = `${svgData.substring(
         0,
-        styleIndex
-      )}${fontAwesomeCSS}${svgData.substring(styleIndex)}`
+        styleIndex,
+      )}${fontAwesomeCSS}${svgData.substring(styleIndex)}`;
     }
-    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgData)
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgData);
   } catch (e) {
-    let svgData = new XMLSerializer().serializeToString(iframeDom)
-    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgData)
+    let svgData = new XMLSerializer().serializeToString(iframeDom);
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgData);
   }
-}
+};
 
 const getSvgDataUrlFromSvgDom = () => {
-  const svgDom = mermaidPreviewerExporterDom
+  const svgDom = mermaidPreviewerExporterDom;
   if (svgDom == null) {
-    console.warn("Cannot found svg dom.")
-    return
+    console.warn("Cannot found svg dom.");
+    return;
   }
 
-  let svgData = new XMLSerializer().serializeToString(svgDom)
+  let svgData = new XMLSerializer().serializeToString(svgDom);
   if (containsFontAwesome(svgData)) {
-    const styleIndex = svgData.indexOf("<style>")
+    const styleIndex = svgData.indexOf("<style>");
     // noinspection JSUnresolvedLibraryURL
     const fontAwesomeCSS =
-      '<link xmlns="http://www.w3.org/1999/xhtml" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" type="text/css"/>'
+      '<link xmlns="http://www.w3.org/1999/xhtml" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" type="text/css"/>';
     svgData = `${svgData.substring(
       0,
-      styleIndex
-    )}${fontAwesomeCSS}${svgData.substring(styleIndex)}`
+      styleIndex,
+    )}${fontAwesomeCSS}${svgData.substring(styleIndex)}`;
   }
-  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgData)
-}
+  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgData);
+};
 
 const getMermaidRawCode = () => {
-  const svgDom = mermaidPreviewerExporterDom
+  const svgDom = mermaidPreviewerExporterDom;
   if (svgDom == null) {
-    console.warn("Cannot found svg dom.")
-    return
+    console.warn("Cannot found svg dom.");
+    return;
   }
-  return svgDom.parentElement.getAttribute(rawDataKey)
-}
+  return svgDom.parentElement.getAttribute(rawDataKey);
+};
 
 const unescapeHTML = (str) => {
-  const doc = new DOMParser().parseFromString(str, "text/html")
-  return doc.documentElement.textContent
-}
+  const doc = new DOMParser().parseFromString(str, "text/html");
+  return doc.documentElement.textContent;
+};
 
 const ExportButton = () => {
   return (
@@ -136,9 +136,9 @@ const ExportButton = () => {
             name: "download",
             body: {
               url: await getSvgDataUrl(),
-              filename: `${crypto.randomUUID()}.svg`
-            }
-          }).then((_) => {})
+              filename: `${crypto.randomUUID()}.svg`,
+            },
+          }).then((_) => {});
         }}
         type="button"
         className="text-xl border box-border border-gray-80 text-gray-100 bg-gray-10 hover:bg-gray-30 rounded">
@@ -158,20 +158,20 @@ const ExportButton = () => {
         id={"copy"}
         title={"copy"}
         onClick={() => {
-          const rawCode = getMermaidRawCode()
+          const rawCode = getMermaidRawCode();
 
           navigator.clipboard
             .writeText(unescapeHTML(rawCode))
             .catch((error) => {
-              console.error("write to clipboard error", error)
-            })
+              console.error("write to clipboard error", error);
+            });
         }}
         type="button"
         className="text-xl border box-border border-gray-80 text-gray-100 bg-gray-10 hover:bg-gray-30 rounded">
         <DocumentCopyFilled width="1em" height="1em" />
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default ExportButton
+export default ExportButton;

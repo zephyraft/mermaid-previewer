@@ -1,12 +1,12 @@
 export interface ExcludeConfig {
-  regex: string
+  regex: string;
 }
 
 export interface SelectorConfig {
-  regex: string
-  selector: string
+  regex: string;
+  selector: string;
 }
 
 export interface Experimental {
-  sandbox: boolean
+  sandbox: boolean;
 }

@@ -31,7 +31,7 @@ export default {
           190: "#201f1e",
           200: "#1b1a19",
           210: "#161514",
-          220: "#11100f"
+          220: "#11100f",
         },
         white: "#ffffff",
         product: {
@@ -51,9 +51,9 @@ export default {
           teams: "#6264a7",
           visio: "#3955a3",
           word: "#2b579a",
-          yammer: "#106ebe"
-        }
-      }
-    }
-  }
-}
+          yammer: "#106ebe",
+        },
+      },
+    },
+  },
+};

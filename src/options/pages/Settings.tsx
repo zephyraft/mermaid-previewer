@@ -4,43 +4,44 @@ import {
   AccordionItem,
   AccordionPanel,
   Subtitle2,
-  Switch
+  Switch,
+  InfoLabel,
 } from "@fluentui/react-components";
-import { InfoLabel } from "@fluentui/react-components/unstable"
-import React from "react"
+import React from "react";
 
-import { useStorage } from "@plasmohq/storage/hook"
+import { useStorage } from "@plasmohq/storage/hook";
 
 import {
   defaultDownloadSelectors,
   defaultExcludes,
   defaultMatchSelectors,
-  storageKey
-} from "~core/options"
-import ExcludeConfigTable from "~options/components/ExcludeConfig/ExcludeConfigTable"
-import ExcludeConfigToolbar from "~options/components/ExcludeConfig/ExcludeConfigToolbar"
-import SelectorConfigTable from "~options/components/SelectorConfig/SelectorConfigTable"
-import SelectorConfigToolbar from "~options/components/SelectorConfig/SelectorConfigToolbar"
+  storageKey,
+} from "~core/options";
+import ExcludeConfigTable from "~options/components/ExcludeConfig/ExcludeConfigTable";
+import ExcludeConfigToolbar from "~options/components/ExcludeConfig/ExcludeConfigToolbar";
+import SelectorConfigTable from "~options/components/SelectorConfig/SelectorConfigTable";
+import SelectorConfigToolbar from "~options/components/SelectorConfig/SelectorConfigToolbar";
 import type { ExcludeConfig, Experimental, SelectorConfig } from "~types";
 
-export default (): React.JSX.Element => {
+export default () => {
   const [customExcludeConfigs, setCustomExcludeConfigs] = useStorage<
     ExcludeConfig[]
-  >(storageKey.excludeURLs, [])
+  >(storageKey.excludeURLs, []);
 
   const [customMatchSelectors, setCustomMatchSelectors] = useStorage<
     SelectorConfig[]
-  >(storageKey.matchSelectors, [])
+  >(storageKey.matchSelectors, []);
 
   const [customDownloadSelectors, setCustomDownloadSelectors] = useStorage<
     SelectorConfig[]
-  >(storageKey.downloadSelectors, [])
+  >(storageKey.downloadSelectors, []);
 
-  const [experimental, setExperimental] = useStorage<
-    Experimental
-  >(storageKey.experimental, {
-    sandbox: false,
-  })
+  const [experimental, setExperimental] = useStorage<Experimental>(
+    storageKey.experimental,
+    {
+      sandbox: false,
+    },
+  );
 
   return (
     <div>
@@ -117,16 +118,15 @@ export default (): React.JSX.Element => {
                   });
                 }}
                 label={
-                  <InfoLabel
-                    info="Use sandbox mode to render mermaid, which has better security and style isolation, but does not support fontawesome.">
+                  <InfoLabel info="Use sandbox mode to render mermaid, which has better security and style isolation, but does not support fontawesome.">
                     Sandbox
                   </InfoLabel>
-                 }
+                }
               />
             </AccordionPanel>
           </AccordionItem>
         </Accordion>
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,11 +1,11 @@
-import { defineConfig, devices } from "@playwright/test"
-import dotenv from "dotenv"
+import { defineConfig, devices } from "@playwright/test";
+import dotenv from "dotenv";
 
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-dotenv.config()
+dotenv.config();
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -30,7 +30,7 @@ export default defineConfig({
     // baseURL: 'http://127.0.0.1:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: "on-first-retry"
+    trace: "on-first-retry",
   },
 
   /* Configure projects for major browsers */
@@ -70,10 +70,10 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         channel: "chrome",
-        permissions: ["clipboard-read", "clipboard-write"]
-      }
-    }
-  ]
+        permissions: ["clipboard-read", "clipboard-write"],
+      },
+    },
+  ],
 
   /* Run your local dev server before starting the tests */
   // webServer: {
@@ -81,4 +81,4 @@ export default defineConfig({
   //   url: 'http://127.0.0.1:3000',
   //   reuseExistingServer: !process.env.CI,
   // },
-})
+});

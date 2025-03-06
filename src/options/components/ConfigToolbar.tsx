@@ -1,28 +1,28 @@
 import {
   DialogContent,
   Toolbar,
-  ToolbarButton
-} from "@fluentui/react-components"
+  ToolbarButton,
+} from "@fluentui/react-components";
 import {
   AddRegular,
   ArrowResetFilled,
   ArrowResetRegular,
-  bundleIcon
-} from "@fluentui/react-icons"
-import React from "react"
+  bundleIcon,
+} from "@fluentui/react-icons";
+import React from "react";
 
-import SimpleDialog from "./SimpleDialog"
+import SimpleDialog from "./SimpleDialog";
 
-const ResetIcon = bundleIcon(ArrowResetFilled, ArrowResetRegular)
+const ResetIcon = bundleIcon(ArrowResetFilled, ArrowResetRegular);
 
 interface Props {
-  addTitle: string
-  addForm: JSX.Element
+  addTitle: string;
+  addForm: JSX.Element;
   onAdd: (
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    ev: React.FormEvent
-  ) => void
-  onReset: (setOpen: React.Dispatch<React.SetStateAction<boolean>>) => void
+    ev: React.FormEvent,
+  ) => void;
+  onReset: (setOpen: React.Dispatch<React.SetStateAction<boolean>>) => void;
 }
 
 export default ({ addTitle, addForm, onAdd, onReset }: Props): JSX.Element => {
@@ -46,5 +46,5 @@ export default ({ addTitle, addForm, onAdd, onReset }: Props): JSX.Element => {
         onConfirm={onReset}
       />
     </Toolbar>
-  )
-}
+  );
+};

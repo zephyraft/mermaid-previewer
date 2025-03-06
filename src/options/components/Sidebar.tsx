@@ -2,14 +2,14 @@ import {
   type SelectTabData,
   type SelectTabEvent,
   Tab,
-  TabList
-} from "@fluentui/react-components"
-import React from "react"
+  TabList,
+} from "@fluentui/react-components";
+import React from "react";
 
-import { RouteContext, routes } from "../routes/routes"
+import { RouteContext, routes } from "../routes/routes";
 
 export default (): JSX.Element => {
-  const { route, setRoute } = React.useContext(RouteContext)
+  const { route, setRoute } = React.useContext(RouteContext);
 
   return (
     <div className="flex-none w-60 px-1 py-3 border-r border-gray-30">
@@ -17,7 +17,7 @@ export default (): JSX.Element => {
         defaultSelectedValue={route.key}
         vertical
         onTabSelect={(event: SelectTabEvent, data: SelectTabData) => {
-          setRoute(routes[data.value as string])
+          setRoute(routes[data.value as string]);
         }}>
         {Object.entries(routes).map(([key, route], index) => (
           <Tab key={index} value={key} icon={route.icon}>
@@ -26,5 +26,5 @@ export default (): JSX.Element => {
         ))}
       </TabList>
     </div>
-  )
-}
+  );
+};

@@ -1,18 +1,18 @@
-import { getExcludeURLRegexes } from "~core/options"
+import { getExcludeURLRegexes } from "~core/options";
 
 export const isExclude = async (): Promise<boolean> => {
-  const url = window.location.href
+  const url = window.location.href;
 
   // 域名排除列表
-  const excludeURLRegexes = await getExcludeURLRegexes()
+  const excludeURLRegexes = await getExcludeURLRegexes();
 
-  let isExclude = false
+  let isExclude = false;
   for (const excludeItem of excludeURLRegexes) {
     if (new RegExp(excludeItem.regex).test(url)) {
-      isExclude = true
+      isExclude = true;
       // console.debug("domain match excludeItem", excludeItem)
-      break
+      break;
     }
   }
-  return isExclude
-}
+  return isExclude;
+};
