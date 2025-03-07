@@ -1,4 +1,4 @@
-import { Button, Input, Link, InfoLabel } from "@fluentui/react-components";
+import { Button, InfoLabel, Input, Link } from "@fluentui/react-components";
 import { GlobeRegular, OpenRegular } from "@fluentui/react-icons";
 import React from "react";
 

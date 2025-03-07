@@ -1,4 +1,4 @@
-import { type Tabs, action, runtime } from "webextension-polyfill";
+import { action, runtime, type Tabs } from "webextension-polyfill";
 
 const actionOnClicked = (_: Tabs.Tab) => {
   (async () => {

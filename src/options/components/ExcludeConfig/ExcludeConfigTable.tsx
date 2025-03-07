@@ -3,8 +3,8 @@ import React from "react";
 
 import type { ExcludeConfig } from "~types";
 
-import ConfigTable from "../ConfigTable";
 import type { Column, Row } from "../ConfigTable";
+import ConfigTable from "../ConfigTable";
 import ExcludeConfigForm from "./ExcludeConfigForm";
 
 const columns: Column[] = [

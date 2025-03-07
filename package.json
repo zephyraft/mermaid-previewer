@@ -33,9 +33,10 @@
     "@floating-ui/dom": "1.6.13",
     "@fluentui/react-components": "9.60.0",
     "@fluentui/react-icons": "2.0.279",
+    "@mermaid-js/mermaid-zenuml": "^0.2.0",
     "@plasmohq/messaging": "0.7.1",
     "@plasmohq/storage": "1.15.0",
-    "mermaid": "10.9.3",
+    "mermaid": "11.4.1",
     "plasmo": "0.90.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -58,16 +59,30 @@
   },
   "manifest": {
     "host_permissions": [
-      "https://*/*"
+      "https://*/*",
+      "file:///"
     ],
     "permissions": [
-      "downloads"
+      "downloads",
+      "activeTab",
+      "scripting"
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "mermaid/dist/mermaid.min.js"
+        ],
+        "matches": [
+          "<all_urls>"
+        ]
+      }
     ]
   },
   "pnpm": {
     "onlyBuiltDependencies": [
       "lmdb",
-      "sharp"
+      "sharp",
+      "vue-demi"
     ]
   }
 }

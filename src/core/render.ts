@@ -2,7 +2,6 @@ import { mermaidHover } from "~core/hover";
 
 import { notRenderSelector, queryContainers } from "./selectors";
 import { enableSandbox } from "~core/options";
-import { mermaid } from "~contents/previewer";
 
 /**
  * 用于保存原始mermaid code的key
@@ -13,7 +12,7 @@ export const rawDataKey: string = "data-mermaid-previewer-raw";
  * mermaid图表正则匹配
  */
 const mermaidRegex: RegExp =
-  /^\s*(graph\s+\w{2}|graph|graph\s+.|flowchart\s+\w{2}|flowchart|flowchart\s+.|sequenceDiagram|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|pie\s+showData|pie\s+title\s.+|quadrantChart|requirementDiagram|gitGraph|C4Context|C4Container|C4Component|C4Dynamic|C4Deployment|mindmap|timeline|zenuml|sankey-beta|xychart-beta|)\s*\n/gm;
+  /^\s*(graph\s+\w{2}|graph|graph\s+.|flowchart\s+\w{2}|flowchart|flowchart\s+.|sequenceDiagram|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|pie\s+showData|pie\s+title\s.+|quadrantChart|requirementDiagram|gitGraph|C4Context|C4Container|C4Component|C4Dynamic|C4Deployment|mindmap|timeline|zenuml|sankey-beta|xychart-beta|block-beta|packet-beta|kanban|architecture-beta)\s*\n/gm;
 
 /**
  * 匹配符合条件的dom
@@ -58,7 +57,10 @@ export const queryAndSaveRaw = async (
 /**
  * 渲染mermaid图
  */
-export const render = async (domList: HTMLElement[]): Promise<void> => {
+export const render = async (
+  mermaid,
+  domList: HTMLElement[],
+): Promise<void> => {
   mermaid.initialize({
     securityLevel: (await enableSandbox()) ? "sandbox" : "strict",
     startOnLoad: false,

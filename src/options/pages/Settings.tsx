@@ -3,9 +3,9 @@ import {
   AccordionHeader,
   AccordionItem,
   AccordionPanel,
+  InfoLabel,
   Subtitle2,
   Switch,
-  InfoLabel,
 } from "@fluentui/react-components";
 import React from "react";
 

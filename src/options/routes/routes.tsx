@@ -1,9 +1,9 @@
 import {
+  bundleIcon,
   DrinkCoffeeFilled,
   DrinkCoffeeRegular,
   SettingsFilled,
   SettingsRegular,
-  bundleIcon,
 } from "@fluentui/react-icons";
 import React from "react";
 

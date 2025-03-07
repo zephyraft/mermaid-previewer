@@ -1,4 +1,4 @@
-import { getMatchSelectorList } from "~core/options";
+import { getDownloadSelectorList, getMatchSelectorList } from "~core/options";
 
 /**
  * 用于判断是否已被渲染的key，由mermaid jsapi定义
@@ -19,6 +19,18 @@ export const inMatchURLs = async (): Promise<boolean> => {
   const matchSelectorList = await getMatchSelectorList();
   let inSelectors = false;
   for (const selector of matchSelectorList) {
+    if (matchURL(selector.regex)) {
+      inSelectors = true;
+      break;
+    }
+  }
+  return inSelectors;
+};
+
+export const inDownloadURLs = async (): Promise<boolean> => {
+  const downloadSelectorList = await getDownloadSelectorList();
+  let inSelectors = false;
+  for (const selector of downloadSelectorList) {
     if (matchURL(selector.regex)) {
       inSelectors = true;
       break;

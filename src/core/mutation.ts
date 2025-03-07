@@ -9,6 +9,7 @@ let mermaidPreviewerMutationObserver: MutationObserver | undefined = undefined;
  * @param mutation
  */
 const bitbucketPreviewHack = async (
+  mermaid,
   mutation: MutationRecord,
 ): Promise<void> => {
   // console.debug(`mutation=${JSON.stringify(mutation)}`)
@@ -34,7 +35,7 @@ const bitbucketPreviewHack = async (
         }
       }
       // 重新渲染
-      await render(mermaidDomList);
+      await render(mermaid, mermaidDomList);
     }
   }
 };
@@ -44,6 +45,7 @@ const bitbucketPreviewHack = async (
  * @param mutations dom改变事件
  */
 const mermaidPreviewerMutationCallback = async (
+  mermaid,
   mutations: MutationRecord[],
 ): Promise<void> => {
   // console.debug("mutation", mutations)
@@ -57,19 +59,19 @@ const mermaidPreviewerMutationCallback = async (
 
       const mermaidDomList = await queryAndSaveRaw(node);
       if (mermaidDomList.length !== 0) {
-        await render(mermaidDomList);
+        await render(mermaid, mermaidDomList);
       }
     }
 
     // 解决bitbucket预览加载问题
-    await bitbucketPreviewHack(mutation);
+    await bitbucketPreviewHack(mermaid, mutation);
   }
 };
 
 /**
  * 监听动态插入的dom，渲染其中符合条件的部分
  */
-export const watchDomMutation = async (): Promise<void> => {
+export const watchDomMutation = async (mermaid): Promise<void> => {
   // 使用长变量名，尽可能减少命名重复的可能
   if (mermaidPreviewerMutationObserver != null) {
     mermaidPreviewerMutationObserver.disconnect();
@@ -78,7 +80,7 @@ export const watchDomMutation = async (): Promise<void> => {
   const mutationObserver = async (
     mutations: MutationRecord[],
   ): Promise<void> => {
-    await mermaidPreviewerMutationCallback(mutations);
+    await mermaidPreviewerMutationCallback(mermaid, mutations);
   };
 
   // 定义observer callback

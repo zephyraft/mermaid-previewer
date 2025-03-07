@@ -37,10 +37,6 @@ export const defaultMatchSelectors: SelectorConfig[] = [
     regex: "file:\\/\\/.*.mermaid",
     selector: "body > pre",
   },
-  {
-    regex: ".*gist\\.github\\.com.*",
-    selector: "div.highlight-source-mermaid > pre.notranslate",
-  },
 ];
 
 export const defaultDownloadSelectors: SelectorConfig[] = [
@@ -51,6 +47,10 @@ export const defaultDownloadSelectors: SelectorConfig[] = [
   {
     regex: "https:\\/\\/.*gitlab\\.com.*",
     selector: "div#app",
+  },
+  {
+    regex: ".*gist\\.github\\.com.*",
+    selector: "div.highlight-source-mermaid > pre.notranslate",
   },
 ];
 

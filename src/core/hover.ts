@@ -1,7 +1,7 @@
 import {
   computePosition,
-  offset,
   type MiddlewareState,
+  offset,
 } from "@floating-ui/dom";
 
 const getExporterContainer = (): HTMLElement => {

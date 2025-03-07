@@ -12,11 +12,11 @@ import {
   TableRow,
 } from "@fluentui/react-components";
 import {
+  bundleIcon,
   DeleteFilled,
   DeleteRegular,
   EditFilled,
   EditRegular,
-  bundleIcon,
 } from "@fluentui/react-icons";
 import React from "react";
 
