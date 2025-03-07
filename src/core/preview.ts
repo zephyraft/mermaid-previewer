@@ -1,7 +1,7 @@
 import { type Mermaid } from "mermaid";
 import { queryAndSaveRaw, render } from "./render";
 import { watchDomMutation } from "./mutation";
-import zenuml from '@mermaid-js/mermaid-zenuml/dist/mermaid-zenuml.min.js';
+import zenuml from "@mermaid-js/mermaid-zenuml/dist/mermaid-zenuml.min.js";
 
 export const preview = async () => {
   console.log("previewRes");

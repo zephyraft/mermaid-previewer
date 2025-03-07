@@ -7,6 +7,7 @@ import { getDownloadSelectorList } from "~core/options";
 import { inDownloadURLs, inMatchURLs, matchURL } from "~core/selectors";
 import { mermaidHover } from "~core/hover";
 
+// noinspection JSUnusedGlobalSymbols
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"],
   css: ["fontawesome.css"],

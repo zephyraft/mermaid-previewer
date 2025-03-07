@@ -24,17 +24,18 @@ At the same time, it also provides the function of custom rule configuration.
 - Matching Selectors
   - `div.codehilite > pre` under `.*bitbucket\.org.*`
     - Support Bitbucket preview and export
-  - `body > pre` under `file:\/\/.*.mmd`
-    - Support preview and export of `.mmd` files
-  - `div.highlight-source-mermaid > pre.notranslate` under `.*gist\.github\.com.*`
-    - Support preview and export of gist comment
+  - `body > pre` under `file:\/\/.*.mmd` and `file:\/\/.*.mermaid`
+    - Support preview and export of `.mmd` and `.mermaid` files
 - Download Selectors
   - `div.mermaid-view div.mermaid` under `https:\/\/viewscreen\.githubusercontent\.com.*`
     - Support GitHub export
   - `div#app` under `https:\/\/.*gitlab\.com.*`
     - Support Gitlab export
+  - `div.highlight-source-mermaid > pre.notranslate` under `.*gist\.github\.com.*`
+    - Support Gist export
 
 ## Changelog
+- [1.5.0]  Update mermaid to version 11.4.1. Modify the injection method of mermaid. Since Gist natively supports preview, adjust preset rules to Download Selectors. Add support for zenuml, sankey-beta, xychart-beta, block-beta, packet-beta, kanban, and architecture-beta.
 - [1.4.4]  Updated mermaid version to 10.5.0. Added experimental feature sandbox mode. Added preset rules for gist comment.
 - [1.4.3]  Fix bug.
 - [1.4.2]  Update mermaid version to 10.2.3, and adapt to quadrantChart, C4, mindmap, timeline charts.

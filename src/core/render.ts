@@ -2,6 +2,7 @@ import { mermaidHover } from "~core/hover";
 
 import { notRenderSelector, queryContainers } from "./selectors";
 import { enableSandbox } from "~core/options";
+import type { Mermaid } from "mermaid";
 
 /**
  * 用于保存原始mermaid code的key
@@ -58,7 +59,7 @@ export const queryAndSaveRaw = async (
  * 渲染mermaid图
  */
 export const render = async (
-  mermaid,
+  mermaid: Mermaid,
   domList: HTMLElement[],
 ): Promise<void> => {
   mermaid.initialize({

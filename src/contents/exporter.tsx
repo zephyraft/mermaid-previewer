@@ -8,6 +8,7 @@ import { mermaidPreviewerExporterDom } from "~core/hover";
 import { rawDataKey } from "~core/render";
 import { enableSandbox } from "~core/options";
 
+// noinspection JSUnusedGlobalSymbols
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"],
   all_frames: true,
