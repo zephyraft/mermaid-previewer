@@ -66,8 +66,12 @@ export const render = async (
     securityLevel: (await enableSandbox()) ? "sandbox" : "strict",
     startOnLoad: false,
   });
-  await mermaid.run({
-    nodes: domList,
-  });
+  try {
+    await mermaid.run({
+      nodes: domList,
+    });
+  } catch (e) {
+    console.error(e);
+  }
   await mermaidHover(domList, false);
 };
