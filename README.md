@@ -35,6 +35,7 @@ At the same time, it also provides the function of custom rule configuration.
     - Support Gist export
 
 ## Changelog
+- [1.5.1]  Fix bug.(Remove zenuml support and fix the CSS style leakage caused by it)
 - [1.5.0]  Update mermaid to version 11.4.1. Modify the injection method of mermaid. Since Gist natively supports preview, adjust preset rules to Download Selectors. Add support for zenuml, sankey-beta, xychart-beta, block-beta, packet-beta, kanban, and architecture-beta.
 - [1.4.4]  Updated mermaid version to 10.5.0. Added experimental feature sandbox mode. Added preset rules for gist comment.
 - [1.4.3]  Fix bug.

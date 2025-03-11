@@ -1,7 +1,6 @@
 import { type Mermaid } from "mermaid";
 import { queryAndSaveRaw, render } from "./render";
 import { watchDomMutation } from "./mutation";
-import zenuml from "@mermaid-js/mermaid-zenuml/dist/mermaid-zenuml.min.js";
 
 export const preview = async () => {
   console.log("previewRes");
@@ -11,7 +10,6 @@ export const preview = async () => {
 
   // 禁止自动render .mermaid类的dom，避免类似github下的报错问题
   mermaid.initialize({ startOnLoad: false });
-  await mermaid.registerExternalDiagrams([zenuml]);
 
   queryAndSaveRaw(document)
     .then(async (domList) => {
