@@ -1,8 +1,10 @@
 import { getExcludeURLRegexes } from "~core/options";
 
-export const isExclude = async (): Promise<boolean> => {
-  const url = window.location.href;
+export const windowUrlExclude = async (): Promise<boolean> => {
+  return await urlExclude(window.location.href);
+};
 
+export const urlExclude = async (url: string): Promise<boolean> => {
   // 域名排除列表
   const excludeURLRegexes = await getExcludeURLRegexes();
 
