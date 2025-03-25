@@ -4,7 +4,6 @@ import type { PlasmoCSConfig } from "plasmo";
 
 import { sendToBackground } from "@plasmohq/messaging";
 
-import { mermaidPreviewerExporterDom } from "~core/hover";
 import { rawDataKey } from "~core/render";
 import { enableSandbox } from "~core/options";
 
@@ -57,7 +56,8 @@ const getSvgDataUrl = async () => {
 };
 
 const getSvgDataUrlFromIframe = () => {
-  const iframeDom = mermaidPreviewerExporterDom;
+  // @ts-ignore
+  const iframeDom = window.mermaidPreviewerExporterDom;
   if (iframeDom == null) {
     console.warn("Cannot found iframe dom.");
     return;
@@ -91,7 +91,8 @@ const getSvgDataUrlFromIframe = () => {
 };
 
 const getSvgDataUrlFromSvgDom = () => {
-  const svgDom = mermaidPreviewerExporterDom;
+  // @ts-ignore
+  const svgDom = window.mermaidPreviewerExporterDom;
   if (svgDom == null) {
     console.warn("Cannot found svg dom.");
     return;
@@ -112,7 +113,8 @@ const getSvgDataUrlFromSvgDom = () => {
 };
 
 const getMermaidRawCode = () => {
-  const svgDom = mermaidPreviewerExporterDom;
+  // @ts-ignore
+  const svgDom = window.mermaidPreviewerExporterDom;
   if (svgDom == null) {
     console.warn("Cannot found svg dom.");
     return;

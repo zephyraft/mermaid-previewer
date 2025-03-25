@@ -21,8 +21,6 @@ const exporterWidth: number = 20;
 const scrollWidth: number = 20;
 // 记录当前已添加监听事件的dom元素，避免重复监听
 const watchDomList: HTMLElement[] = [];
-// TODO 注入方式修改后， previewer定义的变量无法在exporter中获取，需要修改机制
-export let mermaidPreviewerExporterDom: HTMLElement | undefined = undefined;
 let hideTimeout: number | undefined = undefined;
 
 export const mermaidHover = async (
@@ -46,8 +44,8 @@ export const mermaidHover = async (
       };
 
       svg.onmouseenter = (_) => {
-        console.log("mouse enter svg", svg);
-        mermaidPreviewerExporterDom = svg;
+        // @ts-ignore
+        window.mermaidPreviewerExporterDom = svg;
         computePosition(svg, exporterContainer, {
           placement: "right",
           middleware: [
