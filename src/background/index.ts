@@ -12,6 +12,7 @@ const actionOnClicked = (_: Tabs.Tab) => {
 };
 
 const inject = async (tabId: number, _: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab) => {
+  console.log("trigger inject", tabId, tab.url);
   if (await urlExclude(tab.url)) {
     return;
   }
@@ -26,6 +27,7 @@ const inject = async (tabId: number, _: Tabs.OnUpdatedChangeInfoType, tab: Tabs.
       // 注入的mermaid.js通过package.json中的web_accessible_resources配置，plasmo会自动从node_modules中查找并打包到扩展中
       files: ["mermaid.min.js"]
     });
+    console.log("injected mermaid.min.js", tabId, tab.url);
   }
 
   // 只有在匹配的规则内才执行
@@ -40,6 +42,7 @@ const inject = async (tabId: number, _: Tabs.OnUpdatedChangeInfoType, tab: Tabs.
         files: [previewerJsUrl.substring(previewerJsUrl.lastIndexOf("/") + 1, previewerJsUrl.lastIndexOf(".")) + ".js"]
       }
     );
+    console.log("injected previewer.js", tabId, tab.url);
 
     // 注入fontawesome css
     await scripting.insertCSS({
@@ -49,6 +52,7 @@ const inject = async (tabId: number, _: Tabs.OnUpdatedChangeInfoType, tab: Tabs.
       },
       files: [fontawesomeCssUrl.substring(fontawesomeCssUrl.lastIndexOf("/") + 1, fontawesomeCssUrl.lastIndexOf(".")) + ".css"]
     });
+    console.log("injected fontawesome.css", tabId, tab.url);
   }
 };
 

@@ -41,7 +41,7 @@ export const defaultMatchSelectors: SelectorConfig[] = [
 
 export const defaultDownloadSelectors: SelectorConfig[] = [
   {
-    regex: "https:\\/\\/viewscreen\\.githubusercontent\\.com.*",
+    regex: "https:\\/\\/github\\.com.*",
     selector: "div.mermaid-view div.mermaid",
   },
   {
@@ -49,8 +49,8 @@ export const defaultDownloadSelectors: SelectorConfig[] = [
     selector: "div#app",
   },
   {
-    regex: ".*gist\\.github\\.com.*",
-    selector: "div.highlight-source-mermaid > pre.notranslate",
+    regex: "https:\\/\\/gist\\.github\\.com.*",
+    selector: "div.mermaid-view div.mermaid",
   },
 ];
 
