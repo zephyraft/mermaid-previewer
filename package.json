@@ -1,7 +1,7 @@
 {
   "name": "mermaid-previewer",
   "displayName": "Mermaid Previewer",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Preview and export mermaid.",
   "type": "module",
   "scripts": {
