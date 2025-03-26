@@ -3,9 +3,9 @@ import {
   AccordionHeader,
   AccordionItem,
   AccordionPanel,
-  InfoLabel,
+  InfoLabel, Link,
   Subtitle2,
-  Switch,
+  Switch
 } from "@fluentui/react-components";
 import React from "react";
 
@@ -22,6 +22,7 @@ import ExcludeConfigToolbar from "~options/components/ExcludeConfig/ExcludeConfi
 import SelectorConfigTable from "~options/components/SelectorConfig/SelectorConfigTable";
 import SelectorConfigToolbar from "~options/components/SelectorConfig/SelectorConfigToolbar";
 import type { ExcludeConfig, Experimental, SelectorConfig } from "~types";
+import { OpenRegular } from "@fluentui/react-icons";
 
 export default () => {
   const [customExcludeConfigs, setCustomExcludeConfigs] = useStorage<
@@ -69,7 +70,19 @@ export default () => {
         <Subtitle2 className={"flex-grow leading-10 pl-2"}>
           <InfoLabel
             size="large"
-            info="Matching selector is used to configure the dom element where mermaid is located under each url, so that the extension can correctly identify and render mermaid">
+            info={<>
+              <div>
+                Matching selector is used to configure the dom element where mermaid is located under each url, so that the extension can correctly identify and render mermaid.
+              </div>
+              <div>
+                <Link
+                  href="https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions#allow_access"
+                  target="_blank">
+                  local file permissions
+                  <OpenRegular />
+                </Link>
+              </div>
+            </>}>
             Matching Selectors
           </InfoLabel>
         </Subtitle2>
