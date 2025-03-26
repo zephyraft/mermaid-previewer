@@ -17,9 +17,9 @@ export default ({ title, setCustomConfigs }: Props): JSX.Element => {
       addForm={<SelectorConfigForm />}
       onAdd={(setOpen, ev) => {
         const formData = new FormData(ev.target as HTMLFormElement); // 通过event.target获取表单元素，然后使用FormData获取表单数据
-        const regex = formData.get("regex")!.toString();
+        const match = formData.get("match")!.toString();
         const selector = formData.get("selector")!.toString();
-        setCustomConfigs((regexes) => regexes.concat({ regex, selector }));
+        setCustomConfigs((configs) => configs.concat({ match, selector }));
         setOpen(false);
       }}
       onReset={(setOpen) => {

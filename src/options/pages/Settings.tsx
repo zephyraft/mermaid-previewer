@@ -54,7 +54,7 @@ export default () => {
           </InfoLabel>
         </Subtitle2>
         <ExcludeConfigToolbar
-          title={"Add Exclude URL Regex"}
+          title={"Add Exclude Match Patterns"}
           setCustomConfigs={setCustomExcludeConfigs}
         />
       </div>

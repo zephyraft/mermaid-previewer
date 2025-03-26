@@ -11,8 +11,8 @@ import SelectorConfigForm from "./SelectorConfigForm";
 
 const columns: Column[] = [
   {
-    key: "regex",
-    label: "Regex",
+    key: "match",
+    label: "Match Patterns",
   },
   {
     key: "selector",
@@ -29,8 +29,8 @@ const getRow = (
     key: index,
     cells: [
       {
-        key: "regex",
-        value: matchSelector.regex,
+        key: "match",
+        value: matchSelector.match,
         icon: <GlobeRegular />,
         default: isDefault,
       },
@@ -46,7 +46,7 @@ const getRow = (
 
 const getMatchSelector = (row: Row): SelectorConfig => {
   return {
-    regex: row.cells.find((it) => it.key === "regex")!.value,
+    match: row.cells.find((it) => it.key === "match")!.value,
     selector: row.cells.find((it) => it.key === "selector")!.value,
   };
 };
@@ -91,14 +91,14 @@ export default ({
       )}
       onEdit={(row, setOpen, ev) => {
         const formData = new FormData(ev.target as HTMLFormElement); // 通过event.target获取表单元素，然后使用FormData获取表单数据
-        const regex = formData.get("regex")!.toString();
+        const match = formData.get("match")!.toString();
         const selector = formData.get("selector")!.toString();
         setCustomConfigs((selectors) => {
           const index = getIndexOfCustomSelectors(row, defaultConfigs);
           const pre = selectors.slice(0, index);
           const suf = selectors.slice(index + 1);
           setOpen(false);
-          return pre.concat({ regex, selector }, suf);
+          return pre.concat({ match, selector }, suf);
         });
       }}
       onDelete={(row, setOpen) => {

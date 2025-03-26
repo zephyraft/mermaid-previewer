@@ -1,9 +1,9 @@
 export interface ExcludeConfig {
-  regex: string;
+  match: string;
 }
 
 export interface SelectorConfig {
-  regex: string;
+  match: string;
   selector: string;
 }
 

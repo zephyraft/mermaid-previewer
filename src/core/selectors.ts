@@ -1,4 +1,4 @@
-import { getDownloadSelectorList, getMatchSelectorList } from "~core/options";
+import { getMatchSelectorList } from "~core/options";
 
 /**
  * 用于判断是否已被渲染的key，由mermaid jsapi定义
@@ -7,66 +7,6 @@ import { getDownloadSelectorList, getMatchSelectorList } from "~core/options";
 export const HadRenderedKey = "data-processed";
 export const HadRenderedSelector = `[${HadRenderedKey}=true]`;
 
-const getURL = (): string => {
-  return window.location.href;
-};
-
-export const matchWindowURL = (regex: string): boolean => {
-  return new RegExp(regex).test(getURL());
-};
-
-const matchURL = (regex: string, url: string): boolean => {
-  return new RegExp(regex).test(url);
-};
-
-export const windowUrlInMatchURLs = async (): Promise<boolean> => {
-  const matchSelectorList = await getMatchSelectorList();
-  let inSelectors = false;
-  for (const selector of matchSelectorList) {
-    if (matchWindowURL(selector.regex)) {
-      inSelectors = true;
-      break;
-    }
-  }
-  return inSelectors;
-};
-
-export const urlInMatchURLs = async (url: string): Promise<boolean> => {
-  const matchSelectorList = await getMatchSelectorList();
-  let inSelectors = false;
-  for (const selector of matchSelectorList) {
-    if (matchURL(selector.regex, url)) {
-      inSelectors = true;
-      break;
-    }
-  }
-  return inSelectors;
-};
-
-export const windowUrlInDownloadURLs = async (): Promise<boolean> => {
-  const downloadSelectorList = await getDownloadSelectorList();
-  let inSelectors = false;
-  for (const selector of downloadSelectorList) {
-    if (matchWindowURL(selector.regex)) {
-      inSelectors = true;
-      break;
-    }
-  }
-  return inSelectors;
-};
-
-export const urlInDownloadURLs = async (url: string): Promise<boolean> => {
-  const downloadSelectorList = await getDownloadSelectorList();
-  let inSelectors = false;
-  for (const selector of downloadSelectorList) {
-    if (matchURL(selector.regex, url)) {
-      inSelectors = true;
-      break;
-    }
-  }
-  return inSelectors;
-};
-
 const getNotSelector = (selector: string): string => {
   return `:not(${selector})`;
 };
@@ -74,7 +14,6 @@ const getNotSelector = (selector: string): string => {
 const mapSelector = async (selectorSuffix: string): Promise<string> => {
   const matchSelectorList = await getMatchSelectorList();
   return matchSelectorList
-    .filter((it) => matchWindowURL(it.regex))
     .map((it) => it.selector)
     .map((selector) => {
       selector += selectorSuffix;

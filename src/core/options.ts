@@ -1,4 +1,4 @@
-import { Storage } from "@plasmohq/storage";
+import { Storage, type StorageCallbackMap, type StorageWatchCallback } from "@plasmohq/storage";
 
 import type { ExcludeConfig, Experimental, SelectorConfig } from "~types";
 
@@ -14,50 +14,40 @@ export const storageKey = {
 
 export const defaultExcludes: ExcludeConfig[] = [
   {
-    regex: "https:\\/\\/.*chrome\\.google\\.com.*",
-  },
-  {
-    regex: "chrome:\\/\\/.*",
-  },
-  {
-    regex: "chrome-extension:\\/\\/.*",
-  },
+    match: "https://chromewebstore.google.com/*"
+  }
 ];
 
 export const defaultMatchSelectors: SelectorConfig[] = [
   {
-    regex: ".*bitbucket\\.org.*",
+    match: "*://bitbucket.org/*",
     selector: "div.codehilite > pre",
   },
   {
-    regex: "file:\\/\\/.*.mmd",
+    match: "file:///*.mmd",
     selector: "body > pre",
   },
   {
-    regex: "file:\\/\\/.*.mermaid",
+    match: "file:///*.mermaid",
     selector: "body > pre",
   },
 ];
 
 export const defaultDownloadSelectors: SelectorConfig[] = [
   {
-    regex: "https:\\/\\/github\\.com.*",
+    match: "https://viewscreen.githubusercontent.com/markdown/mermaid*",
     selector: "div.mermaid-view div.mermaid",
   },
   {
-    regex: "https:\\/\\/.*gitlab\\.com.*",
+    match: "https://gitlab.com/-/sandbox/mermaid",
     selector: "div#app",
-  },
-  {
-    regex: "https:\\/\\/gist\\.github\\.com.*",
-    selector: "div.mermaid-view div.mermaid",
-  },
+  }
 ];
 
 /**
  * 获取排除域名列表，包含默认配置和自定义配置
  */
-export const getExcludeURLRegexes = async (): Promise<ExcludeConfig[]> => {
+export const getExcludeURL = async (): Promise<ExcludeConfig[]> => {
   const customExcludes =
     (await storage.get<ExcludeConfig[] | undefined>(storageKey.excludeURLs)) ??
     [];
@@ -92,3 +82,12 @@ export const enableSandbox = async (): Promise<boolean> => {
   >(storageKey.experimental);
   return experimental ? experimental.sandbox : false;
 };
+
+export const watchStorage = (callback: StorageWatchCallback) => {
+  const callbackMap: StorageCallbackMap = {}
+  for (let key in storageKey) {
+    callbackMap[storageKey[key]] = callback;
+    console.log("watching", storageKey[key]);
+  }
+  storage.watch(callbackMap);
+}

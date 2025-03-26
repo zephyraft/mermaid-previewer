@@ -1,8 +1,8 @@
-import { action, runtime, scripting, tabs, type Tabs } from "webextension-polyfill";
-import { urlExclude } from "~core/filter";
-import { urlInMatchURLs, urlInDownloadURLs } from "~core/selectors";
+import { action, runtime, scripting, type Tabs } from "webextension-polyfill";
 import previewerJsUrl from "url:~/previewer.ts";
+import downloaderJsUrl from "url:~/downloader.ts";
 import fontawesomeCssUrl from "url:~/resources/fontawesome.css";
+import { getDownloadSelectorList, getExcludeURL, getMatchSelectorList, watchStorage } from "~core/options";
 
 const actionOnClicked = (_: Tabs.Tab) => {
   (async () => {
@@ -11,57 +11,73 @@ const actionOnClicked = (_: Tabs.Tab) => {
   })();
 };
 
-const inject = async (tabId: number, _: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab) => {
-  console.log("trigger inject", tabId, tab.url);
-  if (await urlExclude(tab.url)) {
-    return;
-  }
-
-  if (await urlInMatchURLs(tab.url)) {
-    // 只有在匹配的规则内才注入mermaid
-    await scripting.executeScript({
-      target: {
-        tabId,
-        allFrames: true
-      },
-      // 注入的mermaid.js通过package.json中的web_accessible_resources配置，plasmo会自动从node_modules中查找并打包到扩展中
-      files: ["mermaid.min.js"]
-    });
-    console.log("injected mermaid.min.js", tabId, tab.url);
-  }
-
-  // 只有在匹配的规则内才执行
-  if (await urlInMatchURLs(tab.url) || await urlInDownloadURLs(tab.url)) {
-    // 注入内容脚本实现mermaid渲染
-    await scripting.executeScript(
-      {
-        target: {
-          tabId,
-          allFrames: true
-        },
-        files: [previewerJsUrl.substring(previewerJsUrl.lastIndexOf("/") + 1, previewerJsUrl.lastIndexOf(".")) + ".js"]
-      }
-    );
-    console.log("injected previewer.js", tabId, tab.url);
-
-    // 注入fontawesome css
-    await scripting.insertCSS({
-      target: {
-        tabId,
-        allFrames: true
-      },
-      files: [fontawesomeCssUrl.substring(fontawesomeCssUrl.lastIndexOf("/") + 1, fontawesomeCssUrl.lastIndexOf(".")) + ".css"]
-    });
-    console.log("injected fontawesome.css", tabId, tab.url);
-  }
-};
-
 if (!action.onClicked.hasListener(actionOnClicked)) {
   // 扩展图标点击事件
   action.onClicked.addListener(actionOnClicked);
 }
 
-if (!tabs.onUpdated.hasListener(inject)) {
-  // 注入内容脚本
-  tabs.onUpdated.addListener(inject);
+registerContentScripts().then(_ => {});
+
+// 编程式动态声明
+watchStorage(async () => {
+  await unregisterAllDynamicContentScripts();
+
+  await registerContentScripts();
+});
+
+async function registerContentScripts() {
+  const excludeConfigs = await getExcludeURL();
+  const matchSelectors = await getMatchSelectorList();
+  const downloadSelectors = await getDownloadSelectorList();
+
+  const excludeMatches = excludeConfigs.flatMap(config => config.match !== undefined ? [config.match] : []);
+  const matches = matchSelectors.flatMap(config => config.match !== undefined ? [config.match] : []);
+  const downloadMatches = downloadSelectors.flatMap(config => config.match !== undefined ? [config.match] : []);
+
+  console.log(excludeMatches, matches, downloadMatches);
+
+  await scripting.registerContentScripts([
+    {
+      id: "mermaid",
+      allFrames: true,
+      excludeMatches,
+      matches,
+      js: ["mermaid.min.js"]
+    }
+  ]);
+
+  await scripting.registerContentScripts([
+    {
+      id: "previewer",
+      allFrames: true,
+      excludeMatches,
+      matches,
+      js: [previewerJsUrl.substring(previewerJsUrl.lastIndexOf("/") + 1, previewerJsUrl.lastIndexOf(".")) + ".js"],
+      css: [fontawesomeCssUrl.substring(fontawesomeCssUrl.lastIndexOf("/") + 1, fontawesomeCssUrl.lastIndexOf(".")) + ".css"]
+    }
+  ]);
+
+  await scripting.registerContentScripts([
+    {
+      id: "downloader",
+      allFrames: true,
+      excludeMatches,
+      matches: downloadMatches,
+      js: [downloaderJsUrl.substring(downloaderJsUrl.lastIndexOf("/") + 1, downloaderJsUrl.lastIndexOf(".")) + ".js"],
+    }
+  ]);
+}
+
+async function unregisterAllDynamicContentScripts() {
+  try {
+    const scripts = await scripting.getRegisteredContentScripts();
+    const scriptIds = scripts.map(script => script.id);
+    return scripting.unregisterContentScripts({ ids: scriptIds });
+  } catch (error) {
+    const message = [
+      "An unexpected error occurred while",
+      "unregistering dynamic content scripts.",
+    ].join(" ");
+    throw new Error(message, {cause : error});
+  }
 }

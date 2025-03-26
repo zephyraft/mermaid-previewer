@@ -12,7 +12,7 @@ interface Props {
 
 export default ({
   defaultValue = {
-    regex: ".*example\\.com.*",
+    match: "https://example.com/*",
   },
 }: Props): JSX.Element => {
   const inputRef = React.createRef<HTMLInputElement>();
@@ -21,25 +21,25 @@ export default ({
     <>
       <InfoLabel
         required
-        htmlFor={"regex-input"}
+        htmlFor={"match-input"}
         info={
           <Link
-            href="https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression"
+            href="https://developer.chrome.com/docs/extensions/develop/concepts/match-patterns"
             target="_blank">
-            Regular Expressions
+            Match Patterns
             <OpenRegular />
           </Link>
         }>
-        Regex
+        Match Patterns
       </InfoLabel>
       <Input
         ref={inputRef}
         required
         type="text"
-        id={"regex-input"}
-        name={"regex"}
-        placeholder={defaultValue.regex}
-        defaultValue={defaultValue.regex}
+        id={"match-input"}
+        name={"match"}
+        placeholder={defaultValue.match}
+        defaultValue={defaultValue.match}
         contentBefore={<GlobeRegular />}
         contentAfter={
           <Button

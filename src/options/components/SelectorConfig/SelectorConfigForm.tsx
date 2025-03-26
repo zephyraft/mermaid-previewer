@@ -16,44 +16,44 @@ interface Props {
 
 export default ({
   defaultValue = {
-    regex: ".*example\\.com.*",
+    match: "https://example.com/*",
     selector: "pre > code",
   },
 }: Props): JSX.Element => {
-  const regexInputRef = React.createRef<HTMLInputElement>();
+  const matchInputRef = React.createRef<HTMLInputElement>();
   const selectorInputRef = React.createRef<HTMLInputElement>();
 
   return (
     <>
       <InfoLabel
         required
-        htmlFor={"regex-input"}
+        htmlFor={"match-input"}
         info={
           <Link
-            href="https://developer.mozilla.org/en-US/docs/Glossary/Regular_expression"
+            href="https://developer.chrome.com/docs/extensions/develop/concepts/match-patterns"
             target="_blank">
-            Regular Expressions
+            Match Patterns
             <OpenRegular />
           </Link>
         }>
-        Regex
+        Match Patterns
       </InfoLabel>
       <Input
-        ref={regexInputRef}
+        ref={matchInputRef}
         required
         type="text"
-        id={"regex-input"}
-        name={"regex"}
-        placeholder={defaultValue.regex}
-        defaultValue={defaultValue.regex}
+        id={"match-input"}
+        name={"match"}
+        placeholder={defaultValue.match}
+        defaultValue={defaultValue.match}
         contentBefore={<GlobeRegular />}
         contentAfter={
           <Button
             icon={<Close />}
             appearance={"transparent"}
             onClick={() => {
-              regexInputRef.current!.value = "";
-              regexInputRef.current?.focus();
+              matchInputRef.current!.value = "";
+              matchInputRef.current?.focus();
             }}
           />
         }
