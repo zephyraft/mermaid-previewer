@@ -1,11 +1,19 @@
+import { useEffect, useState } from "react";
 import { DocumentCopyFilled } from "@fluentui/react-icons";
 import cssText from "data-text:./style.css";
 import type { PlasmoCSConfig } from "plasmo";
+import type { Mermaid } from "mermaid";
 
 import { sendToBackground } from "@plasmohq/messaging";
 
-import { rawDataKey } from "~core/render";
-import { enableSandbox } from "~core/options";
+import { rawDataKey, rerenderAll } from "~core/render";
+import {
+  cycleTheme,
+  enableSandbox,
+  getThemeSetting,
+  setThemeSetting,
+} from "~core/options";
+import type { ThemeSetting } from "~types";
 
 // noinspection JSUnusedGlobalSymbols
 export const config: PlasmoCSConfig = {
@@ -128,6 +136,32 @@ const unescapeHTML = (str) => {
 };
 
 const ExportButton = () => {
+  const [theme, setTheme] = useState<ThemeSetting>("auto");
+
+  useEffect(() => {
+    getThemeSetting().then((saved) => setTheme(saved));
+  }, []);
+
+  const themeIcon =
+    theme === "light" ? "☀︎" : theme === "dark" ? "☾" : "A";
+  const themeTitle =
+    theme === "light"
+      ? "Mermaid theme: Light · Click for Dark"
+      : theme === "dark"
+        ? "Mermaid theme: Dark · Click for Auto"
+        : "Mermaid theme: Auto (follows system) · Click for Light";
+
+  const onToggleTheme = async () => {
+    const next = cycleTheme(theme);
+    await setThemeSetting(next);
+    setTheme(next);
+    // @ts-ignore
+    const mermaid = window.mermaid as Mermaid;
+    if (mermaid) {
+      await rerenderAll(mermaid);
+    }
+  };
+
   return (
     <div className={"flex flex-col gap-y-1"}>
       <button
@@ -172,6 +206,14 @@ const ExportButton = () => {
         type="button"
         className="text-xl border box-border border-gray-80 text-gray-100 bg-gray-10 hover:bg-gray-30 rounded">
         <DocumentCopyFilled width="1em" height="1em" />
+      </button>
+      <button
+        id={"theme"}
+        title={themeTitle}
+        onClick={onToggleTheme}
+        type="button"
+        className="text-xl border box-border border-gray-80 text-gray-100 bg-gray-10 hover:bg-gray-30 rounded">
+        <span aria-hidden="true">{themeIcon}</span>
       </button>
     </div>
   );

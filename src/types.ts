@@ -10,3 +10,5 @@ export interface SelectorConfig {
 export interface Experimental {
   sandbox: boolean;
 }
+
+export type ThemeSetting = "auto" | "light" | "dark";

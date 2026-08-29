@@ -1,7 +1,7 @@
 import { mermaidHover } from "~core/hover";
 
-import { notRenderSelector, queryContainers } from "./selectors";
-import { enableSandbox } from "~core/options";
+import { notRenderSelector, queryContainers, renderedSelector, HadRenderedKey } from "./selectors";
+import { enableSandbox, getEffectiveTheme } from "~core/options";
 import type { Mermaid } from "mermaid";
 
 /**
@@ -62,9 +62,15 @@ export const render = async (
   mermaid: Mermaid,
   domList: HTMLElement[],
 ): Promise<void> => {
+  const effective = await getEffectiveTheme();
+  const theme = effective === "dark" ? "dark" : "default";
+  // 让页面整体跟随当前模式：暗色/亮色（不写死颜色，由浏览器按 color-scheme 渲染）
+  document.documentElement.style.colorScheme =
+    effective === "dark" ? "dark" : "light";
   mermaid.initialize({
     securityLevel: (await enableSandbox()) ? "sandbox" : "strict",
     startOnLoad: false,
+    theme,
   });
   try {
     await mermaid.run({
@@ -74,4 +80,22 @@ export const render = async (
     console.error(e);
   }
   await mermaidHover(domList, false);
+};
+
+/**
+ * 用当前主题重新渲染页面上所有已渲染的mermaid图
+ */
+export const rerenderAll = async (mermaid: Mermaid): Promise<void> => {
+  const mermaidDomList = await queryContainers(
+    document,
+    await renderedSelector(),
+  );
+  for (const mermaidDom of mermaidDomList) {
+    const rawData = mermaidDom.getAttribute(rawDataKey);
+    if (rawData != null) {
+      mermaidDom.innerHTML = rawData;
+      mermaidDom.removeAttribute(HadRenderedKey);
+    }
+  }
+  await render(mermaid, mermaidDomList);
 };
