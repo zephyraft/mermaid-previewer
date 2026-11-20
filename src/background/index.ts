@@ -24,7 +24,11 @@ function refreshRegistration() {
       );
       const current = registered.find((script) => script.id === bootstrapId);
 
-      if (
+      if (matches.length === 0) {
+        if (current) {
+          await scripting.unregisterContentScripts({ ids: [bootstrapId] });
+        }
+      } else if (
         !current ||
         JSON.stringify([current.matches, current.excludeMatches ?? []]) !==
           JSON.stringify([matches, excludeMatches])

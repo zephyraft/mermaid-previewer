@@ -89,7 +89,7 @@ test("reads legacy sync settings and applies URL regexes and sandbox mode", asyn
     page.getByText("^https://legacy[.]example/native", { exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Experimental" }).click();
-  const sandbox = page.getByRole("switch", { name: "Sandbox" });
+  const sandbox = page.getByRole("switch", { name: /^Sandbox\b/ });
   await expect(sandbox).toBeChecked();
   await sandbox.click();
   await expect(sandbox).not.toBeChecked();
@@ -181,6 +181,117 @@ test("preserves pre-Plasmo selectors and literal URL exclusions", async ({
   await expect(page.locator(".old-diagram")).toHaveText(source);
   await page.goto("https://rules.example/private?stage=1");
   await expect(page.locator(".old-diagram svg")).toBeVisible();
+});
+
+test("applies individual rule switches on reload and unregisters when no include rules remain", async ({
+  context,
+  page,
+  optionsURL,
+  extensionWorker,
+}) => {
+  const origin = "https://rule-toggles.example";
+  const pattern = `${origin}/*`;
+  const blocked = `${origin}/blocked`;
+  const getMatches = () =>
+    extensionWorker.evaluate(async () => {
+      const [script] = await chrome.scripting.getRegisteredContentScripts({
+        ids: ["mermaid-previewer"],
+      });
+      return script?.matches ?? [];
+    });
+
+  await context.route(`${origin}/**`, (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: `<pre id="preview">${source}</pre><div id="native">${nativeSVG}</div>`,
+    }),
+  );
+  await extensionWorker.evaluate(
+    ({ pattern, blocked }) =>
+      chrome.storage.sync.set({
+        "mermaid-previewer.excludeURLs": JSON.stringify([{ match: blocked }]),
+        "mermaid-previewer.matchSelectors": JSON.stringify([
+          { regex: "^https://rule-toggles[.]example/", selector: "#preview" },
+        ]),
+        "mermaid-previewer.downloadSelectors": JSON.stringify([
+          { match: pattern, selector: "#native" },
+        ]),
+      }),
+    { pattern, blocked },
+  );
+  await expect.poll(getMatches).toContain("https://*/*");
+
+  const settings = await context.newPage();
+  await settings.goto(optionsURL);
+  const exclusion = settings
+    .getByRole("row")
+    .filter({ hasText: blocked })
+    .getByRole("switch");
+  const preview = settings
+    .getByRole("row")
+    .filter({ hasText: "#preview" })
+    .getByRole("switch");
+  const download = settings
+    .getByRole("row")
+    .filter({ hasText: "#native" })
+    .getByRole("switch");
+  for (const toggle of [exclusion, preview, download]) {
+    await expect(toggle).toBeChecked();
+  }
+
+  const rendered = page.locator("#preview svg");
+  const downloadButton = page.getByRole("button", { name: "Download SVG" });
+  await page.goto(`${origin}/public`);
+  await expect(rendered).toBeVisible();
+  await page.goto(blocked);
+  await expect(page.locator("#preview")).toHaveText(source);
+
+  await exclusion.click();
+  await expect(exclusion).not.toBeChecked();
+  await expect
+    .poll(async () =>
+      extensionWorker.evaluate(async () => {
+        const [script] = await chrome.scripting.getRegisteredContentScripts({
+          ids: ["mermaid-previewer"],
+        });
+        return script?.excludeMatches;
+      }),
+    )
+    .not.toContain(blocked);
+  await page.reload();
+  await expect(rendered).toBeVisible();
+
+  await preview.click();
+  await expect(preview).not.toBeChecked();
+  await expect.poll(getMatches).toContain(pattern);
+  await expect.poll(getMatches).not.toContain("https://*/*");
+  await page.reload();
+  await expect(page.locator("#preview")).toHaveText(source);
+  await page.locator("#native svg").hover();
+  await expect(downloadButton).toBeVisible();
+
+  await download.click();
+  await expect(download).not.toBeChecked();
+  await expect.poll(getMatches).not.toContain(pattern);
+  await page.reload();
+  await page.locator("#native svg").hover();
+  await expect(page.locator("#mermaid-previewer-exporter")).toHaveCount(0);
+
+  const tables = settings.getByRole("table");
+  const includeSwitches = tables.nth(1).or(tables.nth(2)).getByRole("switch");
+  for (const toggle of await includeSwitches.all()) {
+    if (await toggle.isChecked()) {
+      await toggle.click();
+      await expect(toggle).not.toBeChecked();
+    }
+  }
+  await expect.poll(getMatches).toEqual([]);
+
+  await preview.click();
+  await expect(preview).toBeChecked();
+  await expect.poll(getMatches).toContain("https://*/*");
+  await page.reload();
+  await expect(rendered).toBeVisible();
 });
 
 test("renders diagrams inserted by a Bitbucket editor preview", async ({

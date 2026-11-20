@@ -3,6 +3,7 @@ import {
   AccordionHeader,
   AccordionItem,
   AccordionPanel,
+  Caption1,
   Field,
   InfoLabel,
   Link,
@@ -12,7 +13,7 @@ import {
 } from "@fluentui/react-components";
 import React from "react";
 
-import { useSetting } from "../use-setting";
+import { bindRuleSettings, useSetting } from "../use-setting";
 
 import {
   defaultDownloadSelectors,
@@ -27,14 +28,17 @@ import SelectorConfigToolbar from "~options/components/SelectorConfig/SelectorCo
 import { OpenRegular } from "@fluentui/react-icons";
 
 export default () => {
-  const [customExcludeConfigs, setCustomExcludeConfigs] = useSetting(
-    storageKey.excludeURLs,
+  const exclusions = bindRuleSettings(
+    defaultExcludes,
+    useSetting(storageKey.excludeURLs),
   );
-  const [customMatchSelectors, setCustomMatchSelectors] = useSetting(
-    storageKey.matchSelectors,
+  const previews = bindRuleSettings(
+    defaultMatchSelectors,
+    useSetting(storageKey.matchSelectors),
   );
-  const [customDownloadSelectors, setCustomDownloadSelectors] = useSetting(
-    storageKey.downloadSelectors,
+  const exports = bindRuleSettings(
+    defaultDownloadSelectors,
+    useSetting(storageKey.downloadSelectors),
   );
   const [renderer, setRenderer] = useSetting(storageKey.renderer);
   const [experimental, setExperimental] = useSetting(storageKey.experimental);
@@ -55,6 +59,9 @@ export default () => {
           <option value="mermaid">Mermaid.js (official)</option>
         </Select>
       </Field>
+      <Caption1 as="p" className="mb-2 pl-2">
+        Reload open pages to apply rule changes.
+      </Caption1>
       <div className={"flex"}>
         <Subtitle2 className={"grow leading-10 pl-2"}>
           <InfoLabel
@@ -65,15 +72,12 @@ export default () => {
         </Subtitle2>
         <ExcludeConfigToolbar
           title="Add exclusion"
-          setCustomConfigs={setCustomExcludeConfigs}
+          setCustomConfigs={exclusions.setCustomConfigs}
+          resetRules={exclusions.resetRules}
         />
       </div>
       <div>
-        <ExcludeConfigTable
-          defaultConfigs={defaultExcludes}
-          customConfigs={customExcludeConfigs}
-          setCustomConfigs={setCustomExcludeConfigs}
-        />
+        <ExcludeConfigTable {...exclusions} />
       </div>
       <div className={"flex pt-10"}>
         <Subtitle2 className={"grow leading-10 pl-2"}>
@@ -100,15 +104,12 @@ export default () => {
         </Subtitle2>
         <SelectorConfigToolbar
           title="Add preview rule"
-          setCustomConfigs={setCustomMatchSelectors}
+          setCustomConfigs={previews.setCustomConfigs}
+          resetRules={previews.resetRules}
         />
       </div>
       <div>
-        <SelectorConfigTable
-          defaultConfigs={defaultMatchSelectors}
-          customConfigs={customMatchSelectors}
-          setCustomConfigs={setCustomMatchSelectors}
-        />
+        <SelectorConfigTable {...previews} />
       </div>
       <div className={"flex pt-10"}>
         <Subtitle2 className={"grow leading-10 pl-2"}>
@@ -120,15 +121,12 @@ export default () => {
         </Subtitle2>
         <SelectorConfigToolbar
           title="Add export rule"
-          setCustomConfigs={setCustomDownloadSelectors}
+          setCustomConfigs={exports.setCustomConfigs}
+          resetRules={exports.resetRules}
         />
       </div>
       <div>
-        <SelectorConfigTable
-          defaultConfigs={defaultDownloadSelectors}
-          customConfigs={customDownloadSelectors}
-          setCustomConfigs={setCustomDownloadSelectors}
-        />
+        <SelectorConfigTable {...exports} />
       </div>
       <div className={"mt-8"}>
         <Accordion collapsible>

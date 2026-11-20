@@ -92,7 +92,7 @@ test("配置预览规则", async ({ page, optionsURL }) => {
     },
     onAddFormSubmit: async (rowLocator) => {
       await expect(rowLocator.last().locator("td").first()).toHaveText(pattern);
-      await expect(rowLocator.last().locator("td").last()).toHaveText(selector);
+      await expect(rowLocator.last().locator("td").nth(1)).toHaveText(selector);
     },
     onEditFormOpen: async () => {
       await expect(getMatchInputLocator(page)).toHaveValue(pattern);
@@ -104,7 +104,7 @@ test("配置预览规则", async ({ page, optionsURL }) => {
       await expect(rowLocator.last().locator("td").first()).toHaveText(
         newPattern,
       );
-      await expect(rowLocator.last().locator("td").last()).toHaveText(
+      await expect(rowLocator.last().locator("td").nth(1)).toHaveText(
         newSelector,
       );
     },
@@ -130,7 +130,7 @@ test("配置 SVG 导出规则", async ({ page, optionsURL }) => {
     },
     onAddFormSubmit: async (rowLocator) => {
       await expect(rowLocator.last().locator("td").first()).toHaveText(pattern);
-      await expect(rowLocator.last().locator("td").last()).toHaveText(selector);
+      await expect(rowLocator.last().locator("td").nth(1)).toHaveText(selector);
     },
     onEditFormOpen: async () => {
       await expect(getMatchInputLocator(page)).toHaveValue(pattern);
@@ -142,7 +142,7 @@ test("配置 SVG 导出规则", async ({ page, optionsURL }) => {
       await expect(rowLocator.last().locator("td").first()).toHaveText(
         newPattern,
       );
-      await expect(rowLocator.last().locator("td").last()).toHaveText(
+      await expect(rowLocator.last().locator("td").nth(1)).toHaveText(
         newSelector,
       );
     },
@@ -215,7 +215,10 @@ async function resetDialogVisible(page: Page) {
 }
 
 async function confirmDelete(page: Page) {
-  await page.getByRole("dialog").getByRole("button", { name: "Delete" }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Delete" })
+    .click();
 }
 
 async function confirmReset(page: Page) {
@@ -261,6 +264,16 @@ async function testConfig({
   await expect(rowLocator).toHaveCount(beforeAddCount + 2);
   await onAddFormSubmit(rowLocator);
 
+  const lastSwitch = rowLocator.last().getByRole("switch");
+  const firstCustomSwitch = rowLocator.nth(beforeAddCount).getByRole("switch");
+  await expect(lastSwitch).toBeChecked();
+  await lastSwitch.click();
+  await expect(lastSwitch).not.toBeChecked();
+  await expect(firstCustomSwitch).toBeChecked();
+  await page.reload();
+  await expect(rowLocator).toHaveCount(beforeAddCount + 2);
+  await expect(lastSwitch).not.toBeChecked();
+
   // 编辑最后一个
   await clickEditButton(rowLocator);
   await expect(page.getByText(editFormTitle)).toBeVisible();
@@ -268,6 +281,7 @@ async function testConfig({
   await submitForm(page, "Save");
   await expect(rowLocator).toHaveCount(beforeAddCount + 2);
   await onEditFormSubmit(rowLocator);
+  await expect(lastSwitch).not.toBeChecked();
 
   // 删除最后一个
   await clickDeleteButton(rowLocator);
@@ -276,8 +290,13 @@ async function testConfig({
   await expect(rowLocator).toHaveCount(beforeAddCount + 1);
 
   // 重置
+  const defaultSwitch = rowLocator.first().getByRole("switch");
+  await expect(defaultSwitch).toBeChecked();
+  await defaultSwitch.click();
+  await expect(defaultSwitch).not.toBeChecked();
   await clickResetButton(page, index);
   await resetDialogVisible(page);
   await confirmReset(page);
   await expect(rowLocator).toHaveCount(beforeAddCount);
+  await expect(defaultSwitch).toBeChecked();
 }

@@ -27,18 +27,18 @@ const getRow = (
 ): Row => {
   return {
     key: index,
+    isDefault,
+    enabled: matchSelector.enabled !== false,
     cells: [
       {
         key: "match",
         value: matchSelector.match ?? matchSelector.regex,
         icon: <GlobeRegular />,
-        default: isDefault,
       },
       {
         key: "selector",
         value: matchSelector.selector,
         icon: <DocumentTableSearchRegular />,
-        default: isDefault,
       },
     ],
   };
@@ -48,6 +48,7 @@ interface TableProps {
   defaultConfigs: SelectorConfig[];
   customConfigs: SelectorConfig[];
   setCustomConfigs: React.Dispatch<React.SetStateAction<SelectorConfig[]>>;
+  setRuleEnabled: (index: number, enabled: boolean) => void;
 }
 
 const getIndexOfCustomSelectors = (
@@ -61,6 +62,7 @@ export default ({
   defaultConfigs,
   customConfigs,
   setCustomConfigs,
+  setRuleEnabled,
 }: TableProps): React.JSX.Element => {
   const rows: Row[] = React.useMemo(
     () =>
@@ -78,6 +80,7 @@ export default ({
     <ConfigTable
       columns={columns}
       rows={rows}
+      onEnabledChange={setRuleEnabled}
       editFormTitle="Edit rule"
       editForm={(row) => (
         <SelectorConfigForm
@@ -95,8 +98,8 @@ export default ({
           selectors.map((config, i) =>
             i === index
               ? config.regex !== undefined
-                ? { regex: match, selector }
-                : { match, selector }
+                ? { ...config, regex: match, selector }
+                : { ...config, match, selector }
               : config,
           ),
         );

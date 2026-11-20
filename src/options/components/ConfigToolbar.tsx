@@ -25,7 +25,12 @@ interface Props {
   onReset: (setOpen: React.Dispatch<React.SetStateAction<boolean>>) => void;
 }
 
-export default ({ addTitle, addForm, onAdd, onReset }: Props): React.JSX.Element => {
+export default ({
+  addTitle,
+  addForm,
+  onAdd,
+  onReset,
+}: Props): React.JSX.Element => {
   return (
     <Toolbar className={"gap-x-1"}>
       <SimpleDialog
@@ -52,7 +57,8 @@ export default ({ addTitle, addForm, onAdd, onReset }: Props): React.JSX.Element
         dialogTitle="Reset to defaults?"
         dialogContent={
           <DialogContent>
-            This will remove the custom rules in this section.
+            This will re-enable the built-in rules and remove the custom rules
+            in this section.
           </DialogContent>
         }
         dialogConfirm="Reset"

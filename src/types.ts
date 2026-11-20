@@ -1,5 +1,6 @@
-export type ExcludeConfig =
-  { match: string; regex?: never } | { regex: string; match?: never };
+export type ExcludeConfig = (
+  { match: string; regex?: never } | { regex: string; match?: never }
+) & { enabled?: boolean };
 
 export type SelectorConfig = ExcludeConfig & { selector: string };
 

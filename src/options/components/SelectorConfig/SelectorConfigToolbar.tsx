@@ -8,9 +8,14 @@ import SelectorConfigForm from "./SelectorConfigForm";
 interface Props {
   title: string;
   setCustomConfigs: React.Dispatch<React.SetStateAction<SelectorConfig[]>>;
+  resetRules: () => void;
 }
 
-export default ({ title, setCustomConfigs }: Props): React.JSX.Element => {
+export default ({
+  title,
+  setCustomConfigs,
+  resetRules,
+}: Props): React.JSX.Element => {
   return (
     <ConfigToolbar
       addTitle={title}
@@ -23,7 +28,7 @@ export default ({ title, setCustomConfigs }: Props): React.JSX.Element => {
         setOpen(false);
       }}
       onReset={(setOpen) => {
-        setCustomConfigs([]);
+        resetRules();
         setOpen(false);
       }}
     />

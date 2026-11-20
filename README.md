@@ -20,7 +20,9 @@ flowchart LR
 - **Preview rules** find Mermaid source in page elements. The built-in rules cover Mermaid code blocks in Bitbucket Markdown and local `.md` files, as well as standalone `.mmd` and `.mermaid` files. To preview local files, turn on **Allow access to file URLs** on the extension's details page in Chrome, then open the file in Chrome. The rest of a local Markdown document stays in its original text format.
 - **SVG export rules** find diagrams rendered by the website. The built-in rules cover GitHub, Gists, and GitLab. Diagrams rendered by the extension already have SVG export controls.
 
-You can add your own rules in Settings. Existing rules and the Sandbox preference carry over from previous releases, including rules saved as URL regular expressions and older URL exclusions and CSS selectors.
+Use the **Enabled** switch in Settings to turn individual built-in or custom rules on or off. Existing rules are enabled by default after an upgrade. Reload open pages to apply rule changes. **Reset to defaults** re-enables the built-in rules and removes custom rules in that section.
+
+Existing rules and the Sandbox preference carry over from previous releases, including rules saved as URL regular expressions and older URL exclusions and CSS selectors.
 
 ## Rendering engine
 

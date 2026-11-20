@@ -21,12 +21,13 @@ const getRow = (
 ): Row => {
   return {
     key: index,
+    isDefault,
+    enabled: excludeURL.enabled !== false,
     cells: [
       {
         key: "match",
         value: excludeURL.match ?? excludeURL.regex,
         icon: <GlobeRegular />,
-        default: isDefault,
       },
     ],
   };
@@ -35,6 +36,7 @@ interface TableProps {
   defaultConfigs: ExcludeConfig[];
   customConfigs: ExcludeConfig[];
   setCustomConfigs: React.Dispatch<React.SetStateAction<ExcludeConfig[]>>;
+  setRuleEnabled: (index: number, enabled: boolean) => void;
 }
 
 const getIndexOfCustomConfigs = (
@@ -48,6 +50,7 @@ export default ({
   defaultConfigs,
   customConfigs,
   setCustomConfigs,
+  setRuleEnabled,
 }: TableProps): React.JSX.Element => {
   const rows: Row[] = React.useMemo(
     () =>
@@ -65,6 +68,7 @@ export default ({
     <ConfigTable
       columns={columns}
       rows={rows}
+      onEnabledChange={setRuleEnabled}
       editFormTitle="Edit exclusion"
       editForm={(row) => (
         <ExcludeConfigForm
@@ -81,8 +85,8 @@ export default ({
           configs.map((config, i) =>
             i === index
               ? config.regex !== undefined
-                ? { regex: match }
-                : { match }
+                ? { ...config, regex: match }
+                : { ...config, match }
               : config,
           ),
         );
