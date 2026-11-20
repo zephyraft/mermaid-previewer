@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import type { Page } from "@playwright/test";
 
 import {
@@ -42,13 +43,6 @@ gitGraph
    commit
 `;
 
-const MMD_CODE = `flowchart TD
-    B["fab:fa-twitter for peace"]
-    B-->C[fa:fa-ban forbidden]
-    B-->D(fa:fa-spinner)
-    B-->E(A fa:fa-camera-retro perhaps?)
-`;
-
 test("bitbucket复制", async ({ page, context }) => {
   await mockBitbucketMarkdown(context);
   await page.goto(BITBUCKET_URL);
@@ -72,7 +66,7 @@ test("mmd复制", async ({ page }) => {
   const copyButtonLocator = getCopyButtonLocator(floatButtonContainerLocator);
   await prepareCopy(page, 0);
   await copyButtonLocator.click();
-  await checkClipboard(page, MMD_CODE);
+  await checkClipboard(page, await readFile(new URL(MMD_URL), "utf8"));
 });
 
 async function checkClipboard(page: Page, expectValue: string) {

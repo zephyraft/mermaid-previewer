@@ -35,6 +35,9 @@ dist/
 
 # Generated extension assets
 /public/mermaid.min.js
+/public/pele.global.js
+/public/fontawesome-icons.json
+/public/fontawesome-license.txt
 /public/fontawesome.css
 /.plasmo
 

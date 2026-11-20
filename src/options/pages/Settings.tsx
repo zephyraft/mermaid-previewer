@@ -3,8 +3,10 @@ import {
   AccordionHeader,
   AccordionItem,
   AccordionPanel,
+  Field,
   InfoLabel,
   Link,
+  Select,
   Subtitle2,
   Switch,
 } from "@fluentui/react-components";
@@ -34,10 +36,25 @@ export default () => {
   const [customDownloadSelectors, setCustomDownloadSelectors] = useSetting(
     storageKey.downloadSelectors,
   );
+  const [renderer, setRenderer] = useSetting(storageKey.renderer);
   const [experimental, setExperimental] = useSetting(storageKey.experimental);
 
   return (
     <div>
+      <Field
+        className="mb-8 w-full max-w-80"
+        label="Rendering engine"
+        hint="Reload open pages to apply the change. Sandbox mode uses Mermaid.js.">
+        <Select
+          value={renderer}
+          onChange={(_, { value }) => {
+            if (value === "pele" || value === "mermaid")
+              void setRenderer(value);
+          }}>
+          <option value="pele">Pele (default)</option>
+          <option value="mermaid">Mermaid.js (official)</option>
+        </Select>
+      </Field>
       <div className={"flex"}>
         <Subtitle2 className={"grow leading-10 pl-2"}>
           <InfoLabel
@@ -127,7 +144,7 @@ export default () => {
                   });
                 }}
                 label={
-                  <InfoLabel info="Use sandbox mode to render mermaid, which has better security and style isolation, but does not support fontawesome.">
+                  <InfoLabel info="Render diagrams in a Mermaid.js sandboxed iframe. Font Awesome is unavailable in this mode.">
                     Sandbox
                   </InfoLabel>
                 }

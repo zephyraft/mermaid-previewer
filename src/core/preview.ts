@@ -1,12 +1,8 @@
-import type { Mermaid } from "mermaid";
-
 import { createExporter } from "./exporter";
 import { readRules, readSetting, storageKey } from "./options";
-import { diagramSource, findMermaid, renderMermaid } from "./render";
+import { createDiagramRenderer, diagramSource, findMermaid } from "./render";
 import { selectRules } from "./rules";
 import type { SelectorConfig } from "~types";
-
-type MermaidWindow = Window & { mermaid?: Mermaid };
 
 function findContainers(rules: SelectorConfig[]) {
   const containers = new Set<HTMLElement>();
@@ -23,17 +19,17 @@ function findContainers(rules: SelectorConfig[]) {
 }
 
 export async function observeDiagrams(signal: AbortSignal) {
-  const candidate = (window as MermaidWindow).mermaid;
-  // Elements named "mermaid" can also appear as properties on window.
-  const mermaid =
-    typeof candidate?.initialize === "function" &&
-    typeof candidate.run === "function"
-      ? candidate
-      : undefined;
-  mermaid?.initialize({ startOnLoad: false });
   const rules = selectRules(await readRules(), location.href);
   if (signal.aborted || (!rules.preview.length && !rules.download.length))
     return;
+
+  const render = rules.preview.length
+    ? createDiagramRenderer(
+        await readSetting(storageKey.renderer),
+        (await readSetting(storageKey.experimental)).sandbox,
+      )
+    : undefined;
+  if (signal.aborted) return;
 
   const attachExporter = createExporter(signal);
   let queued = false;
@@ -58,7 +54,7 @@ export async function observeDiagrams(signal: AbortSignal) {
     try {
       while (queued && !signal.aborted) {
         queued = false;
-        if (mermaid && rules.preview.length) {
+        if (render) {
           const containers = findContainers(rules.preview);
           if (restorePreview) {
             restorePreview = false;
@@ -72,9 +68,7 @@ export async function observeDiagrams(signal: AbortSignal) {
           }
           const diagrams = containers.filter(findMermaid);
           if (diagrams.length) {
-            const { sandbox } = await readSetting(storageKey.experimental);
-            if (signal.aborted) return;
-            await renderMermaid(mermaid, diagrams, sandbox);
+            await render(diagrams, signal).catch(console.error);
             if (signal.aborted) return;
           }
           containers.forEach(attachPreviewExporter);
@@ -95,7 +89,7 @@ export async function observeDiagrams(signal: AbortSignal) {
       if (!(target instanceof HTMLElement)) continue;
 
       // Mermaid renders batches sequentially. Enable export as each diagram appears.
-      if (mermaid) attachPreviewExporter(target);
+      if (render) attachPreviewExporter(target);
 
       // Exiting Bitbucket's Markdown editor restores the source view.
       if (

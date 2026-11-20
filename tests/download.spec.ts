@@ -39,6 +39,9 @@ test("bitbucket下载", async ({ page, context, downloadDir }) => {
 test("mmd下载", async ({ page, downloadDir }) => {
   await page.goto(MMD_URL);
   await page.waitForLoadState();
+  await page.evaluate(() =>
+    document.body.style.setProperty("--pele-surface", "#ff00aa"),
+  );
   const floatButtonContainerLocator = getFloatButtonContainerLocator(page);
   const downloadButtonLocator = getDownloadButtonLocator(
     floatButtonContainerLocator,
@@ -51,9 +54,10 @@ test("mmd下载", async ({ page, downloadDir }) => {
   await downloadButtonLocator.click();
   await checkDownloadFile(downloadDir);
   const [download] = completedDownloads(downloadDir);
-  expect(fs.readFileSync(path.join(downloadDir, download), "utf8")).toContain(
-    "data:font/woff2;base64,",
-  );
+  const svg = fs.readFileSync(path.join(downloadDir, download), "utf8");
+  expect(svg).toContain('data-font-awesome="true"');
+  expect(svg).toContain("Font Awesome Free icons by Fonticons, Inc.");
+  expect(svg).toContain("--pele-surface: #ff00aa");
 });
 
 test("gitlab下载", async ({ context, page, downloadDir }) => {

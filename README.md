@@ -22,6 +22,10 @@ At the same time, it also provides the function of custom rule configuration.
 - SVG export supports diagrams rendered by the extension, GitHub and Gist Mermaid frames, and the GitLab Mermaid sandbox.
 - The settings page supports custom exclusion, preview, and export rules. Existing rules and the sandbox preference are read from Chrome sync storage. Rules saved as URL regular expressions before 1.5.2 are still recognized, along with custom URL exclusions and CSS selectors from pre-Plasmo versions.
 
+## Rendering engine
+
+Pele is the default for local previews. Choose **Rendering engine → Mermaid.js (official)** in Settings and reload the page to switch. The extension uses Mermaid.js for the existing Sandbox mode and for diagrams that require Mermaid-specific configuration or that Pele cannot render. Native diagram downloads use the website's rendered SVG.
+
 ## Development
 
 Use Node.js 26.13.1 LTS and pnpm 12.22.0. Run `pnpm install`, then use `pnpm dev` to load the extension in Chrome. `pnpm build` writes an unpacked extension to `dist/chrome`. `pnpm package` writes `dist/mermaid-previewer-chrome.zip`.

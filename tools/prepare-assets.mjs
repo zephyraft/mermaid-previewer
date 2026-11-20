@@ -24,10 +24,49 @@ const fontUrls = new Map(
   ),
 );
 
+const fontAwesomeMetadata = JSON.parse(
+  await readFile(
+    new URL("metadata/icon-families.json", fontAwesomeRoot),
+    "utf8",
+  ),
+);
+const icons = {};
+const aliases = {};
+for (const [name, icon] of Object.entries(fontAwesomeMetadata)) {
+  for (const { family, style } of icon.familyStylesByLicense.free) {
+    if (family !== "classic") continue;
+    const svg = icon.svgs.classic?.[style]?.raw;
+    if (svg) {
+      icons[`${style}:${name}`] = svg;
+      for (const alias of icon.aliases?.names ?? []) {
+        aliases[`${style}:${alias}`] = name;
+      }
+    }
+  }
+}
+
+const mermaid = await readFile(
+  projectFile("node_modules/mermaid/dist/mermaid.min.js"),
+  "utf8",
+);
+
 await Promise.all([
-  copyFile(
-    projectFile("node_modules/mermaid/dist/mermaid.min.js"),
+  // Disable Mermaid's window load handler before the injected script yields.
+  writeFile(
     projectFile("public/mermaid.min.js"),
+    mermaid + "\n;globalThis.mermaid.startOnLoad = false;\n",
+  ),
+  copyFile(
+    projectFile("node_modules/pele/dist/pele.global.js"),
+    projectFile("public/pele.global.js"),
+  ),
+  copyFile(
+    new URL("LICENSE.txt", fontAwesomeRoot),
+    projectFile("public/fontawesome-license.txt"),
+  ),
+  writeFile(
+    projectFile("public/fontawesome-icons.json"),
+    JSON.stringify({ icons, aliases }),
   ),
   writeFile(
     projectFile("public/fontawesome.css"),

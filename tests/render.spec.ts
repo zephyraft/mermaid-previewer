@@ -28,5 +28,8 @@ test("font-awesome", async ({ page }) => {
   await page.goto(MMD_URL);
   await page.waitForLoadState();
   const mermaidSVGLocator = getMermaidSVGLocator(page);
-  await expect(mermaidSVGLocator.locator("i.fab").first()).toBeVisible();
+  await expect(mermaidSVGLocator).toHaveClass(/\bpele\b/);
+  await expect(mermaidSVGLocator.locator("svg[data-font-awesome]")).toHaveCount(
+    4,
+  );
 });

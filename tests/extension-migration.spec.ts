@@ -211,3 +211,68 @@ test("renders diagrams inserted by a Bitbucket editor preview", async ({
   await editor.evaluate((element) => element.replaceChildren());
   await expect(page.locator(".codehilite > pre > svg")).toHaveCount(1);
 });
+
+test("uses Pele by default and switches renderers for already open pages on reload", async ({
+  context,
+  page,
+  optionsURL,
+  extensionWorker,
+}) => {
+  const url = "https://bitbucket.org/renderer-test";
+  await context.route(url, (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: `<div class="codehilite"><pre>${source}</pre></div>`,
+    }),
+  );
+
+  await page.goto(url);
+  await expect(page.locator(".codehilite pre > svg.pele")).toBeVisible();
+
+  const settings = await context.newPage();
+  await settings.goto(optionsURL);
+  const renderer = settings.getByRole("combobox", { name: "Rendering engine" });
+  await expect(renderer).toHaveValue("pele");
+  for (const engine of ["mermaid", "pele"] as const) {
+    await renderer.selectOption(engine);
+    await expect
+      .poll(() =>
+        extensionWorker.evaluate(async () => {
+          const key = "mermaid-previewer.renderer";
+          return (await chrome.storage.sync.get(key))[key];
+        }),
+      )
+      .toBe(JSON.stringify(engine));
+    await settings.reload();
+    await expect(renderer).toHaveValue(engine);
+    await page.reload();
+    await expect(
+      page.locator(
+        `.codehilite pre > svg${engine === "pele" ? ".pele" : ":not(.pele)"}`,
+      ),
+    ).toBeVisible();
+  }
+});
+
+test("keeps Mermaid-specific settings when a Pele page has mixed diagrams", async ({
+  context,
+  page,
+}) => {
+  const url = "https://bitbucket.org/renderer-fallback";
+  await context.route(url, (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: `<div class="codehilite">
+        <pre id="default-diagram">${source}</pre>
+        <pre id="custom-theme">---
+config:
+  theme: dark
+---
+${source}</pre>
+      </div>`,
+    }),
+  );
+  await page.goto(url);
+  await expect(page.locator("#default-diagram > svg.pele")).toBeVisible();
+  await expect(page.locator("#custom-theme > svg:not(.pele)")).toBeVisible();
+});

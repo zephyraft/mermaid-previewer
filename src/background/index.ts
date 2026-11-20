@@ -1,6 +1,7 @@
 import { getRegistrationMatches, selectRules } from "~core/rules";
 import { readRules, ruleStorageKeys } from "~core/options";
-import type { ExtensionMessage } from "~types";
+import type { ExtensionMessage, Renderer } from "~types";
+import { resolveFontAwesome } from "./font-awesome";
 
 const { action, downloads, runtime, scripting, storage } = chrome;
 const bootstrapId = "mermaid-previewer";
@@ -63,32 +64,40 @@ storage.onChanged.addListener((changes, area) => {
 });
 refreshRegistration();
 
-async function activatePreview(sender: chrome.runtime.MessageSender) {
-  if (
-    sender.tab?.id === undefined ||
-    sender.frameId === undefined ||
-    !sender.url
-  )
-    return;
-
-  const { preview, download } = selectRules(await readRules(), sender.url);
-  if (!preview.length && !download.length) return;
-
-  const target = {
+function injectionTarget(sender: chrome.runtime.MessageSender) {
+  if (sender.tab?.id === undefined || sender.frameId === undefined) return;
+  return {
     tabId: sender.tab.id,
     ...(sender.documentId
       ? { documentIds: [sender.documentId] }
       : { frameIds: [sender.frameId] }),
   };
-  if (preview.length) {
-    await scripting.insertCSS({ target, files: ["fontawesome.css"] });
-    await scripting.executeScript({
-      target,
-      files: ["mermaid.min.js", "scripts/site.js"],
-    });
-  } else {
+}
+
+async function activatePreview(sender: chrome.runtime.MessageSender) {
+  const target = injectionTarget(sender);
+  if (!target || !sender.url) return;
+
+  const { preview, download } = selectRules(await readRules(), sender.url);
+  if (preview.length || download.length) {
     await scripting.executeScript({ target, files: ["scripts/site.js"] });
   }
+}
+
+async function loadRenderer(
+  sender: chrome.runtime.MessageSender,
+  renderer: Renderer,
+) {
+  const target = injectionTarget(sender);
+  if (!target) throw new Error("Missing diagram frame");
+
+  if (renderer === "mermaid") {
+    await scripting.insertCSS({ target, files: ["fontawesome.css"] });
+  }
+  await scripting.executeScript({
+    target,
+    files: [renderer === "pele" ? "pele.global.js" : "mermaid.min.js"],
+  });
 }
 
 let fontAwesomeCSS: Promise<string> | undefined;
@@ -123,6 +132,17 @@ runtime.onMessage.addListener((request: ExtensionMessage, sender, respond) => {
   if (request?.type === "activate-preview") {
     operation = activatePreview(sender);
   } else if (
+    request?.type === "load-renderer" &&
+    (request.renderer === "pele" || request.renderer === "mermaid")
+  ) {
+    operation = loadRenderer(sender, request.renderer);
+  } else if (
+    request?.type === "resolve-font-awesome" &&
+    Array.isArray(request.names) &&
+    request.names.every((name) => typeof name === "string")
+  ) {
+    operation = resolveFontAwesome(request.names);
+  } else if (
     request?.type === "download-svg" &&
     typeof request.svg === "string" &&
     request.svg.startsWith("<svg")
@@ -132,7 +152,7 @@ runtime.onMessage.addListener((request: ExtensionMessage, sender, respond) => {
     return;
   }
   void operation
-    .then(() => respond({ ok: true }))
+    .then((data) => respond({ ok: true, data }))
     .catch((error) => {
       console.error(error);
       respond({ ok: false });

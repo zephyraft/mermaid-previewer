@@ -19,7 +19,7 @@ function OptionsIndex() {
         <div className="flex h-[calc(100vh-4rem)]">
           <RouteContext.Provider value={{ route, setRoute }}>
             <Sidebar />
-            <div className="grow p-3">{route.page}</div>
+            <div className="min-w-0 grow overflow-auto p-3">{route.page}</div>
           </RouteContext.Provider>
         </div>
       </div>

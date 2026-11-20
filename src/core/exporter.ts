@@ -21,12 +21,38 @@ function getSVG(target: Element): SVGSVGElement | null {
     .querySelector("svg");
 }
 
+function serializeSVG(svg: SVGSVGElement) {
+  const serializer = new XMLSerializer();
+  const markup = serializer.serializeToString(svg);
+  if (!svg.classList.contains("pele")) return markup;
+
+  const copy = svg.cloneNode(true) as SVGSVGElement;
+  const styles = getComputedStyle(svg);
+  const variables = new Set(
+    [...markup.matchAll(/var\(\s*(--pele-[a-z0-9-]+)/gi)].map(
+      ([, variable]) => variable,
+    ),
+  );
+  for (const variable of variables) {
+    const value = styles.getPropertyValue(variable).trim();
+    if (value) copy.style.setProperty(variable, value);
+  }
+  if (copy.querySelector("svg[data-font-awesome]")) {
+    copy.prepend(
+      document.createComment(
+        "Font Awesome Free icons by Fonticons, Inc. Embedded under CC BY 4.0. https://fontawesome.com/license/free",
+      ),
+    );
+  }
+  return serializer.serializeToString(copy);
+}
+
 async function download(target: Element) {
   const svg = getSVG(target);
   if (!svg) return;
   const message: ExtensionMessage = {
     type: "download-svg",
-    svg: new XMLSerializer().serializeToString(svg),
+    svg: serializeSVG(svg),
     fontAwesome: !!svg.querySelector('i[class*="fa"]'),
   };
   const response = await chrome.runtime.sendMessage(message);

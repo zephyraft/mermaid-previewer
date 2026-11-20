@@ -1,10 +1,16 @@
-import type { ExcludeConfig, Experimental, SelectorConfig } from "~types";
+import type {
+  ExcludeConfig,
+  Experimental,
+  Renderer,
+  SelectorConfig,
+} from "~types";
 
 export const storageKey = {
   excludeURLs: "mermaid-previewer.excludeURLs",
   matchSelectors: "mermaid-previewer.matchSelectors",
   downloadSelectors: "mermaid-previewer.downloadSelectors",
   experimental: "mermaid-previewer.experimental",
+  renderer: "mermaid-previewer.renderer",
 } as const;
 
 type Settings = {
@@ -12,6 +18,7 @@ type Settings = {
   [storageKey.matchSelectors]: SelectorConfig[];
   [storageKey.downloadSelectors]: SelectorConfig[];
   [storageKey.experimental]: Experimental;
+  [storageKey.renderer]: Renderer;
 };
 
 const legacyKey: Partial<Record<keyof Settings, string>> = {
@@ -50,6 +57,7 @@ const defaults: Settings = {
   [storageKey.matchSelectors]: [],
   [storageKey.downloadSelectors]: [],
   [storageKey.experimental]: { sandbox: false },
+  [storageKey.renderer]: "pele",
 };
 
 export function decodeSetting<K extends keyof Settings>(
@@ -63,6 +71,10 @@ export function decodeSetting<K extends keyof Settings>(
       console.warn(`Invalid Mermaid Previewer setting ${key}`, error);
       return defaults[key];
     }
+  }
+
+  if (key === storageKey.renderer) {
+    return (value === "mermaid" ? "mermaid" : "pele") as Settings[K];
   }
 
   if (key === storageKey.experimental) {
