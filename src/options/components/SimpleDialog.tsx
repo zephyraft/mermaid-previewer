@@ -10,16 +10,16 @@ import {
 import React from "react";
 
 interface SecondConfirmButtonProps {
-  trigger: JSX.Element;
+  trigger: React.JSX.Element;
   onConfirm: (
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
     ev: React.FormEvent,
   ) => void;
   onClose?: () => void;
-  dialogTitle: string | JSX.Element;
-  dialogContent?: string | JSX.Element;
-  dialogConfirm: string | JSX.Element;
-  dialogCancel?: string | JSX.Element;
+  dialogTitle: string | React.JSX.Element;
+  dialogContent?: string | React.JSX.Element;
+  dialogConfirm: string | React.JSX.Element;
+  dialogCancel?: string | React.JSX.Element;
 }
 
 export default ({
@@ -30,7 +30,7 @@ export default ({
   dialogContent,
   dialogConfirm,
   dialogCancel = "Cancel",
-}: SecondConfirmButtonProps): JSX.Element => {
+}: SecondConfirmButtonProps): React.JSX.Element => {
   const [open, setOpen] = React.useState(false);
 
   const handleSubmit = (ev: React.FormEvent) => {

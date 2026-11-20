@@ -13,88 +13,72 @@ const packageContent = fs.readFileSync(packagePath, "utf-8");
 const packageJson = JSON.parse(packageContent);
 
 const version = packageJson.version;
-test("配置页正常加载", async ({ page, extensionId }) => {
-  await gotoOptionPage(page, extensionId);
+test("配置页正常加载", async ({ page, optionsURL }) => {
+  await gotoOptionPage(page, optionsURL);
   await expect(page.locator("body")).toContainText("Mermaid Previewer");
+  await expect(page.getByText(`v${version}`, { exact: true })).toBeVisible();
   await expect(page.locator("body")).toContainText("Exclude URL");
   await expect(page.locator("body")).toContainText("Matching Selectors");
   await expect(page.locator("body")).toContainText("Download Selectors");
 });
 
-test("外链正常跳转", async ({ context, page, extensionId }) => {
-  await gotoOptionPage(page, extensionId);
-
-  // 点击链接前等待新页面
-  const storePagePromise = context.waitForEvent("page");
-  await page.getByText("Mermaid Previewer", { exact: true }).click();
-  const storePage = await storePagePromise;
-  await expect(storePage).toHaveURL(
-    "https://chromewebstore.google.com/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl",
-  );
-
-  const releasePagePromise = context.waitForEvent("page");
-  await page.getByText(`v${version}`, { exact: true }).click();
-  const releasePage = await releasePagePromise;
-  await expect(releasePage).toHaveURL(
-    "https://github.com/zephyraft/mermaid-previewer/releases",
-  );
-
-  const githubPagePromise = context.waitForEvent("page");
-  await page
-    .locator("a[role='button']", { has: page.locator("span > svg") })
-    .click();
-  const githubPage = await githubPagePromise;
-  await expect(githubPage).toHaveURL(
-    "https://github.com/zephyraft/mermaid-previewer",
-  );
+test("外链指向对应页面", async ({ page, optionsURL }) => {
+  await gotoOptionPage(page, optionsURL);
+  for (const target of [
+    "https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl",
+    "https://www.github.com/zephyraft/mermaid-previewer/releases",
+    "https://www.github.com/zephyraft/mermaid-previewer",
+  ]) {
+    const link = page.locator(`a[href="${target}"]`);
+    await expect(link).toBeVisible();
+    await expect(link).toHaveAttribute("target", "_blank");
+  }
 });
 
-test("打赏页显示和跳转外链正常", async ({ context, page, extensionId }) => {
-  await gotoOptionPage(page, extensionId);
+test("打赏页显示二维码及外链", async ({ page, optionsURL }) => {
+  await gotoOptionPage(page, optionsURL);
   await page.locator("button[value='Coffee']").click();
   await expect(page.locator(`img[src='${buyMeACoffeeQRCode}']`)).toBeVisible();
 
-  const coffeePagePromise = context.waitForEvent("page");
-  await page
-    .locator("a[role='button']", { hasText: "buy me a coffee" })
-    .click();
-  const coffeePage = await coffeePagePromise;
-  await expect(coffeePage).toHaveURL("https://buymeacoffee.com/zephyraft");
+  const target = "https://www.buymeacoffee.com/zephyraft";
+  const link = page.locator(`a[href="${target}"]`);
+  await expect(link).toHaveText("buy me a coffee");
+  await expect(link).toHaveAttribute("target", "_blank");
 });
 
-test("配置ExcludeURL", async ({ page, extensionId }) => {
-  await gotoOptionPage(page, extensionId);
+test("配置ExcludeURL", async ({ page, optionsURL }) => {
+  await gotoOptionPage(page, optionsURL);
 
-  const regex = ".*example1\\.com.*";
-  const newRegex = ".*example\\.com.*";
+  const pattern = "https://example1.com/*";
+  const newPattern = "https://example.com/*";
 
   await testConfig({
     page,
     index: 0,
-    addFormTitle: "Add Exclude URL Regex",
-    editFormTitle: "Edit Exclude URL Regex",
+    addFormTitle: "Add Exclude Match Patterns",
+    editFormTitle: "Edit Exclude Match Patterns",
     onAddFormOpen: async () => {
-      await getRegexInputLocator(page).fill(regex);
+      await getMatchInputLocator(page).fill(pattern);
     },
     onAddFormSubmit: async (rowLocator) => {
-      await expect(rowLocator.last()).toHaveText(regex);
+      await expect(rowLocator.last()).toHaveText(pattern);
     },
     onEditFormOpen: async () => {
-      await expect(getRegexInputLocator(page)).toHaveValue(regex);
-      await getRegexInputLocator(page).fill(newRegex);
+      await expect(getMatchInputLocator(page)).toHaveValue(pattern);
+      await getMatchInputLocator(page).fill(newPattern);
     },
     onEditFormSubmit: async (rowLocator) => {
-      await expect(rowLocator.last()).toHaveText(newRegex);
+      await expect(rowLocator.last()).toHaveText(newPattern);
     },
   });
 });
 
-test("配置Matching Selectors", async ({ page, extensionId }) => {
-  await gotoOptionPage(page, extensionId);
+test("配置Matching Selectors", async ({ page, optionsURL }) => {
+  await gotoOptionPage(page, optionsURL);
 
-  const regex = ".*example1\\.com.*";
+  const pattern = "https://example1.com/*";
   const selector = "pre > code.test";
-  const newRegex = ".*example\\.com.*";
+  const newPattern = "https://example.com/*";
   const newSelector = "pre > code";
 
   await testConfig({
@@ -103,22 +87,22 @@ test("配置Matching Selectors", async ({ page, extensionId }) => {
     addFormTitle: "Add Matching Selector",
     editFormTitle: "Edit Selector",
     onAddFormOpen: async () => {
-      await getRegexInputLocator(page).fill(regex);
+      await getMatchInputLocator(page).fill(pattern);
       await getSelectorInputLocator(page).fill(selector);
     },
     onAddFormSubmit: async (rowLocator) => {
-      await expect(rowLocator.last().locator("td").first()).toHaveText(regex);
+      await expect(rowLocator.last().locator("td").first()).toHaveText(pattern);
       await expect(rowLocator.last().locator("td").last()).toHaveText(selector);
     },
     onEditFormOpen: async () => {
-      await expect(getRegexInputLocator(page)).toHaveValue(regex);
+      await expect(getMatchInputLocator(page)).toHaveValue(pattern);
       await expect(getSelectorInputLocator(page)).toHaveValue(selector);
-      await getRegexInputLocator(page).fill(newRegex);
+      await getMatchInputLocator(page).fill(newPattern);
       await getSelectorInputLocator(page).fill(newSelector);
     },
     onEditFormSubmit: async (rowLocator) => {
       await expect(rowLocator.last().locator("td").first()).toHaveText(
-        newRegex,
+        newPattern,
       );
       await expect(rowLocator.last().locator("td").last()).toHaveText(
         newSelector,
@@ -127,12 +111,12 @@ test("配置Matching Selectors", async ({ page, extensionId }) => {
   });
 });
 
-test("配置Download Selectors", async ({ page, extensionId }) => {
-  await gotoOptionPage(page, extensionId);
+test("配置Download Selectors", async ({ page, optionsURL }) => {
+  await gotoOptionPage(page, optionsURL);
 
-  const regex = ".*example1\\.com.*";
+  const pattern = "https://example1.com/*";
   const selector = "pre > code.test";
-  const newRegex = ".*example\\.com.*";
+  const newPattern = "https://example.com/*";
   const newSelector = "pre > code";
 
   await testConfig({
@@ -141,22 +125,22 @@ test("配置Download Selectors", async ({ page, extensionId }) => {
     addFormTitle: "Add Download Selector",
     editFormTitle: "Edit Selector",
     onAddFormOpen: async () => {
-      await getRegexInputLocator(page).fill(regex);
+      await getMatchInputLocator(page).fill(pattern);
       await getSelectorInputLocator(page).fill(selector);
     },
     onAddFormSubmit: async (rowLocator) => {
-      await expect(rowLocator.last().locator("td").first()).toHaveText(regex);
+      await expect(rowLocator.last().locator("td").first()).toHaveText(pattern);
       await expect(rowLocator.last().locator("td").last()).toHaveText(selector);
     },
     onEditFormOpen: async () => {
-      await expect(getRegexInputLocator(page)).toHaveValue(regex);
+      await expect(getMatchInputLocator(page)).toHaveValue(pattern);
       await expect(getSelectorInputLocator(page)).toHaveValue(selector);
-      await getRegexInputLocator(page).fill(newRegex);
+      await getMatchInputLocator(page).fill(newPattern);
       await getSelectorInputLocator(page).fill(newSelector);
     },
     onEditFormSubmit: async (rowLocator) => {
       await expect(rowLocator.last().locator("td").first()).toHaveText(
-        newRegex,
+        newPattern,
       );
       await expect(rowLocator.last().locator("td").last()).toHaveText(
         newSelector,
@@ -165,8 +149,8 @@ test("配置Download Selectors", async ({ page, extensionId }) => {
   });
 });
 
-async function gotoOptionPage(page: Page, extensionId: string) {
-  await page.goto(`chrome-extension://${extensionId}/options.html`);
+async function gotoOptionPage(page: Page, optionsURL: string) {
+  await page.goto(optionsURL);
 }
 
 function getTableLocator(page: Page, index: number) {
@@ -177,8 +161,8 @@ function getRowLocator(tableLocator: Locator) {
   return tableLocator.locator("tbody tr.fui-TableRow");
 }
 
-function getRegexInputLocator(page: Page) {
-  return page.locator("#regex-input");
+function getMatchInputLocator(page: Page) {
+  return page.locator("#match-input");
 }
 
 function getSelectorInputLocator(page: Page) {

@@ -17,7 +17,7 @@ const ResetIcon = bundleIcon(ArrowResetFilled, ArrowResetRegular);
 
 interface Props {
   addTitle: string;
-  addForm: JSX.Element;
+  addForm: React.JSX.Element;
   onAdd: (
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
     ev: React.FormEvent,
@@ -25,7 +25,7 @@ interface Props {
   onReset: (setOpen: React.Dispatch<React.SetStateAction<boolean>>) => void;
 }
 
-export default ({ addTitle, addForm, onAdd, onReset }: Props): JSX.Element => {
+export default ({ addTitle, addForm, onAdd, onReset }: Props): React.JSX.Element => {
   return (
     <Toolbar className={"gap-x-1"}>
       <SimpleDialog

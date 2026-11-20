@@ -17,24 +17,22 @@ At the same time, it also provides the function of custom rule configuration.
 
 ## Preset Rules
 
-- Exclude Urls
-  - `https:\/\/.*chrome\.google\.com.*`
-  - `chrome:\/\/.*`
-  - `chrome-extension:\/\/.*`
-- Matching Selectors
-  - `div.codehilite > pre` under `.*bitbucket\.org.*`
-    - Support Bitbucket preview and export
-  - `body > pre` under `file:\/\/.*.mmd` and `file:\/\/.*.mermaid`
-    - Support preview and export of `.mmd` and `.mermaid` files
-- Download Selectors
-  - `div.mermaid-view div.mermaid` under `https:\/\/viewscreen\.githubusercontent\.com.*`
-    - Support GitHub export
-  - `div#app` under `https:\/\/.*gitlab\.com.*`
-    - Support Gitlab export
-  - `div.highlight-source-mermaid > pre.notranslate` under `.*gist\.github\.com.*`
-    - Support Gist export
+- Exclusion matches `https://chromewebstore.google.com/*`.
+- Preview matches Bitbucket Markdown and local `.mmd` and `.mermaid` files. To preview local files, enable **Allow access to file URLs** in the extension's Chrome details.
+- SVG export supports diagrams rendered by the extension, GitHub and Gist Mermaid frames, and the GitLab Mermaid sandbox.
+- The settings page supports custom exclusion, preview, and export rules. Existing rules and the sandbox preference are read from Chrome sync storage. Rules saved as URL regular expressions before 1.5.2 are still recognized, along with custom URL exclusions and CSS selectors from pre-Plasmo versions.
+
+## Development
+
+Use Node.js 26.13.1 LTS and pnpm 12.22.0. Run `pnpm install`, then use `pnpm dev` to load the extension in Chrome. `pnpm build` writes an unpacked extension to `dist/chrome`. `pnpm package` writes `dist/mermaid-previewer-chrome.zip`.
+
+Run `pnpm exec playwright install chromium` once and `pnpm test` after building. If a local `.env` points to the old Plasmo build, set `PLAYWRIGHT_EXTENSION_DIR=dist/chrome`.
+
+The manual Chrome Web Store workflow uses the existing `SUBMIT_KEYS` secret and the repository variable `CWS_PUBLISHER_ID` for the Chrome Web Store API v2 publisher ID.
 
 ## Changelog
+
+- [1.5.3] Migrate to Extension.js and preserve existing settings.
 - [1.5.2]  Fix https://github.com/zephyraft/mermaid-previewer/issues/304 (Manually inject content scripts now, only effective for matching URLs)
 - [1.5.1]  Fix bug.(Remove zenuml support and fix the CSS style leakage caused by it)
 - [1.5.0]  Update mermaid to version 11.4.1. Modify the injection method of mermaid. Since Gist natively supports preview, adjust preset rules to Download Selectors. Add support for zenuml, sankey-beta, xychart-beta, block-beta, packet-beta, kanban, and architecture-beta.

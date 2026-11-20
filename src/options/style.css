@@ -1,13 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss" source(none);
+@source "./";
+
+@theme {
+    --color-gray-30: #edebe9;
+}
 
 body {
     overflow: hidden;
 }
 
 /* Add left side background color splash */
-#__plasmo > div:before {
+#options-root > div:before {
     content: '';
     position: absolute;
     top: -200px;
@@ -20,7 +23,7 @@ body {
 }
 
 /* Add right side background color splash */
-#__plasmo > div:after {
+#options-root > div:after {
     content: '';
     position: absolute;
     top: -200px;

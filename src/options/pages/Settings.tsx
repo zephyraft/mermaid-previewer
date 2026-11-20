@@ -3,13 +3,14 @@ import {
   AccordionHeader,
   AccordionItem,
   AccordionPanel,
-  InfoLabel, Link,
+  InfoLabel,
+  Link,
   Subtitle2,
-  Switch
+  Switch,
 } from "@fluentui/react-components";
 import React from "react";
 
-import { useStorage } from "@plasmohq/storage/hook";
+import { useSetting } from "../use-setting";
 
 import {
   defaultDownloadSelectors,
@@ -21,33 +22,24 @@ import ExcludeConfigTable from "~options/components/ExcludeConfig/ExcludeConfigT
 import ExcludeConfigToolbar from "~options/components/ExcludeConfig/ExcludeConfigToolbar";
 import SelectorConfigTable from "~options/components/SelectorConfig/SelectorConfigTable";
 import SelectorConfigToolbar from "~options/components/SelectorConfig/SelectorConfigToolbar";
-import type { ExcludeConfig, Experimental, SelectorConfig } from "~types";
 import { OpenRegular } from "@fluentui/react-icons";
 
 export default () => {
-  const [customExcludeConfigs, setCustomExcludeConfigs] = useStorage<
-    ExcludeConfig[]
-  >(storageKey.excludeURLs, []);
-
-  const [customMatchSelectors, setCustomMatchSelectors] = useStorage<
-    SelectorConfig[]
-  >(storageKey.matchSelectors, []);
-
-  const [customDownloadSelectors, setCustomDownloadSelectors] = useStorage<
-    SelectorConfig[]
-  >(storageKey.downloadSelectors, []);
-
-  const [experimental, setExperimental] = useStorage<Experimental>(
-    storageKey.experimental,
-    {
-      sandbox: false,
-    },
+  const [customExcludeConfigs, setCustomExcludeConfigs] = useSetting(
+    storageKey.excludeURLs,
   );
+  const [customMatchSelectors, setCustomMatchSelectors] = useSetting(
+    storageKey.matchSelectors,
+  );
+  const [customDownloadSelectors, setCustomDownloadSelectors] = useSetting(
+    storageKey.downloadSelectors,
+  );
+  const [experimental, setExperimental] = useSetting(storageKey.experimental);
 
   return (
     <div>
       <div className={"flex"}>
-        <Subtitle2 className={"flex-grow leading-10 pl-2"}>
+        <Subtitle2 className={"grow leading-10 pl-2"}>
           <InfoLabel
             size="large"
             info="The url exclusion configuration is used to disable extension script execution under specific urls">
@@ -67,22 +59,26 @@ export default () => {
         />
       </div>
       <div className={"flex pt-10"}>
-        <Subtitle2 className={"flex-grow leading-10 pl-2"}>
+        <Subtitle2 className={"grow leading-10 pl-2"}>
           <InfoLabel
             size="large"
-            info={<>
-              <div>
-                Matching selector is used to configure the dom element where mermaid is located under each url, so that the extension can correctly identify and render mermaid.
-              </div>
-              <div>
-                <Link
-                  href="https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions#allow_access"
-                  target="_blank">
-                  local file permissions
-                  <OpenRegular />
-                </Link>
-              </div>
-            </>}>
+            info={
+              <>
+                <div>
+                  Matching selector is used to configure the dom element where
+                  mermaid is located under each url, so that the extension can
+                  correctly identify and render mermaid.
+                </div>
+                <div>
+                  <Link
+                    href="https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions#allow_access"
+                    target="_blank">
+                    local file permissions
+                    <OpenRegular />
+                  </Link>
+                </div>
+              </>
+            }>
             Matching Selectors
           </InfoLabel>
         </Subtitle2>
@@ -99,7 +95,7 @@ export default () => {
         />
       </div>
       <div className={"flex pt-10"}>
-        <Subtitle2 className={"flex-grow leading-10 pl-2"}>
+        <Subtitle2 className={"grow leading-10 pl-2"}>
           <InfoLabel
             size="large"
             info="Download selector is different from matching selector. Download selector is applied to websites that natively support mermaid rendering, so that the extension can recognize the rendered mermaid for download and export">

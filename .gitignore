@@ -33,8 +33,10 @@ out/
 build/
 dist/
 
-# plasmo - https://www.plasmo.com
-.plasmo
+# Generated extension assets
+/public/mermaid.min.js
+/public/fontawesome.css
+/.plasmo
 
 # bpp - http://bpp.browser.market/
 keys.json
@@ -52,3 +54,6 @@ key.json
 /playwright/.cache/
 /playwright/.auth/
 /playwright/.download/
+
+# Extension.js local session state
+.extension-js

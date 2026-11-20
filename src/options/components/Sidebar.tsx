@@ -8,7 +8,7 @@ import React from "react";
 
 import { RouteContext, routes } from "../routes/routes";
 
-export default (): JSX.Element => {
+export default (): React.JSX.Element => {
   const { route, setRoute } = React.useContext(RouteContext);
 
   return (

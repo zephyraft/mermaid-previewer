@@ -10,7 +10,7 @@ interface Props {
   setCustomConfigs: React.Dispatch<React.SetStateAction<ExcludeConfig[]>>;
 }
 
-export default ({ title, setCustomConfigs }: Props): JSX.Element => {
+export default ({ title, setCustomConfigs }: Props): React.JSX.Element => {
   return (
     <ConfigToolbar
       addTitle={title}

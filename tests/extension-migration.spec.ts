@@ -1,0 +1,213 @@
+import { readFile, readdir } from "node:fs/promises";
+import { join } from "node:path";
+
+import { expect, test } from "./fixtures";
+
+async function completedDownloads(directory: string) {
+  return (await readdir(directory)).filter(
+    (file) => !file.endsWith(".crdownload"),
+  );
+}
+
+const source = "flowchart LR\n  A --> B";
+const nativeSVG =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="280" height="120"><rect width="280" height="120" fill="royalblue"/></svg>';
+
+test("reads legacy sync settings and applies URL regexes and sandbox mode", async ({
+  context,
+  page,
+  optionsURL,
+  extensionWorker,
+  downloadDir,
+}) => {
+  await extensionWorker.evaluate(() =>
+    chrome.storage.sync.set({
+      "mermaid-previewer.excludeURLs": JSON.stringify([
+        { regex: "^https://legacy[.]example/blocked" },
+      ]),
+      "mermaid-previewer.matchSelectors": JSON.stringify([
+        { regex: "^https://legacy[.]example/", selector: ".legacy-diagram" },
+        { match: "https://modern.example/*", selector: ".modern-diagram" },
+      ]),
+      "mermaid-previewer.downloadSelectors": JSON.stringify([
+        { regex: "^https://legacy[.]example/native", selector: "#native" },
+      ]),
+      "mermaid-previewer.experimental": JSON.stringify({ sandbox: true }),
+    }),
+  );
+  await expect
+    .poll(async () =>
+      extensionWorker.evaluate(
+        async () =>
+          (
+            await chrome.scripting.getRegisteredContentScripts({
+              ids: ["mermaid-previewer"],
+            })
+          )[0].matches,
+      ),
+    )
+    .toContain("https://*/*");
+
+  await context.route("https://legacy.example/**", (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: `<pre class="legacy-diagram">${source}</pre>`,
+    }),
+  );
+  await context.route("https://modern.example/**", (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: `<pre class="modern-diagram">${source}</pre>`,
+    }),
+  );
+  await page.goto("https://legacy.example/diagram");
+  const sandboxDiagram = page.locator(".legacy-diagram iframe");
+  await expect(sandboxDiagram).toBeVisible();
+  await page.getByRole("button", { name: "Download SVG" }).click();
+  await expect
+    .poll(async () => (await completedDownloads(downloadDir)).length)
+    .toBe(1);
+  const [download] = await completedDownloads(downloadDir);
+  await expect
+    .poll(() => readFile(join(downloadDir, download), "utf8"))
+    .toContain("<svg");
+
+  await page.goto("https://modern.example/diagram");
+  await expect(page.locator(".modern-diagram iframe")).toBeVisible();
+  await page.goto("https://legacy.example/blocked");
+  await expect(page.locator(".legacy-diagram")).toHaveText(source);
+  await expect(page.locator(".legacy-diagram iframe")).toHaveCount(0);
+
+  await page.goto(optionsURL);
+  await expect(
+    page.getByText("^https://legacy[.]example/", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("https://modern.example/*", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("^https://legacy[.]example/native", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Experimental" }).click();
+  const sandbox = page.getByRole("switch", { name: "Sandbox" });
+  await expect(sandbox).toBeChecked();
+  await sandbox.click();
+  await expect(sandbox).not.toBeChecked();
+  await expect
+    .poll(async () =>
+      extensionWorker.evaluate(
+        async () =>
+          (await chrome.storage.sync.get("mermaid-previewer.experimental"))[
+            "mermaid-previewer.experimental"
+          ],
+      ),
+    )
+    .toBe(JSON.stringify({ sandbox: false }));
+});
+
+test("exports a native diagram added to a GitHub Mermaid iframe", async ({
+  context,
+  page,
+  downloadDir,
+}) => {
+  const frameURL =
+    "https://viewscreen.githubusercontent.com/markdown/mermaid?test=1";
+  await context.route("https://github.com/**", (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: `<iframe src="${frameURL}" width="700" height="400"></iframe>`,
+    }),
+  );
+  await context.route(frameURL, (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: '<div class="mermaid-view"><div class="mermaid"></div></div>',
+    }),
+  );
+
+  await page.goto("https://github.com/local-test");
+  const frame = page.frameLocator("iframe");
+  const target = frame.locator(".mermaid");
+  await target.evaluate((element, markup) => {
+    element.innerHTML = markup;
+  }, nativeSVG);
+  await expect(frame.locator("#mermaid-previewer-exporter")).toBeAttached();
+  await target.locator("svg").hover();
+  const controls = frame.locator("#mermaid-previewer-controls");
+  await expect(controls.locator("#copy")).toBeHidden();
+  await controls.locator("#download").click();
+
+  await expect
+    .poll(async () => (await completedDownloads(downloadDir)).length)
+    .toBe(1);
+  const [download] = await completedDownloads(downloadDir);
+  await expect
+    .poll(() => readFile(join(downloadDir, download), "utf8"))
+    .toBe(nativeSVG);
+  await expect(page.locator("#mermaid-previewer-exporter")).toHaveCount(0);
+});
+
+test("preserves pre-Plasmo selectors and literal URL exclusions", async ({
+  context,
+  page,
+  extensionWorker,
+}) => {
+  await extensionWorker.evaluate(() =>
+    chrome.storage.sync.set({
+      excludeDomainList: ["rules.example/private?stage=2"],
+      matchSelectorList: [".old-diagram"],
+    }),
+  );
+  await expect
+    .poll(async () =>
+      extensionWorker.evaluate(
+        async () =>
+          (
+            await chrome.scripting.getRegisteredContentScripts({
+              ids: ["mermaid-previewer"],
+            })
+          )[0].matches,
+      ),
+    )
+    .toContain("<all_urls>");
+
+  await context.route("https://rules.example/**", (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: `<pre class="old-diagram">${source}</pre>`,
+    }),
+  );
+  await page.goto("https://rules.example/private?stage=2");
+  await expect(page.locator(".old-diagram")).toHaveText(source);
+  await page.goto("https://rules.example/private?stage=1");
+  await expect(page.locator(".old-diagram svg")).toBeVisible();
+});
+
+test("renders diagrams inserted by a Bitbucket editor preview", async ({
+  context,
+  page,
+}) => {
+  await context.route("https://bitbucket.org/**", (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: `
+      <div class="codehilite"><pre>${source}</pre></div>
+      <div id="editor-container" class="maskable"></div>
+    `,
+    }),
+  );
+  await page.goto("https://bitbucket.org/local-test");
+  await expect(page.locator(".codehilite > pre > svg")).toHaveCount(1);
+  const editor = page.locator("#editor-container");
+  await editor.evaluate((element, code) => {
+    const preview = document.createElement("div");
+    preview.className = "codehilite";
+    const diagram = document.createElement("pre");
+    diagram.textContent = code;
+    preview.append(diagram);
+    element.append(preview);
+  }, source);
+  await expect(editor.locator("pre > svg")).toBeVisible();
+  await editor.evaluate((element) => element.replaceChildren());
+  await expect(page.locator(".codehilite > pre > svg")).toHaveCount(1);
+});

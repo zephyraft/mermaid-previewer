@@ -11,13 +11,13 @@ import * as packageJson from "../../../package.json";
 import Github from "../icons/Github";
 
 const version = packageJson.version;
-export default (): JSX.Element => {
+export default (): React.JSX.Element => {
   const [githubIconRef, setGithubIconRef] =
     React.useState<HTMLSpanElement | null>(null);
 
   return (
     <div className="flex items-center h-16 px-6 border-b border-gray-30">
-      <div className="flex-grow flex items-center gap-x-2">
+      <div className="grow flex items-center gap-x-2">
         <Title3>
           <Link
             href="https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl"

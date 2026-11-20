@@ -32,7 +32,7 @@ export type Row = {
 export type Cell = {
   key: string;
   value: string;
-  icon: JSX.Element;
+  icon: React.JSX.Element;
   default: boolean;
 };
 
@@ -48,7 +48,7 @@ interface TableProps {
   columns: Column[];
   rows: Row[];
   editFormTitle: string;
-  editForm: (row: Row) => JSX.Element;
+  editForm: (row: Row) => React.JSX.Element;
   onDelete: (
     row: Row,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -74,7 +74,7 @@ export default ({
   onDelete,
   onEdit,
   onEditCancel,
-}: TableProps): JSX.Element => {
+}: TableProps): React.JSX.Element => {
   return (
     <Table>
       <TableHeader>

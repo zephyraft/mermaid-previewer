@@ -1,5 +1,3 @@
-# 集成步骤
+# Font Awesome
 
-[参考](https://stackoverflow.com/questions/41237548/how-to-use-fontawesome-in-chrome-extension)
-
-全局替换fontawesome.css的`@font-face`中的url，转换为类似`data-base64:/assets/webfonts/fa-brands-400.woff2`的形式
+The build takes the stylesheet and WOFF2 files from the pinned `@fortawesome/fontawesome-free` package and inlines the fonts into `public/fontawesome.css`. Chrome injects that stylesheet when the extension renders a diagram. SVGs exported with Font Awesome icons include the bundled fonts and can be opened offline.

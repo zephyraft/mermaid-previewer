@@ -7,6 +7,7 @@ import {
   getCopyButtonLocator,
   getFloatButtonContainerLocator,
   getMermaidSVGLocator,
+  mockBitbucketMarkdown,
 } from "./content.utils";
 import { expect, test } from "./fixtures";
 
@@ -48,7 +49,8 @@ const MMD_CODE = `flowchart TD
     B-->E(A fa:fa-camera-retro perhaps?)
 `;
 
-test("bitbucket复制", async ({ page }) => {
+test("bitbucket复制", async ({ page, context }) => {
+  await mockBitbucketMarkdown(context);
   await page.goto(BITBUCKET_URL);
   await page.waitForLoadState();
   const floatButtonContainerLocator = getFloatButtonContainerLocator(page);

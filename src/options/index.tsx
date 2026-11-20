@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createRoot } from "react-dom/client";
 
 import "./style.css";
 
@@ -18,7 +19,7 @@ function OptionsIndex() {
         <div className="flex h-[calc(100vh-4rem)]">
           <RouteContext.Provider value={{ route, setRoute }}>
             <Sidebar />
-            <div className="flex-grow p-3">{route.page}</div>
+            <div className="grow p-3">{route.page}</div>
           </RouteContext.Provider>
         </div>
       </div>
@@ -26,4 +27,4 @@ function OptionsIndex() {
   );
 }
 
-export default OptionsIndex;
+createRoot(document.getElementById("options-root")!).render(<OptionsIndex />);

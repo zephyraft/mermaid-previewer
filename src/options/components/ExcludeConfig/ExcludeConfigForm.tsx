@@ -14,8 +14,15 @@ export default ({
   defaultValue = {
     match: "https://example.com/*",
   },
-}: Props): JSX.Element => {
+}: Props): React.JSX.Element => {
   const inputRef = React.createRef<HTMLInputElement>();
+
+  const isLegacy = defaultValue.regex !== undefined;
+  const pattern = defaultValue.match ?? defaultValue.regex;
+  const label = isLegacy ? "URL Regular Expression" : "Match Patterns";
+  const helpLink = isLegacy
+    ? "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions"
+    : "https://developer.chrome.com/docs/extensions/develop/concepts/match-patterns";
 
   return (
     <>
@@ -23,14 +30,12 @@ export default ({
         required
         htmlFor={"match-input"}
         info={
-          <Link
-            href="https://developer.chrome.com/docs/extensions/develop/concepts/match-patterns"
-            target="_blank">
-            Match Patterns
+          <Link href={helpLink} target="_blank">
+            {label}
             <OpenRegular />
           </Link>
         }>
-        Match Patterns
+        {label}
       </InfoLabel>
       <Input
         ref={inputRef}
@@ -38,8 +43,8 @@ export default ({
         type="text"
         id={"match-input"}
         name={"match"}
-        placeholder={defaultValue.match}
-        defaultValue={defaultValue.match}
+        placeholder={pattern}
+        defaultValue={pattern}
         contentBefore={<GlobeRegular />}
         contentAfter={
           <Button

@@ -1,42 +1,26 @@
 import type { Page } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
-import * as process from "process";
 
 import {
   BITBUCKET_URL,
-  GIST_MERMAID_COUNT,
   GIST_URL,
-  GITHUB_MERMAID_COUNT,
   GITHUB_MERMAID_SELECTOR,
   GITHUB_URL,
-  GITLAB_MERMAID_COUNT,
   GITLAB_MERMAID_SELECTOR,
   GITLAB_URL,
   MMD_URL,
   getDownloadButtonLocator,
-  getFirstFrame,
   getFloatButtonContainerLocator,
   getFloatButtonContainerLocatorOfFrame,
   getMermaidSVGLocator,
-  waitFrames,
+  mockBitbucketMarkdown,
+  waitForMermaidFrame,
 } from "./content.utils";
 import { expect, test } from "./fixtures";
 
-const downloadPath = process.env.PLAYWRIGHT_DOWNLOAD_DIR;
-
-test.beforeEach(() => {
-  // 清理下载文件夹
-  test.fail(
-    !downloadPath.endsWith("/playwright/.download"),
-    "下载文件夹配置有误",
-  );
-  deleteDownloadFile(downloadPath);
-});
-
-test.describe.configure({ mode: "serial" });
-
-test("bitbucket下载", async ({ page }) => {
+test("bitbucket下载", async ({ page, context, downloadDir }) => {
+  await mockBitbucketMarkdown(context);
   await page.goto(BITBUCKET_URL);
   await page.waitForLoadState();
   const floatButtonContainerLocator = getFloatButtonContainerLocator(page);
@@ -49,10 +33,10 @@ test("bitbucket下载", async ({ page }) => {
   await expect(floatButtonContainerLocator).toBeInViewport();
 
   await downloadButtonLocator.click();
-  await checkDownloadFile(page, downloadPath, 1);
+  await checkDownloadFile(downloadDir);
 });
 
-test("mmd下载", async ({ page }) => {
+test("mmd下载", async ({ page, downloadDir }) => {
   await page.goto(MMD_URL);
   await page.waitForLoadState();
   const floatButtonContainerLocator = getFloatButtonContainerLocator(page);
@@ -65,98 +49,100 @@ test("mmd下载", async ({ page }) => {
   await expect(floatButtonContainerLocator).toBeInViewport();
 
   await downloadButtonLocator.click();
-  await checkDownloadFile(page, downloadPath, 1);
+  await checkDownloadFile(downloadDir);
+  const [download] = completedDownloads(downloadDir);
+  expect(fs.readFileSync(path.join(downloadDir, download), "utf8")).toContain(
+    "data:font/woff2;base64,",
+  );
 });
 
-test("gitlab下载", async ({ page }) => {
+test("gitlab下载", async ({ context, page, downloadDir }) => {
+  const frameURL = "https://gitlab.com/-/sandbox/mermaid_v12";
+  await context.route(GITLAB_URL, (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: `<iframe src="${frameURL}" width="600" height="300"></iframe>`,
+    }),
+  );
+  await context.route(frameURL, (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: `<div id="app"><div id="dmermaid">
+        <svg id="mermaid" xmlns="http://www.w3.org/2000/svg" width="300" height="160">
+          ${'<rect width="100" height="120" fill="royalblue"/>'.repeat(24)}
+        </svg>
+      </div></div>`,
+    }),
+  );
   await checkDownloadForNativeSupportWebsite({
     page,
+    downloadDir,
     url: GITLAB_URL,
-    mermaidCount: GITLAB_MERMAID_COUNT,
+    frameURL,
     mermaidSelector: GITLAB_MERMAID_SELECTOR,
   });
 });
 
-test("github下载", async ({ page }) => {
+test("github下载", async ({ page, downloadDir }) => {
   await checkDownloadForNativeSupportWebsite({
     page,
+    downloadDir,
     url: GITHUB_URL,
-    mermaidCount: GITHUB_MERMAID_COUNT,
+    frameURL: "https://viewscreen.githubusercontent.com/markdown/mermaid",
     mermaidSelector: GITHUB_MERMAID_SELECTOR,
   });
 });
 
-test("gist下载", async ({ page }) => {
+test("gist下载", async ({ page, downloadDir }) => {
   await checkDownloadForNativeSupportWebsite({
     page,
+    downloadDir,
     url: GIST_URL,
-    mermaidCount: GIST_MERMAID_COUNT,
+    frameURL: "https://viewscreen.githubusercontent.com/markdown/mermaid",
     mermaidSelector: GITHUB_MERMAID_SELECTOR,
-    waitMills: 2000,
   });
 });
 
-function deleteDownloadFile(downloadPath: string) {
-  fs.readdirSync(downloadPath).forEach((file) => {
-    const currentPath = path.join(downloadPath, file);
-    if (fs.lstatSync(currentPath).isDirectory()) {
-      deleteDownloadFile(currentPath);
-    } else {
-      fs.unlinkSync(currentPath);
-    }
-  });
+function completedDownloads(downloadDir: string) {
+  return fs
+    .readdirSync(downloadDir)
+    .filter((file) => !file.endsWith(".crdownload"));
 }
 
-async function checkDownloadFile(
-  page: Page,
-  downloadPath: string,
-  fileCount: number,
-) {
-  // 目前chrome扩展触发的下载，playwright监听不到事件，只能手动等待后使用fs api检查文件
-  await page.waitForTimeout(1000);
-  const dirFiles = fs.readdirSync(downloadPath);
-  dirFiles.forEach((file) => {
-    const currentPath = path.join(downloadPath, file);
-    test.fail(fs.lstatSync(currentPath).isDirectory(), "下载文件夹内包含目录");
-    test.fail(
-      fs.lstatSync(currentPath).size < 1000,
-      "下载文件过小，请检查输出",
-    );
-  });
-  await expect(dirFiles.length).toBe(fileCount);
+async function checkDownloadFile(downloadDir: string) {
+  await expect.poll(() => completedDownloads(downloadDir).length).toBe(1);
+  const [file] = completedDownloads(downloadDir);
+  await expect
+    .poll(() => fs.statSync(path.join(downloadDir, file)).size)
+    .toBeGreaterThan(1000);
 }
 
 async function checkDownloadForNativeSupportWebsite({
   page,
+  downloadDir,
   url,
-  mermaidCount,
+  frameURL,
   mermaidSelector,
-  waitMills,
 }: {
   page: Page;
+  downloadDir: string;
   url: string;
-  mermaidCount: number;
+  frameURL: string;
   mermaidSelector: string;
-  waitMills?: number;
 }) {
   await page.goto(url);
-  // 等待所有iframe加载完成
-  await waitFrames(page, mermaidCount, mermaidSelector);
-  if (waitMills) {
-    await page.waitForTimeout(waitMills);
-  }
-
-  const firstFrame = getFirstFrame(page);
+  const firstFrame = await waitForMermaidFrame(page, frameURL, mermaidSelector);
   const floatButtonContainerLocator =
     getFloatButtonContainerLocatorOfFrame(firstFrame);
   const downloadButtonLocator = getDownloadButtonLocator(
     floatButtonContainerLocator,
   );
 
-  const firstMermaidLocator = firstFrame.locator(mermaidSelector);
+  await expect(floatButtonContainerLocator).toBeAttached();
+  const firstMermaidLocator = firstFrame.locator(mermaidSelector).first();
   await firstMermaidLocator.hover();
   await expect(floatButtonContainerLocator).toBeVisible();
 
   await downloadButtonLocator.click();
-  await checkDownloadFile(page, downloadPath, 1);
+  await checkDownloadFile(downloadDir);
 }

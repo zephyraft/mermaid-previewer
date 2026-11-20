@@ -10,7 +10,7 @@ import ExcludeConfigForm from "./ExcludeConfigForm";
 const columns: Column[] = [
   {
     key: "match",
-    label: "Match Patterns",
+    label: "URL Pattern",
   },
 ];
 
@@ -24,19 +24,13 @@ const getRow = (
     cells: [
       {
         key: "match",
-        value: excludeURL.match,
+        value: excludeURL.match ?? excludeURL.regex,
         icon: <GlobeRegular />,
         default: isDefault,
       },
     ],
   };
 };
-const getExcludeURL = (row: Row): ExcludeConfig => {
-  return {
-    match: row.cells.find((it) => it.key === "match")!.value,
-  };
-};
-
 interface TableProps {
   defaultConfigs: ExcludeConfig[];
   customConfigs: ExcludeConfig[];
@@ -54,7 +48,7 @@ export default ({
   defaultConfigs,
   customConfigs,
   setCustomConfigs,
-}: TableProps): JSX.Element => {
+}: TableProps): React.JSX.Element => {
   const rows: Row[] = React.useMemo(
     () =>
       defaultConfigs
@@ -73,18 +67,26 @@ export default ({
       rows={rows}
       editFormTitle={"Edit Exclude Match Patterns"}
       editForm={(row) => (
-        <ExcludeConfigForm defaultValue={getExcludeURL(row)} />
+        <ExcludeConfigForm
+          defaultValue={
+            customConfigs[getIndexOfCustomConfigs(row, defaultConfigs)]
+          }
+        />
       )}
       onEdit={(row, setOpen, ev) => {
         const formData = new FormData(ev.target as HTMLFormElement); // 通过event.target获取表单元素，然后使用FormData获取表单数据
         const match = formData.get("match")!.toString();
-        setCustomConfigs((configs) => {
-          const index = getIndexOfCustomConfigs(row, defaultConfigs);
-          const pre = configs.slice(0, index);
-          const suf = configs.slice(index + 1);
-          setOpen(false);
-          return pre.concat({ match }, suf);
-        });
+        const index = getIndexOfCustomConfigs(row, defaultConfigs);
+        setCustomConfigs((configs) =>
+          configs.map((config, i) =>
+            i === index
+              ? config.regex !== undefined
+                ? { regex: match }
+                : { match }
+              : config,
+          ),
+        );
+        setOpen(false);
       }}
       onDelete={(row, setOpen) => {
         const index = getIndexOfCustomConfigs(row, defaultConfigs);

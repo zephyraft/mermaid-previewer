@@ -16,8 +16,8 @@ const DrinkCoffeeIcon = bundleIcon(DrinkCoffeeFilled, DrinkCoffeeRegular);
 interface Route {
   key: string;
   title: string;
-  icon: JSX.Element;
-  page: JSX.Element;
+  icon: React.JSX.Element;
+  page: React.JSX.Element;
 }
 
 interface RouteContextProps {

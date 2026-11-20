@@ -1,0 +1,5 @@
+minimumReleaseAgeExclude:
+  - extension-create@4.2.0
+  - extension-develop@4.2.0
+  - extension-install@4.2.0
+  - extension@4.2.0

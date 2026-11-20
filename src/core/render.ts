@@ -1,77 +1,34 @@
-import { mermaidHover } from "~core/hover";
-
-import { notRenderSelector, queryContainers } from "./selectors";
-import { enableSandbox } from "~core/options";
 import type { Mermaid } from "mermaid";
 
-/**
- * 用于保存原始mermaid code的key
- */
-export const rawDataKey: string = "data-mermaid-previewer-raw";
+export const diagramSource = "data-mermaid-previewer-raw";
 
-/**
- * mermaid图表正则匹配
- */
-const mermaidRegex: RegExp =
-  /^\s*(graph\s+\w{2}|graph|graph\s+.|flowchart\s+\w{2}|flowchart|flowchart\s+.|sequenceDiagram|classDiagram|stateDiagram-v2|stateDiagram|erDiagram|journey|gantt|pie|pie\s+showData|pie\s+title\s.+|quadrantChart|requirementDiagram|gitGraph|C4Context|C4Container|C4Component|C4Dynamic|C4Deployment|mindmap|timeline|zenuml|sankey-beta|xychart-beta|block-beta|packet-beta|kanban|architecture-beta)\s*\n/gm;
+const diagramHeader =
+  /^[ \t]*(graph(?:\s+\w+)?|flowchart(?:\s+\w+)?|sequenceDiagram|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey|gantt|pie(?:\s+showData|\s+title\s.+)?|quadrantChart|requirementDiagram|gitGraph|C4Context|C4Container|C4Component|C4Dynamic|C4Deployment|mindmap|timeline|zenuml|sankey-beta|xychart-beta|block-beta|packet-beta|kanban|architecture-beta)\s*\r?$/m;
 
-/**
- * 匹配符合条件的dom
- * @param mermaidDomList dom列表
- */
-const matchMermaidExp = async (
-  mermaidDomList: HTMLElement[],
-): Promise<HTMLElement[]> => {
-  // 过滤不符合正则的dom
-  return Array.from(mermaidDomList).filter((mermaidDom) => {
-    // console.debug("" + mermaidDom.innerText)
-    return new RegExp(mermaidRegex).test(mermaidDom.innerText.trim());
-  });
-};
+export function findMermaid(container: HTMLElement) {
+  return (
+    !container.hasAttribute("data-processed") &&
+    diagramHeader.test(container.innerText)
+  );
+}
 
-/**
- * 缓存mermaid原始code
- * @param mermaidDomList
- */
-const saveRawCode = async (mermaidDomList: HTMLElement[]): Promise<void> => {
-  mermaidDomList.forEach((mermaidDom) => {
-    // 缓存mermaid原始内容
-    mermaidDom.setAttribute(rawDataKey, mermaidDom.innerHTML);
-  });
-};
-
-/**
- * 查找并保存原始mermaid code
- * @param dom 从这个dom结点搜索
- * @return NodeList 符合条件的dom结点数组
- */
-export const queryAndSaveRaw = async (
-  dom: Document | Element,
-): Promise<HTMLElement[]> => {
-  const notRenderSelectors = await notRenderSelector();
-  const mermaidDomList = await queryContainers(dom, notRenderSelectors);
-  const filteredDomList = await matchMermaidExp(mermaidDomList);
-  await saveRawCode(filteredDomList);
-  return filteredDomList;
-};
-
-/**
- * 渲染mermaid图
- */
-export const render = async (
+export async function renderMermaid(
   mermaid: Mermaid,
-  domList: HTMLElement[],
-): Promise<void> => {
+  containers: HTMLElement[],
+  sandbox: boolean,
+) {
+  for (const container of containers) {
+    const source = container.innerText;
+    container.setAttribute(diagramSource, source);
+    container.textContent = source;
+  }
   mermaid.initialize({
-    securityLevel: (await enableSandbox()) ? "sandbox" : "strict",
+    securityLevel: sandbox ? "sandbox" : "strict",
     startOnLoad: false,
   });
   try {
-    await mermaid.run({
-      nodes: domList,
-    });
-  } catch (e) {
-    console.error(e);
+    await mermaid.run({ nodes: containers });
+  } catch (error) {
+    console.error(error);
   }
-  await mermaidHover(domList, false);
-};
+}

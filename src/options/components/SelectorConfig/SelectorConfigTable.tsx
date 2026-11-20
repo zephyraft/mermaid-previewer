@@ -12,7 +12,7 @@ import SelectorConfigForm from "./SelectorConfigForm";
 const columns: Column[] = [
   {
     key: "match",
-    label: "Match Patterns",
+    label: "URL Pattern",
   },
   {
     key: "selector",
@@ -30,7 +30,7 @@ const getRow = (
     cells: [
       {
         key: "match",
-        value: matchSelector.match,
+        value: matchSelector.match ?? matchSelector.regex,
         icon: <GlobeRegular />,
         default: isDefault,
       },
@@ -41,13 +41,6 @@ const getRow = (
         default: isDefault,
       },
     ],
-  };
-};
-
-const getMatchSelector = (row: Row): SelectorConfig => {
-  return {
-    match: row.cells.find((it) => it.key === "match")!.value,
-    selector: row.cells.find((it) => it.key === "selector")!.value,
   };
 };
 
@@ -68,7 +61,7 @@ export default ({
   defaultConfigs,
   customConfigs,
   setCustomConfigs,
-}: TableProps): JSX.Element => {
+}: TableProps): React.JSX.Element => {
   const rows: Row[] = React.useMemo(
     () =>
       defaultConfigs
@@ -87,19 +80,27 @@ export default ({
       rows={rows}
       editFormTitle={"Edit Selector"}
       editForm={(row) => (
-        <SelectorConfigForm defaultValue={getMatchSelector(row)} />
+        <SelectorConfigForm
+          defaultValue={
+            customConfigs[getIndexOfCustomSelectors(row, defaultConfigs)]
+          }
+        />
       )}
       onEdit={(row, setOpen, ev) => {
         const formData = new FormData(ev.target as HTMLFormElement); // 通过event.target获取表单元素，然后使用FormData获取表单数据
         const match = formData.get("match")!.toString();
         const selector = formData.get("selector")!.toString();
-        setCustomConfigs((selectors) => {
-          const index = getIndexOfCustomSelectors(row, defaultConfigs);
-          const pre = selectors.slice(0, index);
-          const suf = selectors.slice(index + 1);
-          setOpen(false);
-          return pre.concat({ match, selector }, suf);
-        });
+        const index = getIndexOfCustomSelectors(row, defaultConfigs);
+        setCustomConfigs((selectors) =>
+          selectors.map((config, i) =>
+            i === index
+              ? config.regex !== undefined
+                ? { regex: match, selector }
+                : { match, selector }
+              : config,
+          ),
+        );
+        setOpen(false);
       }}
       onDelete={(row, setOpen) => {
         const index = getIndexOfCustomSelectors(row, defaultConfigs);
