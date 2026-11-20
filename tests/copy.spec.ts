@@ -2,8 +2,8 @@ import { readFile } from "node:fs/promises";
 import type { Page } from "@playwright/test";
 
 import {
-  BITBUCKET_MERMAID_COUNT,
   BITBUCKET_URL,
+  EXAMPLE_DIAGRAM_COUNT,
   MMD_URL,
   getCopyButtonLocator,
   getFloatButtonContainerLocator,
@@ -53,7 +53,7 @@ test("bitbucket复制", async ({ page, context }) => {
   await copyButtonLocator.click();
   await checkClipboard(page, FLOW_CODE);
 
-  await prepareCopy(page, BITBUCKET_MERMAID_COUNT - 1);
+  await prepareCopy(page, EXAMPLE_DIAGRAM_COUNT - 1);
   await expect(floatButtonContainerLocator).toBeInViewport();
   await copyButtonLocator.click();
   await checkClipboard(page, GIT_CODE);

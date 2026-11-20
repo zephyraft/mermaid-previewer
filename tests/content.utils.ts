@@ -14,7 +14,8 @@ export const GITLAB_URL = `https://gitlab.com/zzzzzzzephyr/test`;
 export const GITHUB_URL = `https://github.com/zephyraft/mermaid-previewer/blob/master/doc/example.md`;
 export const GIST_URL = `https://gist.github.com/zephyraft/b404f51ef44afeff2fc10c37018417c1`;
 
-export const BITBUCKET_MERMAID_COUNT = 14;
+export const EXAMPLE_MARKDOWN_PATH = resolve("doc/example.md");
+export const EXAMPLE_DIAGRAM_COUNT = 14;
 
 export const EXTENSION_MERMAID_SELECTOR = "svg[id^='mermaid']";
 export const GITLAB_MERMAID_SELECTOR = "svg#mermaid";
@@ -31,7 +32,7 @@ export function getDownloadButtonLocator(containerLocator: Locator) {
 }
 
 export async function mockBitbucketMarkdown(context: BrowserContext) {
-  const markdown = await readFile(resolve("doc/example.md"), "utf8");
+  const markdown = await readFile(EXAMPLE_MARKDOWN_PATH, "utf8");
   const examples = [...markdown.matchAll(/^```mermaid\r?\n([\s\S]*?)^```/gm)];
   const html = examples
     .map(([, code]) => {

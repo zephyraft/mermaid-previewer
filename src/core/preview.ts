@@ -1,5 +1,11 @@
 import { createExporter } from "./exporter";
-import { readRules, readSetting, storageKey } from "./options";
+import { prepareLocalMarkdown } from "./local-markdown";
+import {
+  localMarkdownPreviewRule,
+  readRules,
+  readSetting,
+  storageKey,
+} from "./options";
 import { createDiagramRenderer, diagramSource, findMermaid } from "./render";
 import { selectRules } from "./rules";
 import type { SelectorConfig } from "~types";
@@ -31,6 +37,9 @@ export async function observeDiagrams(signal: AbortSignal) {
     : undefined;
   if (signal.aborted) return;
 
+  const markdownSource = rules.preview.includes(localMarkdownPreviewRule)
+    ? prepareLocalMarkdown()
+    : undefined;
   const attachExporter = createExporter(signal);
   let queued = false;
   let running = false;
@@ -55,7 +64,9 @@ export async function observeDiagrams(signal: AbortSignal) {
       while (queued && !signal.aborted) {
         queued = false;
         if (render) {
-          const containers = findContainers(rules.preview);
+          const containers = findContainers(rules.preview).filter(
+            (container) => container !== markdownSource,
+          );
           if (restorePreview) {
             restorePreview = false;
             for (const container of containers) {

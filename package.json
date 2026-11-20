@@ -34,6 +34,7 @@
     "@floating-ui/dom": "1.8.0",
     "@fluentui/react-components": "9.75.2",
     "@fluentui/react-icons": "2.0.347",
+    "markdown-it": "15.0.3",
     "mermaid": "12.3.0",
     "pele": "1.13.0",
     "react": "19.3.1",

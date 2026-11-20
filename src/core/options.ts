@@ -38,8 +38,15 @@ export const defaultExcludes: ExcludeConfig[] = [
   { match: "https://chromewebstore.google.com/*" },
 ];
 
+export const markdownFenceAttribute = "data-mermaid-previewer-fence";
+export const localMarkdownPreviewRule: SelectorConfig = {
+  match: "file:///*.md",
+  selector: `[${markdownFenceAttribute}]`,
+};
+
 export const defaultMatchSelectors: SelectorConfig[] = [
   { match: "*://bitbucket.org/*", selector: "div.codehilite > pre" },
+  localMarkdownPreviewRule,
   { match: "file:///*.mmd", selector: "body > pre" },
   { match: "file:///*.mermaid", selector: "body > pre" },
 ];

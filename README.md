@@ -17,7 +17,7 @@ flowchart LR
 ## Preview and export rules
 
 - **URL exclusions** skip matching pages. The Chrome Web Store is excluded by default.
-- **Preview rules** find Mermaid source in page elements. The built-in rules cover Bitbucket Markdown and local `.mmd` and `.mermaid` files. To open local files, turn on **Allow access to file URLs** on the extension's details page in Chrome.
+- **Preview rules** find Mermaid source in page elements. The built-in rules cover Mermaid code blocks in Bitbucket Markdown and local `.md` files, as well as standalone `.mmd` and `.mermaid` files. To preview local files, turn on **Allow access to file URLs** on the extension's details page in Chrome, then open the file in Chrome. The rest of a local Markdown document stays in its original text format.
 - **SVG export rules** find diagrams rendered by the website. The built-in rules cover GitHub, Gists, and GitLab. Diagrams rendered by the extension already have SVG export controls.
 
 You can add your own rules in Settings. Existing rules and the Sandbox preference carry over from previous releases, including rules saved as URL regular expressions and older URL exclusions and CSS selectors.
@@ -36,7 +36,7 @@ The manual Chrome Web Store workflow uses the existing `SUBMIT_KEYS` secret and 
 
 ## Changelog
 
-- [1.5.3] Migrated to Extension.js with support for existing settings. Updated Mermaid.js from 11.4.1 to 12.3.0. Made Pele the default renderer and added a setting to switch to Mermaid.js.
+- [1.5.3] Migrated to Extension.js with support for existing settings. Updated Mermaid.js from 11.4.1 to 12.3.0. Made Pele the default renderer and added a setting to switch to Mermaid.js. Added in-page previews for Mermaid code blocks in local `.md` files.
 - [1.5.2] Limited content script injection to matching URLs. See [issue #304](https://github.com/zephyraft/mermaid-previewer/issues/304).
 - [1.5.1] Removed ZenUML support to fix CSS leaking into web pages.
 - [1.5.0] Updated Mermaid.js to 11.4.1 and changed how it is injected. Switched Gist to SVG export once it added native previews. Added support for `zenuml`, `sankey-beta`, `xychart-beta`, `block-beta`, `packet-beta`, `kanban`, and `architecture-beta`.
