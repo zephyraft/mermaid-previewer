@@ -44,7 +44,7 @@ export default () => {
       <Field
         className="mb-8 w-full max-w-80"
         label="Rendering engine"
-        hint="Reload open pages to apply the change. Sandbox mode uses Mermaid.js.">
+        hint="Reload the page to see the change. Sandbox mode always uses Mermaid.js.">
         <Select
           value={renderer}
           onChange={(_, { value }) => {
@@ -59,12 +59,12 @@ export default () => {
         <Subtitle2 className={"grow leading-10 pl-2"}>
           <InfoLabel
             size="large"
-            info="The url exclusion configuration is used to disable extension script execution under specific urls">
-            Exclude URL
+            info="Skip previews and exports on pages whose URLs match these rules.">
+            URL exclusions
           </InfoLabel>
         </Subtitle2>
         <ExcludeConfigToolbar
-          title={"Add Exclude Match Patterns"}
+          title="Add exclusion"
           setCustomConfigs={setCustomExcludeConfigs}
         />
       </div>
@@ -82,25 +82,24 @@ export default () => {
             info={
               <>
                 <div>
-                  Matching selector is used to configure the dom element where
-                  mermaid is located under each url, so that the extension can
-                  correctly identify and render mermaid.
+                  Choose which elements contain Mermaid source on matching
+                  pages.
                 </div>
                 <div>
                   <Link
                     href="https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions#allow_access"
                     target="_blank">
-                    local file permissions
+                    Enable access to file URLs
                     <OpenRegular />
                   </Link>
                 </div>
               </>
             }>
-            Matching Selectors
+            Preview rules
           </InfoLabel>
         </Subtitle2>
         <SelectorConfigToolbar
-          title={"Add Matching Selector"}
+          title="Add preview rule"
           setCustomConfigs={setCustomMatchSelectors}
         />
       </div>
@@ -115,12 +114,12 @@ export default () => {
         <Subtitle2 className={"grow leading-10 pl-2"}>
           <InfoLabel
             size="large"
-            info="Download selector is different from matching selector. Download selector is applied to websites that natively support mermaid rendering, so that the extension can recognize the rendered mermaid for download and export">
-            Download Selectors
+            info="Choose which elements contain diagrams already rendered by the website, so the extension can offer SVG downloads.">
+            SVG export rules
           </InfoLabel>
         </Subtitle2>
         <SelectorConfigToolbar
-          title={"Add Download Selector"}
+          title="Add export rule"
           setCustomConfigs={setCustomDownloadSelectors}
         />
       </div>
@@ -144,7 +143,7 @@ export default () => {
                   });
                 }}
                 label={
-                  <InfoLabel info="Render diagrams in a Mermaid.js sandboxed iframe. Font Awesome is unavailable in this mode.">
+                  <InfoLabel info="Render diagrams with Mermaid.js in an isolated frame. Font Awesome icons are unavailable in this mode.">
                     Sandbox
                   </InfoLabel>
                 }

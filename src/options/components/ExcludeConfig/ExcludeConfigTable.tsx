@@ -10,7 +10,7 @@ import ExcludeConfigForm from "./ExcludeConfigForm";
 const columns: Column[] = [
   {
     key: "match",
-    label: "URL Pattern",
+    label: "URL pattern",
   },
 ];
 
@@ -65,7 +65,7 @@ export default ({
     <ConfigTable
       columns={columns}
       rows={rows}
-      editFormTitle={"Edit Exclude Match Patterns"}
+      editFormTitle="Edit exclusion"
       editForm={(row) => (
         <ExcludeConfigForm
           defaultValue={

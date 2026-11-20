@@ -2,29 +2,29 @@
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/zephyraft/mermaid-previewer)](https://github.com/zephyraft/mermaid-previewer/releases)
 [![GitHub package.json dependency version (prod)](https://img.shields.io/github/package-json/dependency-version/zephyraft/mermaid-previewer/mermaid)](https://github.com/mermaid-js/mermaid)
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/oidjnlhbegipkcklbdfnbkikplpghfdl)](https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/users/oidjnlhbegipkcklbdfnbkikplpghfdl)](https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/oidjnlhbegipkcklbdfnbkikplpghfdl)](https://chromewebstore.google.com/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)
+[![Chrome Web Store users](https://img.shields.io/chrome-web-store/users/oidjnlhbegipkcklbdfnbkikplpghfdl)](https://chromewebstore.google.com/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)
 
-A chrome extension for previewing and exporting mermaid images in web pages, fully rendering mermaid locally without involving remote api calls.
+Mermaid Previewer is a Chrome extension that renders Mermaid diagrams right on the page. Hover over a preview to copy its Mermaid source or download it as an SVG. The extension renders diagrams locally in Chrome.
 
-On websites that meet the preset rules, you can preview or export by setting the code block language in markdown to mermaid:
+On pages covered by a preview rule, use a fenced Markdown code block labeled `mermaid`.
+
 ```mermaid
-graph LR
-A --> B
+flowchart LR
+    Draft --> Review --> Publish
 ```
 
-At the same time, it also provides the function of custom rule configuration.
+## Preview and export rules
 
-## Preset Rules
+- **URL exclusions** skip matching pages. The Chrome Web Store is excluded by default.
+- **Preview rules** find Mermaid source in page elements. The built-in rules cover Bitbucket Markdown and local `.mmd` and `.mermaid` files. To open local files, turn on **Allow access to file URLs** on the extension's details page in Chrome.
+- **SVG export rules** find diagrams rendered by the website. The built-in rules cover GitHub, Gists, and GitLab. Diagrams rendered by the extension already have SVG export controls.
 
-- Exclusion matches `https://chromewebstore.google.com/*`.
-- Preview matches Bitbucket Markdown and local `.mmd` and `.mermaid` files. To preview local files, enable **Allow access to file URLs** in the extension's Chrome details.
-- SVG export supports diagrams rendered by the extension, GitHub and Gist Mermaid frames, and the GitLab Mermaid sandbox.
-- The settings page supports custom exclusion, preview, and export rules. Existing rules and the sandbox preference are read from Chrome sync storage. Rules saved as URL regular expressions before 1.5.2 are still recognized, along with custom URL exclusions and CSS selectors from pre-Plasmo versions.
+You can add your own rules in Settings. Existing rules and the Sandbox preference carry over from previous releases, including rules saved as URL regular expressions and older URL exclusions and CSS selectors.
 
 ## Rendering engine
 
-Pele is the default for local previews. Choose **Rendering engine → Mermaid.js (official)** in Settings and reload the page to switch. The extension uses Mermaid.js for the existing Sandbox mode and for diagrams that require Mermaid-specific configuration or that Pele cannot render. Native diagram downloads use the website's rendered SVG.
+Pele is the default rendering engine. To switch, choose **Mermaid.js (official)** under **Rendering engine** in Settings, then reload the page you're previewing. The extension also tries Mermaid.js when a diagram uses certain Mermaid.js features or when Pele fails to render it. Sandbox mode always uses Mermaid.js.
 
 ## Development
 
@@ -36,37 +36,37 @@ The manual Chrome Web Store workflow uses the existing `SUBMIT_KEYS` secret and 
 
 ## Changelog
 
-- [1.5.3] Migrate to Extension.js and preserve existing settings.
-- [1.5.2]  Fix https://github.com/zephyraft/mermaid-previewer/issues/304 (Manually inject content scripts now, only effective for matching URLs)
-- [1.5.1]  Fix bug.(Remove zenuml support and fix the CSS style leakage caused by it)
-- [1.5.0]  Update mermaid to version 11.4.1. Modify the injection method of mermaid. Since Gist natively supports preview, adjust preset rules to Download Selectors. Add support for zenuml, sankey-beta, xychart-beta, block-beta, packet-beta, kanban, and architecture-beta.
-- [1.4.4]  Updated mermaid version to 10.5.0. Added experimental feature sandbox mode. Added preset rules for gist comment.
-- [1.4.3]  Fix bug.
-- [1.4.2]  Update mermaid version to 10.2.3, and adapt to quadrantChart, C4, mindmap, timeline charts.
-- [1.4.1]  Fix floating button display bug, add copy code button.
-- [1.4.0]  Update mermaid version to 10.2.0, use the plasmo framework to refactor the code, adjust the configuration page, and use the floating button to provide the export function.
-- [1.3.0]  Update mermaid version to 10.1.0, the export function is changed to export svg to support more styles and font-awesome.
-- [1.2.9]  Update mermaid version to 10.0.2, support font-awesome and gitGraph.
-- [1.2.8]  Update mermaid version to 9.1.3, fix repeat toast & modify toast style.
-- [1.2.7]  Update mermaid version to 8.14.0, support GitHub native mermaid download.
-- [1.2.6]  Update mermaid version to 8.13.8, optimize configuration page interaction and style.
-- [1.2.5]  Update mermaid version to 8.13.5, fix preview issue of Bitbucket.
-- [1.2.4]  Added popup options page, providing domain exclusion and dom selector configuration.
-- [1.2.3]  Update mermaid version to 8.13.3.
-- [1.2.2]  Update mermaid version to 8.13.2.
-- [1.2.1]  Fix Toast.
-- [1.2.0]  Mermaid graph export.
-- [1.1.0]  Added bitbucket support, updated mermaid version to 8.12.1.
-- [1.0.1]  Update mermaid version to 8.12.0.
-- [1.0.0]  First released, mermaid version 8.11.5.
+- [1.5.3] Migrated to Extension.js with support for existing settings. Updated Mermaid.js from 11.4.1 to 12.3.0. Made Pele the default renderer and added a setting to switch to Mermaid.js.
+- [1.5.2] Limited content script injection to matching URLs. See [issue #304](https://github.com/zephyraft/mermaid-previewer/issues/304).
+- [1.5.1] Removed ZenUML support to fix CSS leaking into web pages.
+- [1.5.0] Updated Mermaid.js to 11.4.1 and changed how it is injected. Switched Gist to SVG export once it added native previews. Added support for `zenuml`, `sankey-beta`, `xychart-beta`, `block-beta`, `packet-beta`, `kanban`, and `architecture-beta`.
+- [1.4.4] Updated Mermaid.js to 10.5.0. Added experimental Sandbox mode and built-in rules for Gist comments.
+- [1.4.3] Fixed a bug.
+- [1.4.2] Updated Mermaid.js to 10.2.3 and added support for quadrant charts, C4 diagrams, mind maps, and timelines.
+- [1.4.1] Fixed the floating controls and added a button to copy the Mermaid source.
+- [1.4.0] Updated Mermaid.js to 10.2.0, migrated to Plasmo, updated the settings page, and added a floating export button.
+- [1.3.0] Updated Mermaid.js to 10.1.0 and switched to SVG export for better support for styling and Font Awesome icons.
+- [1.2.9] Updated Mermaid.js to 10.0.2 and added support for Font Awesome icons and Git graphs.
+- [1.2.8] Updated Mermaid.js to 9.1.3, fixed duplicate notifications, and updated their appearance.
+- [1.2.7] Updated Mermaid.js to 8.14.0 and added SVG downloads for diagrams rendered by GitHub.
+- [1.2.6] Updated Mermaid.js to 8.13.8 and improved the settings page.
+- [1.2.5] Updated Mermaid.js to 8.13.5 and fixed previews on Bitbucket.
+- [1.2.4] Added a settings popup for domain exclusions and DOM selectors.
+- [1.2.3] Updated Mermaid.js to 8.13.3.
+- [1.2.2] Updated Mermaid.js to 8.13.2.
+- [1.2.1] Fixed notifications.
+- [1.2.0] Added diagram export.
+- [1.1.0] Added Bitbucket support and updated Mermaid.js to 8.12.1.
+- [1.0.1] Updated Mermaid.js to 8.12.0.
+- [1.0.0] Released the first version with Mermaid.js 8.11.5.
 
 ## TODO
 
-- [x] Support fontawesome.
-- [x] Support [mmd format](https://github.com/mermaid-js/mermaid-cli) files.
-- [x] Add floating button for export.
-- [x] Add floating button for copying code.
-- [x] Automation test.
-- [x] Support comment for gist.
-- [ ] More test cases.
+- [x] Support Font Awesome icons.
+- [x] Preview [local Mermaid files](https://github.com/mermaid-js/mermaid-cli).
+- [x] Add a floating export button.
+- [x] Add a floating button to copy Mermaid source.
+- [x] Add automated tests.
+- [x] Support Mermaid diagrams in Gist comments.
+- [ ] Expand test coverage.
 

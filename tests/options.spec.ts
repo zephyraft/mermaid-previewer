@@ -17,15 +17,15 @@ test("配置页正常加载", async ({ page, optionsURL }) => {
   await gotoOptionPage(page, optionsURL);
   await expect(page.locator("body")).toContainText("Mermaid Previewer");
   await expect(page.getByText(`v${version}`, { exact: true })).toBeVisible();
-  await expect(page.locator("body")).toContainText("Exclude URL");
-  await expect(page.locator("body")).toContainText("Matching Selectors");
-  await expect(page.locator("body")).toContainText("Download Selectors");
+  await expect(page.locator("body")).toContainText("URL exclusions");
+  await expect(page.locator("body")).toContainText("Preview rules");
+  await expect(page.locator("body")).toContainText("SVG export rules");
 });
 
 test("外链指向对应页面", async ({ page, optionsURL }) => {
   await gotoOptionPage(page, optionsURL);
   for (const target of [
-    "https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl",
+    "https://chromewebstore.google.com/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl",
     "https://www.github.com/zephyraft/mermaid-previewer/releases",
     "https://www.github.com/zephyraft/mermaid-previewer",
   ]) {
@@ -42,7 +42,7 @@ test("打赏页显示二维码及外链", async ({ page, optionsURL }) => {
 
   const target = "https://www.buymeacoffee.com/zephyraft";
   const link = page.locator(`a[href="${target}"]`);
-  await expect(link).toHaveText("buy me a coffee");
+  await expect(link).toHaveText("Buy me a coffee");
   await expect(link).toHaveAttribute("target", "_blank");
 });
 
@@ -55,8 +55,8 @@ test("配置ExcludeURL", async ({ page, optionsURL }) => {
   await testConfig({
     page,
     index: 0,
-    addFormTitle: "Add Exclude Match Patterns",
-    editFormTitle: "Edit Exclude Match Patterns",
+    addFormTitle: "Add exclusion",
+    editFormTitle: "Edit exclusion",
     onAddFormOpen: async () => {
       await getMatchInputLocator(page).fill(pattern);
     },
@@ -73,7 +73,7 @@ test("配置ExcludeURL", async ({ page, optionsURL }) => {
   });
 });
 
-test("配置Matching Selectors", async ({ page, optionsURL }) => {
+test("配置预览规则", async ({ page, optionsURL }) => {
   await gotoOptionPage(page, optionsURL);
 
   const pattern = "https://example1.com/*";
@@ -84,8 +84,8 @@ test("配置Matching Selectors", async ({ page, optionsURL }) => {
   await testConfig({
     page,
     index: 1,
-    addFormTitle: "Add Matching Selector",
-    editFormTitle: "Edit Selector",
+    addFormTitle: "Add preview rule",
+    editFormTitle: "Edit rule",
     onAddFormOpen: async () => {
       await getMatchInputLocator(page).fill(pattern);
       await getSelectorInputLocator(page).fill(selector);
@@ -111,7 +111,7 @@ test("配置Matching Selectors", async ({ page, optionsURL }) => {
   });
 });
 
-test("配置Download Selectors", async ({ page, optionsURL }) => {
+test("配置 SVG 导出规则", async ({ page, optionsURL }) => {
   await gotoOptionPage(page, optionsURL);
 
   const pattern = "https://example1.com/*";
@@ -122,8 +122,8 @@ test("配置Download Selectors", async ({ page, optionsURL }) => {
   await testConfig({
     page,
     index: 2,
-    addFormTitle: "Add Download Selector",
-    editFormTitle: "Edit Selector",
+    addFormTitle: "Add export rule",
+    editFormTitle: "Edit rule",
     onAddFormOpen: async () => {
       await getMatchInputLocator(page).fill(pattern);
       await getSelectorInputLocator(page).fill(selector);
@@ -173,8 +173,11 @@ async function countConfig(tableLocator: Locator) {
   return tableLocator.locator("tbody tr.fui-TableRow").count();
 }
 
-async function submitForm(page: Page) {
-  await page.getByRole("button", { name: "Submit" }).click();
+async function submitForm(page: Page, action: "Add" | "Save") {
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: action, exact: true })
+    .click();
 }
 
 async function clickAddButton(page: Page, index: number) {
@@ -204,19 +207,19 @@ async function clickResetButton(page: Page, index: number) {
 }
 
 async function deleteDialogVisible(page: Page) {
-  await expect(page.getByText("Confirm Delete?")).toBeVisible();
+  await expect(page.getByText("Delete this rule?")).toBeVisible();
 }
 
 async function resetDialogVisible(page: Page) {
-  await expect(page.getByText("Confirm Reset To Preset?")).toBeVisible();
+  await expect(page.getByText("Reset to defaults?")).toBeVisible();
 }
 
 async function confirmDelete(page: Page) {
-  await page.getByRole("button", { name: "Delete" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Delete" }).click();
 }
 
 async function confirmReset(page: Page) {
-  await page.getByRole("button", { name: "Reset" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Reset" }).click();
 }
 
 async function testConfig({
@@ -247,14 +250,14 @@ async function testConfig({
   await clickAddButton(page, index);
   await expect(page.getByText(addFormTitle)).toBeVisible();
   await onAddFormOpen();
-  await submitForm(page);
+  await submitForm(page, "Add");
   await expect(rowLocator).toHaveCount(beforeAddCount + 1);
   await onAddFormSubmit(rowLocator);
   // 新增第二个
   await clickAddButton(page, index);
   await expect(page.getByText(addFormTitle)).toBeVisible();
   await onAddFormOpen();
-  await submitForm(page);
+  await submitForm(page, "Add");
   await expect(rowLocator).toHaveCount(beforeAddCount + 2);
   await onAddFormSubmit(rowLocator);
 
@@ -262,7 +265,7 @@ async function testConfig({
   await clickEditButton(rowLocator);
   await expect(page.getByText(editFormTitle)).toBeVisible();
   await onEditFormOpen();
-  await submitForm(page);
+  await submitForm(page, "Save");
   await expect(rowLocator).toHaveCount(beforeAddCount + 2);
   await onEditFormSubmit(rowLocator);
 

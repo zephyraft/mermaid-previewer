@@ -23,7 +23,7 @@ export default (): React.JSX.Element => (
           target="_blank"
           appearance="primary"
           className="w-48">
-          buy me a coffee
+          Buy me a coffee
         </Button>
       </CardFooter>
     </div>

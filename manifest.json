@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Mermaid Previewer",
   "version": "1.5.3",
-  "description": "Preview and export mermaid.",
+  "description": "Preview Mermaid diagrams right on the page, copy their source, and download SVGs.",
   "author": "zephyraft",
   "homepage_url": "https://github.com/zephyraft/mermaid-previewer#readme",
   "icons": {

@@ -29,20 +29,33 @@ export default ({ addTitle, addForm, onAdd, onReset }: Props): React.JSX.Element
   return (
     <Toolbar className={"gap-x-1"}>
       <SimpleDialog
-        trigger={<ToolbarButton appearance={"primary"} icon={<AddRegular />} />}
+        trigger={
+          <ToolbarButton
+            aria-label={addTitle}
+            appearance="primary"
+            icon={<AddRegular />}
+          />
+        }
         dialogTitle={addTitle}
         dialogContent={
           <DialogContent className={"flex flex-col gap-y-2.5"}>
             {addForm}
           </DialogContent>
         }
-        dialogConfirm={"Submit"}
+        dialogConfirm="Add"
         onConfirm={onAdd}
       />
       <SimpleDialog
-        trigger={<ToolbarButton icon={<ResetIcon />} />}
-        dialogTitle={"Confirm Reset To Preset?"}
-        dialogConfirm={"Reset"}
+        trigger={
+          <ToolbarButton aria-label="Reset to defaults" icon={<ResetIcon />} />
+        }
+        dialogTitle="Reset to defaults?"
+        dialogContent={
+          <DialogContent>
+            This will remove the custom rules in this section.
+          </DialogContent>
+        }
+        dialogConfirm="Reset"
         onConfirm={onReset}
       />
     </Toolbar>

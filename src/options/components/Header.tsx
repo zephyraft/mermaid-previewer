@@ -20,7 +20,7 @@ export default (): React.JSX.Element => {
       <div className="grow flex items-center gap-x-2">
         <Title3>
           <Link
-            href="https://chrome.google.com/webstore/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl"
+            href="https://chromewebstore.google.com/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl"
             target="_blank"
             appearance="subtle"
             className="font-semibold hover:no-underline">
@@ -28,7 +28,7 @@ export default (): React.JSX.Element => {
           </Link>
         </Title3>
         <Body1 className="-mb-3.5">
-          <Tooltip content="Changelog" relationship="label" withArrow>
+          <Tooltip content="Release notes" relationship="label" withArrow>
             <Link
               href="https://www.github.com/zephyraft/mermaid-previewer/releases"
               target="_blank"

@@ -12,11 +12,11 @@ import SelectorConfigForm from "./SelectorConfigForm";
 const columns: Column[] = [
   {
     key: "match",
-    label: "URL Pattern",
+    label: "URL pattern",
   },
   {
     key: "selector",
-    label: "Selector",
+    label: "CSS selector",
   },
 ];
 
@@ -78,7 +78,7 @@ export default ({
     <ConfigTable
       columns={columns}
       rows={rows}
-      editFormTitle={"Edit Selector"}
+      editFormTitle="Edit rule"
       editForm={(row) => (
         <SelectorConfigForm
           defaultValue={

@@ -93,7 +93,7 @@ export default ({
                   <span className={"pr-2"}>{cell.value}</span>
                   {cell.default && isLastCell(row, index) && (
                     <Badge appearance="filled" color="informative">
-                      preset
+                      Default
                     </Badge>
                   )}
                 </TableCellLayout>
@@ -103,6 +103,7 @@ export default ({
                       trigger={
                         <Button
                           icon={<EditIcon />}
+                          aria-label={editFormTitle}
                           appearance="subtle"
                           disabled={cell.default}
                         />
@@ -113,7 +114,7 @@ export default ({
                           {editForm(row)}
                         </DialogContent>
                       }
-                      dialogConfirm={"Submit"}
+                      dialogConfirm="Save"
                       onConfirm={(setOpen, ev) => onEdit(row, setOpen, ev)}
                       onClose={onEditCancel}
                     />
@@ -121,12 +122,13 @@ export default ({
                       trigger={
                         <Button
                           icon={<DeleteIcon />}
+                          aria-label="Delete rule"
                           appearance="subtle"
                           disabled={cell.default}
                         />
                       }
-                      dialogTitle={"Confirm Delete?"}
-                      dialogConfirm={"Delete"}
+                      dialogTitle="Delete this rule?"
+                      dialogConfirm="Delete"
                       onConfirm={(setOpen, ev) => onDelete(row, setOpen, ev)}
                     />
                   </TableCellActions>

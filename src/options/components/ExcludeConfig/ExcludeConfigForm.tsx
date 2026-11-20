@@ -19,7 +19,7 @@ export default ({
 
   const isLegacy = defaultValue.regex !== undefined;
   const pattern = defaultValue.match ?? defaultValue.regex;
-  const label = isLegacy ? "URL Regular Expression" : "Match Patterns";
+  const label = isLegacy ? "URL regular expression" : "URL match pattern";
   const helpLink = isLegacy
     ? "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions"
     : "https://developer.chrome.com/docs/extensions/develop/concepts/match-patterns";
@@ -49,6 +49,7 @@ export default ({
         contentAfter={
           <Button
             icon={<Close />}
+            aria-label="Clear URL pattern"
             appearance={"transparent"}
             onClick={() => {
               inputRef.current!.value = "";

@@ -2,7 +2,7 @@
   "name": "mermaid-previewer",
   "displayName": "Mermaid Previewer",
   "version": "1.5.3",
-  "description": "Preview and export mermaid.",
+  "description": "Preview Mermaid diagrams right on the page, copy their source, and download SVGs.",
   "type": "module",
   "scripts": {
     "dev": "node tools/prepare-assets.mjs && extension dev --browser=chrome",
