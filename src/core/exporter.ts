@@ -1,12 +1,13 @@
 import { computePosition, flip, offset, shift } from "@floating-ui/dom";
 
 import type { ExtensionMessage } from "~types";
+import { diagramSurface } from "./diagram-surface";
 
 function getSVG(target: Element): SVGSVGElement | null {
   if (target instanceof SVGSVGElement) return target;
   if (!(target instanceof HTMLIFrameElement)) return null;
 
-  // Mermaid sandbox mode renders a self-contained SVG in a data URL.
+  // Some sites wrap their rendered SVG in a data URL.
   const src = target.getAttribute("src") ?? "";
   const prefix = /^data:text\/html(?:;charset=[^;,]+)?;base64,/i.exec(
     src ?? "",
@@ -59,6 +60,21 @@ async function download(target: Element) {
   if (!response?.ok) throw new Error("Could not download the Mermaid diagram");
 }
 
+async function openPreview(target: Element) {
+  const svg = getSVG(target);
+  if (!svg) return;
+  const message: ExtensionMessage = {
+    type: "open-diagram-preview",
+    svg: serializeSVG(svg),
+    fontAwesome: !!svg.querySelector('i[class*="fa"]'),
+    surface: svg.isConnected
+      ? diagramSurface(svg)
+      : { color: "#fff", dark: false },
+  };
+  const response = await chrome.runtime.sendMessage(message);
+  if (!response?.ok) throw new Error("Could not open the diagram preview");
+}
+
 function createButton(id: string, title: string, iconPath: string) {
   const button = document.createElement("button");
   button.id = id;
@@ -75,17 +91,15 @@ function createButton(id: string, title: string, iconPath: string) {
   return button;
 }
 
-function createControls(placement: "overlay" | "inline") {
+function createControls() {
   const host = document.createElement("div");
-  host.dataset.mermaidPreviewerExporter = placement;
-  if (placement === "overlay") host.id = "mermaid-previewer-exporter";
+  host.dataset.mermaidPreviewerExporter = "overlay";
+  host.id = "mermaid-previewer-exporter";
   host.style.setProperty("all", "initial", "important");
   const root = host.attachShadow({ mode: "open" });
   const style = document.createElement("style");
   style.textContent = `
-    #mermaid-previewer-controls { display: flex; gap: 4px; }
-    #mermaid-previewer-controls.overlay { position: fixed; z-index: 2147483647; flex-direction: column; }
-    #mermaid-previewer-controls.inline { margin-block-start: 4px; }
+    #mermaid-previewer-controls { display: flex; gap: 4px; position: fixed; z-index: 2147483647; flex-direction: column; }
     #mermaid-previewer-controls[hidden], button[hidden] { display: none; }
     button { display: grid; place-items: center; width: 24px; height: 24px; padding: 1px;
       color: #605e5c; background: #faf9f8; border: 1px solid #b3b0ad; border-radius: 4px; cursor: pointer; }
@@ -94,8 +108,12 @@ function createControls(placement: "overlay" | "inline") {
   `;
   const controls = document.createElement("div");
   controls.id = "mermaid-previewer-controls";
-  controls.className = placement;
 
+  const previewButton = createButton(
+    "open-preview",
+    "Open preview",
+    "M4 4h6v2H6v4H4V4Zm10 0h6v6h-2V6h-4V4ZM4 14h2v4h4v2H4v-6Zm14 0h2v6h-6v-2h4v-4Z",
+  );
   const downloadButton = createButton(
     "download",
     "Download SVG",
@@ -106,16 +124,16 @@ function createControls(placement: "overlay" | "inline") {
     "Copy Mermaid source",
     "M8 3H4v14h2V5h10V3H8Zm2 4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-8Zm0 2h8v10h-8V9Z",
   );
-  controls.append(downloadButton, copyButton);
+  controls.append(previewButton, downloadButton, copyButton);
   root.append(style, controls);
 
-  return { host, controls, downloadButton, copyButton };
+  return { host, controls, previewButton, downloadButton, copyButton };
 }
 
 export function createExporter(signal: AbortSignal) {
   const tracked = new WeakSet<Element>();
-  const { host, controls, downloadButton, copyButton } =
-    createControls("overlay");
+  const { host, controls, previewButton, downloadButton, copyButton } =
+    createControls();
   controls.hidden = true;
   let activeTarget: Element | undefined;
   let activeSource: string | undefined;
@@ -133,6 +151,8 @@ export function createExporter(signal: AbortSignal) {
     clearTimeout(hideTimer);
     activeTarget = target;
     activeSource = source;
+    previewButton.hidden =
+      target instanceof HTMLIFrameElement && !getSVG(target);
     copyButton.hidden = source === undefined;
     controls.hidden = false;
     const { x, y } = await computePosition(target, controls, {
@@ -152,6 +172,19 @@ export function createExporter(signal: AbortSignal) {
     listenerOptions,
   );
   controls.addEventListener("mouseleave", hideLater, listenerOptions);
+  controls.addEventListener(
+    "focusin",
+    () => clearTimeout(hideTimer),
+    listenerOptions,
+  );
+  controls.addEventListener("focusout", hideLater, listenerOptions);
+  previewButton.addEventListener(
+    "click",
+    () => {
+      if (activeTarget) void openPreview(activeTarget).catch(console.error);
+    },
+    listenerOptions,
+  );
   downloadButton.addEventListener(
     "click",
     () => {
@@ -176,42 +209,35 @@ export function createExporter(signal: AbortSignal) {
     { once: true },
   );
 
-  return (target: Element, source?: string) => {
-    if (tracked.has(target)) return;
+  return (target: Element, source?: string, targetSignal = signal) => {
+    if (tracked.has(target) || targetSignal.aborted) return;
     tracked.add(target);
-    if (target instanceof HTMLIFrameElement && source !== undefined) {
-      // The sandbox document owns its pointer events. Put its controls beside the frame.
-      const toolbar = createControls("inline");
-      toolbar.downloadButton.addEventListener(
-        "click",
-        () => {
-          void download(target).catch(console.error);
-        },
-        listenerOptions,
-      );
-      toolbar.copyButton.addEventListener(
-        "click",
-        () => {
-          void navigator.clipboard.writeText(source).catch(console.error);
-        },
-        listenerOptions,
-      );
-      const container = target.parentElement;
-      if (!container) return;
-      container.append(toolbar.host);
-      signal.addEventListener("abort", () => toolbar.host.remove(), {
-        once: true,
-      });
-      return;
-    }
+    const targetListeners = { signal: targetSignal };
     if (!host.isConnected) document.body.append(host);
     const hoverTarget =
       source === undefined ? (target.parentElement ?? target) : target;
     const showControls = () => {
       void show(target, source).catch(console.error);
     };
-    hoverTarget.addEventListener("mouseenter", showControls, listenerOptions);
-    hoverTarget.addEventListener("mouseleave", hideLater, listenerOptions);
-    if (hoverTarget.matches(":hover")) showControls();
+    if (!hoverTarget.hasAttribute("tabindex"))
+      hoverTarget.setAttribute("tabindex", "0");
+    hoverTarget.addEventListener("mouseenter", showControls, targetListeners);
+    hoverTarget.addEventListener("mouseleave", hideLater, targetListeners);
+    hoverTarget.addEventListener("focusin", showControls, targetListeners);
+    hoverTarget.addEventListener("focusout", hideLater, targetListeners);
+    if (targetSignal !== signal) {
+      targetSignal.addEventListener(
+        "abort",
+        () => {
+          if (activeTarget !== target) return;
+          clearTimeout(hideTimer);
+          activeTarget = undefined;
+          activeSource = undefined;
+          controls.hidden = true;
+        },
+        { once: true },
+      );
+    }
+    if (hoverTarget.matches(":hover, :focus-within")) showControls();
   };
 }

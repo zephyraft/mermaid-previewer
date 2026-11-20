@@ -2,9 +2,9 @@ Short description
 Preview Mermaid diagrams right on the page, copy their source, and download SVGs.
 
 Detailed description
-Turn Mermaid code blocks into diagrams you can read right on the page. Hover over a preview to copy the original Mermaid source or download a scalable SVG for your docs and slides.
+Turn Mermaid code blocks into diagrams you can read right on the page. Hover over a diagram to open a larger preview with zoom and pan, copy the original source, or download a scalable SVG for your docs and slides.
 
-• Preview Mermaid code blocks in Bitbucket Markdown and local .md files, or open standalone .mmd and .mermaid files in Chrome.
+• Preview Mermaid code blocks in Bitbucket Markdown, Gemini, and local .md files, or open standalone .mmd and .mermaid files in Chrome.
 • Download SVGs from Mermaid diagrams already rendered by GitHub, Gists, and GitLab.
 • Use Pele by default or switch to the official Mermaid.js engine in Settings.
 • Add your own preview and SVG export rules with URL patterns and CSS selectors, or exclude pages where you don't want the extension to run.

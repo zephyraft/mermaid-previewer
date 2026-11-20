@@ -1,5 +1,6 @@
 import { readFile, readdir } from "node:fs/promises";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
 import { expect, test } from "./fixtures";
 
@@ -13,7 +14,59 @@ const source = "flowchart LR\n  A --> B";
 const nativeSVG =
   '<svg xmlns="http://www.w3.org/2000/svg" width="280" height="120"><rect width="280" height="120" fill="royalblue"/></svg>';
 
-test("reads legacy sync settings and applies URL regexes and sandbox mode", async ({
+test("recovers the first local page when Chrome misses declarative injection", async ({
+  page,
+  extensionWorker,
+}) => {
+  const url = pathToFileURL(resolve("doc/issue-395.html")).href;
+  const pattern = "file:///*/issue-395.html";
+  await extensionWorker.evaluate(
+    (match) =>
+      chrome.storage.sync.set({
+        "mermaid-previewer.matchSelectors": JSON.stringify([
+          { match, selector: "code.language-mermaid" },
+        ]),
+      }),
+    pattern,
+  );
+  await expect
+    .poll(() =>
+      extensionWorker.evaluate(async () => {
+        const [script] = await chrome.scripting.getRegisteredContentScripts({
+          ids: ["mermaid-previewer"],
+        });
+        return script?.matches ?? [];
+      }),
+    )
+    .toContain(pattern);
+  await extensionWorker.evaluate(() =>
+    chrome.scripting.unregisterContentScripts({
+      ids: ["mermaid-previewer"],
+    }),
+  );
+
+  await page.goto(url);
+  const diagrams = page.locator("code.language-mermaid > svg.pele");
+  await expect(diagrams).toHaveCount(1);
+  await extensionWorker.evaluate(async (url) => {
+    const [tab] = await chrome.tabs.query({ url });
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id! },
+      files: ["scripts/site.js"],
+    });
+  }, url);
+  await page.locator("main").evaluate((main) => {
+    const code = document.createElement("code");
+    code.className = "language-mermaid";
+    code.style.whiteSpace = "pre";
+    code.textContent = "flowchart LR\n  C --> D";
+    main.append(code);
+  });
+  await expect(diagrams).toHaveCount(2);
+  await expect(page.locator("#mermaid-previewer-exporter")).toHaveCount(1);
+});
+
+test("preserves legacy URL regex rules and ignores the retired Sandbox preference", async ({
   context,
   page,
   optionsURL,
@@ -61,8 +114,16 @@ test("reads legacy sync settings and applies URL regexes and sandbox mode", asyn
     }),
   );
   await page.goto("https://legacy.example/diagram");
-  const sandboxDiagram = page.locator(".legacy-diagram iframe");
-  await expect(sandboxDiagram).toBeVisible();
+  const legacyDiagram = page.locator(".legacy-diagram > svg.pele");
+  await expect(legacyDiagram).toBeVisible();
+  await legacyDiagram.hover();
+  await page.getByRole("button", { name: "Open preview" }).click();
+  const viewer = page.getByRole("dialog", { name: "Diagram preview" });
+  await expect(
+    viewer.getByRole("img", { name: "Mermaid diagram" }),
+  ).toBeVisible();
+  await viewer.getByRole("button", { name: "Close preview" }).click();
+  await legacyDiagram.hover();
   await page.getByRole("button", { name: "Download SVG" }).click();
   await expect
     .poll(async () => (await completedDownloads(downloadDir)).length)
@@ -73,10 +134,10 @@ test("reads legacy sync settings and applies URL regexes and sandbox mode", asyn
     .toContain("<svg");
 
   await page.goto("https://modern.example/diagram");
-  await expect(page.locator(".modern-diagram iframe")).toBeVisible();
+  await expect(page.locator(".modern-diagram > svg.pele")).toBeVisible();
   await page.goto("https://legacy.example/blocked");
   await expect(page.locator(".legacy-diagram")).toHaveText(source);
-  await expect(page.locator(".legacy-diagram iframe")).toHaveCount(0);
+  await expect(legacyDiagram).toHaveCount(0);
 
   await page.goto(optionsURL);
   await expect(
@@ -88,21 +149,71 @@ test("reads legacy sync settings and applies URL regexes and sandbox mode", asyn
   await expect(
     page.getByText("^https://legacy[.]example/native", { exact: true }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Experimental" }).click();
-  const sandbox = page.getByRole("switch", { name: /^Sandbox\b/ });
-  await expect(sandbox).toBeChecked();
-  await sandbox.click();
-  await expect(sandbox).not.toBeChecked();
+  await expect(
+    page.getByRole("combobox", { name: "Rendering engine" }),
+  ).toHaveValue("pele");
+});
+
+test("honors the explicit ports in 1.5.2 URL match patterns", async ({
+  context,
+  page,
+  extensionWorker,
+}) => {
+  const host = "https://upgrade-test.example";
+  const origin = host + ":8443";
+  const match = origin + "/*";
+  await extensionWorker.evaluate(
+    ({ host, origin, match }) =>
+      chrome.storage.sync.set({
+        "mermaid-previewer.excludeURLs": JSON.stringify([
+          { match: origin + "/blocked" },
+        ]),
+        "mermaid-previewer.matchSelectors": JSON.stringify([
+          { match, selector: ".source" },
+          { match: host + ":443/blocked", selector: ".source" },
+        ]),
+        "mermaid-previewer.downloadSelectors": JSON.stringify([
+          { match: origin + "/native", selector: "#native" },
+        ]),
+      }),
+    { host, origin, match },
+  );
   await expect
-    .poll(async () =>
-      extensionWorker.evaluate(
-        async () =>
-          (await chrome.storage.sync.get("mermaid-previewer.experimental"))[
-            "mermaid-previewer.experimental"
-          ],
-      ),
+    .poll(() =>
+      extensionWorker.evaluate(async () => {
+        const [script] = await chrome.scripting.getRegisteredContentScripts({
+          ids: ["mermaid-previewer"],
+        });
+        return script?.matches ?? [];
+      }),
     )
-    .toBe(JSON.stringify({ sandbox: false }));
+    .toContain(match);
+
+  await context.route(
+    (url) => url.origin === origin || url.origin === host,
+    (route) =>
+      route.fulfill({
+        contentType: "text/html",
+        body: `<pre class="source">${source}</pre><div id="native">${nativeSVG}</div>`,
+      }),
+  );
+  const preview = page.locator(".source > svg.pele");
+  await page.goto(origin + "/native");
+  await expect(preview).toBeVisible();
+  await page.locator("#native svg").hover();
+  await expect(
+    page.getByRole("button", { name: "Download SVG" }),
+  ).toBeVisible();
+
+  await page.goto(origin + "/blocked");
+  await expect(page.locator(".source")).toHaveText(source);
+  await expect(preview).toHaveCount(0);
+
+  await page.goto(host + "/blocked");
+  await expect(preview).toBeVisible();
+  await page.goto(host + "/native");
+  await expect(page.locator(".source")).toHaveText(source);
+  await expect(page.locator("#mermaid-previewer-exporter")).toHaveCount(0);
 });
 
 test("exports a native diagram added to a GitHub Mermaid iframe", async ({
@@ -132,6 +243,13 @@ test("exports a native diagram added to a GitHub Mermaid iframe", async ({
     element.innerHTML = markup;
   }, nativeSVG);
   await expect(frame.locator("#mermaid-previewer-exporter")).toBeAttached();
+  await target.locator("svg").hover();
+  await frame.getByRole("button", { name: "Open preview" }).click();
+  const viewer = page.getByRole("dialog", { name: "Diagram preview" });
+  await expect(
+    viewer.getByRole("img", { name: "Mermaid diagram" }),
+  ).toBeVisible();
+  await viewer.getByRole("button", { name: "Close preview" }).click();
   await target.locator("svg").hover();
   const controls = frame.locator("#mermaid-previewer-controls");
   await expect(controls.locator("#copy")).toBeHidden();
@@ -226,20 +344,20 @@ test("applies individual rule switches on reload and unregisters when no include
   const exclusion = settings
     .getByRole("row")
     .filter({ hasText: blocked })
-    .getByRole("switch");
+    .getByRole("switch", { name: /^Enable / });
   const preview = settings
     .getByRole("row")
     .filter({ hasText: "#preview" })
-    .getByRole("switch");
+    .getByRole("switch", { name: /^Enable / });
   const download = settings
     .getByRole("row")
     .filter({ hasText: "#native" })
-    .getByRole("switch");
+    .getByRole("switch", { name: /^Enable / });
   for (const toggle of [exclusion, preview, download]) {
     await expect(toggle).toBeChecked();
   }
 
-  const rendered = page.locator("#preview svg");
+  const rendered = page.locator("pre#preview > svg.pele");
   const downloadButton = page.getByRole("button", { name: "Download SVG" });
   await page.goto(`${origin}/public`);
   await expect(rendered).toBeVisible();
@@ -278,7 +396,10 @@ test("applies individual rule switches on reload and unregisters when no include
   await expect(page.locator("#mermaid-previewer-exporter")).toHaveCount(0);
 
   const tables = settings.getByRole("table");
-  const includeSwitches = tables.nth(1).or(tables.nth(2)).getByRole("switch");
+  const includeSwitches = tables
+    .nth(1)
+    .or(tables.nth(2))
+    .getByRole("switch", { name: /^Enable / });
   for (const toggle of await includeSwitches.all()) {
     if (await toggle.isChecked()) {
       await toggle.click();

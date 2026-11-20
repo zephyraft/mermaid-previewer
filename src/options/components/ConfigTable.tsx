@@ -28,6 +28,7 @@ export type Row = {
   key: number;
   cells: Cell[];
   enabled: boolean;
+  live?: boolean;
   isDefault: boolean;
 };
 
@@ -52,6 +53,7 @@ interface TableProps {
   editFormTitle: string;
   editForm: (row: Row) => React.JSX.Element;
   onEnabledChange: (index: number, enabled: boolean) => void;
+  onLiveChange?: (index: number, live: boolean) => void;
   onDelete: (
     row: Row,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -75,6 +77,7 @@ export default ({
   editFormTitle,
   editForm,
   onEnabledChange,
+  onLiveChange,
   onDelete,
   onEdit,
   onEditCancel,
@@ -87,6 +90,11 @@ export default ({
             <TableHeaderCell key={column.key}>{column.label}</TableHeaderCell>
           ))}
           <TableHeaderCell style={{ width: 96 }}>Enabled</TableHeaderCell>
+          {onLiveChange && (
+            <TableHeaderCell style={{ width: 115 }}>
+              Live updates
+            </TableHeaderCell>
+          )}
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -147,6 +155,15 @@ export default ({
                 onChange={(_, { checked }) => onEnabledChange(row.key, checked)}
               />
             </TableCell>
+            {onLiveChange && (
+              <TableCell>
+                <Switch
+                  aria-label={`Live updates for ${row.cells.map((cell) => cell.value).join(", ")}`}
+                  checked={row.live === true}
+                  onChange={(_, { checked }) => onLiveChange(row.key, checked)}
+                />
+              </TableCell>
+            )}
           </TableRow>
         ))}
       </TableBody>

@@ -20,6 +20,19 @@ test("配置页正常加载", async ({ page, optionsURL }) => {
   await expect(page.locator("body")).toContainText("URL exclusions");
   await expect(page.locator("body")).toContainText("Preview rules");
   await expect(page.locator("body")).toContainText("SVG export rules");
+  await expect(page.getByText("Rendering engine", { exact: true })).toHaveCSS(
+    "font-weight",
+    "700",
+  );
+  await expect(
+    page
+      .getByRole("combobox", { name: "Rendering engine" })
+      .locator('option[value="pele"]'),
+  ).toHaveText("Pele (recommended)");
+  await expect(
+    page.getByRole("link", { name: "Official performance comparison" }),
+  ).toHaveAttribute("href", "https://pele.run/#why-pele");
+  await expect(page.getByRole("switch", { name: /^Sandbox\b/ })).toHaveCount(0);
 });
 
 test("外链指向对应页面", async ({ page, optionsURL }) => {
@@ -149,6 +162,44 @@ test("配置 SVG 导出规则", async ({ page, optionsURL }) => {
   });
 });
 
+test("预览规则的实时更新状态独立保存并按区恢复默认", async ({
+  page,
+  optionsURL,
+}) => {
+  await gotoOptionPage(page, optionsURL);
+  const gemini = page.getByRole("switch", {
+    name: /^Live updates for https:\/\/gemini/,
+  });
+  const bitbucket = page.getByRole("switch", {
+    name: /^Live updates for \*:\/\/bitbucket/,
+  });
+  await expect(gemini).toBeChecked();
+  await expect(bitbucket).not.toBeChecked();
+  await expect(
+    getTableLocator(page, 0).getByRole("switch", {
+      name: /^Live updates for /,
+    }),
+  ).toHaveCount(0);
+  await expect(
+    getTableLocator(page, 2).getByRole("switch", {
+      name: /^Live updates for /,
+    }),
+  ).toHaveCount(0);
+
+  await gemini.click();
+  await bitbucket.click();
+  await expect(gemini).not.toBeChecked();
+  await expect(bitbucket).toBeChecked();
+  await page.reload();
+  await expect(gemini).not.toBeChecked();
+  await expect(bitbucket).toBeChecked();
+
+  await clickResetButton(page, 1);
+  await confirmReset(page);
+  await expect(gemini).toBeChecked();
+  await expect(bitbucket).not.toBeChecked();
+});
+
 async function gotoOptionPage(page: Page, optionsURL: string) {
   await page.goto(optionsURL);
 }
@@ -264,8 +315,12 @@ async function testConfig({
   await expect(rowLocator).toHaveCount(beforeAddCount + 2);
   await onAddFormSubmit(rowLocator);
 
-  const lastSwitch = rowLocator.last().getByRole("switch");
-  const firstCustomSwitch = rowLocator.nth(beforeAddCount).getByRole("switch");
+  const lastSwitch = rowLocator
+    .last()
+    .getByRole("switch", { name: /^Enable / });
+  const firstCustomSwitch = rowLocator
+    .nth(beforeAddCount)
+    .getByRole("switch", { name: /^Enable / });
   await expect(lastSwitch).toBeChecked();
   await lastSwitch.click();
   await expect(lastSwitch).not.toBeChecked();
@@ -290,7 +345,9 @@ async function testConfig({
   await expect(rowLocator).toHaveCount(beforeAddCount + 1);
 
   // 重置
-  const defaultSwitch = rowLocator.first().getByRole("switch");
+  const defaultSwitch = rowLocator
+    .first()
+    .getByRole("switch", { name: /^Enable / });
   await expect(defaultSwitch).toBeChecked();
   await defaultSwitch.click();
   await expect(defaultSwitch).not.toBeChecked();

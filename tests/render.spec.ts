@@ -21,6 +21,42 @@ test("bitbucket渲染", async ({ page, context }) => {
   });
 });
 
+test("识别合法图表头并跳过普通代码和无效 frontmatter", async ({
+  page,
+  context,
+}) => {
+  const blocks = {
+    invalid: "---\nconfig: [\n---\nflowchart LR\nA --> B",
+    ordinary: "const note = `\n  graph LR\n`;",
+    flowchart: "graph TD; A --> B;",
+    usecase:
+      'usecase-beta\ndirection LR\nactor Customer\nCheckout("Place order")\nCustomer --> Checkout',
+    bom: "\uFEFFflowchart LR\nA --> B",
+    frontmatter:
+      "\uFEFF---\ntitle: Example\n---\n%% Comment\ngitGraph LR:\n  commit",
+  };
+  await context.route(BITBUCKET_URL, (route) =>
+    route.fulfill({
+      contentType: "text/html; charset=utf-8",
+      body: Object.entries(blocks)
+        .map(
+          ([id, source]) =>
+            `<div class="codehilite"><pre id="${id}">${source}</pre></div>`,
+        )
+        .join(""),
+    }),
+  );
+  await page.goto(BITBUCKET_URL);
+  for (const id of ["flowchart", "usecase", "bom", "frontmatter"]) {
+    await expect(page.locator(`#${id} > svg.pele`)).toBeVisible();
+  }
+  for (const id of ["invalid", "ordinary"] as const) {
+    const block = page.locator(`#${id}`);
+    await expect(block).toHaveText(blocks[id]);
+    await expect(block).not.toHaveAttribute("data-mermaid-previewer-raw");
+  }
+});
+
 test("渲染本地 doc/example.md 中的 Mermaid 代码块", async ({ page }) => {
   await page.goto(pathToFileURL(EXAMPLE_MARKDOWN_PATH).href);
   await expect(getMermaidSVGLocator(page)).toHaveCount(EXAMPLE_DIAGRAM_COUNT, {

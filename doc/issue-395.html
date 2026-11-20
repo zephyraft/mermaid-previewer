@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mermaid Previewer issue #395</title>
+  </head>
+  <body>
+    <main>
+      <h1>Issue #395 first-load test</h1>
+      <p>
+        With the matching preview rule enabled, this code block should become a
+        diagram on the first visit after restarting Chrome.
+      </p>
+      <pre><code class="language-mermaid">flowchart LR
+    A([Start Chrome]) --> B[Open this page]
+    B --> C[Render the Mermaid diagram]</code></pre>
+    </main>
+  </body>
+</html>

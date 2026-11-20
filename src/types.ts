@@ -4,14 +4,22 @@ export type ExcludeConfig = (
 
 export type SelectorConfig = ExcludeConfig & { selector: string };
 
+export type PreviewConfig = SelectorConfig & { live?: boolean };
+
 export type Renderer = "pele" | "mermaid";
 
-export interface Experimental {
-  sandbox: boolean;
-}
+export type PreviewWindow = Window & {
+  mermaidPreviewerLifecycle?: AbortController;
+};
 
 export type ExtensionMessage =
   | { type: "activate-preview" }
   | { type: "load-renderer"; renderer: Renderer }
   | { type: "resolve-font-awesome"; names: string[] }
+  | {
+      type: "open-diagram-preview";
+      svg: string;
+      fontAwesome: boolean;
+      surface: { color: string; dark: boolean };
+    }
   | { type: "download-svg"; svg: string; fontAwesome: boolean };

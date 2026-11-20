@@ -5,7 +5,7 @@
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/oidjnlhbegipkcklbdfnbkikplpghfdl)](https://chromewebstore.google.com/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)
 [![Chrome Web Store users](https://img.shields.io/chrome-web-store/users/oidjnlhbegipkcklbdfnbkikplpghfdl)](https://chromewebstore.google.com/detail/mermaid-previewer/oidjnlhbegipkcklbdfnbkikplpghfdl)
 
-Mermaid Previewer is a Chrome extension that renders Mermaid diagrams right on the page. Hover over a preview to copy its Mermaid source or download it as an SVG. The extension renders diagrams locally in Chrome.
+Mermaid Previewer is a Chrome extension that renders Mermaid diagrams right on the page. Hover over a diagram to open a larger preview, copy its Mermaid source, or download it as an SVG. In the larger preview, zoom or drag the diagram to see more detail. The extension renders diagrams locally in Chrome.
 
 On pages covered by a preview rule, use a fenced Markdown code block labeled `mermaid`.
 
@@ -17,16 +17,18 @@ flowchart LR
 ## Preview and export rules
 
 - **URL exclusions** skip matching pages. The Chrome Web Store is excluded by default.
-- **Preview rules** find Mermaid source in page elements. The built-in rules cover Mermaid code blocks in Bitbucket Markdown and local `.md` files, as well as standalone `.mmd` and `.mermaid` files. To preview local files, turn on **Allow access to file URLs** on the extension's details page in Chrome, then open the file in Chrome. The rest of a local Markdown document stays in its original text format.
+- **Preview rules** find Mermaid source in page elements. The built-in rules cover Mermaid code blocks in Bitbucket Markdown, Gemini, and local `.md` files, as well as standalone `.mmd` and `.mermaid` files. In Gemini, previews update as the code is generated. To preview local files, turn on **Allow access to file URLs** on the extension's details page in Chrome, then open the file in Chrome. The rest of a local Markdown document stays in its original text format.
 - **SVG export rules** find diagrams rendered by the website. The built-in rules cover GitHub, Gists, and GitLab. Diagrams rendered by the extension already have SVG export controls.
 
-Use the **Enabled** switch in Settings to turn individual built-in or custom rules on or off. Existing rules are enabled by default after an upgrade. Reload open pages to apply rule changes. **Reset to defaults** re-enables the built-in rules and removes custom rules in that section.
+Use the **Enabled** switch in Settings to turn individual built-in or custom rules on or off. Existing rules are enabled by default after an upgrade. Use **Live updates** on a preview rule to refresh diagrams as their source changes. The built-in Gemini rule enables live updates by default. Reload open pages to apply rule changes. **Reset to defaults** restores the built-in rules' settings and removes custom rules in that section.
 
-Existing rules and the Sandbox preference carry over from previous releases, including rules saved as URL regular expressions and older URL exclusions and CSS selectors.
+Existing rules carry over from previous releases, including rules saved as URL regular expressions and older URL exclusions and CSS selectors.
 
 ## Rendering engine
 
-Pele is the default rendering engine. To switch, choose **Mermaid.js (official)** under **Rendering engine** in Settings, then reload the page you're previewing. The extension also tries Mermaid.js when a diagram uses certain Mermaid.js features or when Pele fails to render it. Sandbox mode always uses Mermaid.js.
+Pele is the default and recommended rendering engine for faster previews and a smaller renderer. See the [official performance comparison](https://pele.run/#why-pele).
+
+To switch, choose **Mermaid.js (official)** under **Rendering engine** in Settings, then reload the page you're previewing. The extension also tries Mermaid.js when a diagram uses certain Mermaid.js features or when Pele fails to render it.
 
 ## Development
 
@@ -38,7 +40,7 @@ The manual Chrome Web Store workflow uses the existing `SUBMIT_KEYS` secret and 
 
 ## Changelog
 
-- [1.5.3] Migrated to Extension.js with support for existing settings. Updated Mermaid.js from 11.4.1 to 12.3.0. Made Pele the default renderer and added a setting to switch to Mermaid.js. Added in-page previews for Mermaid code blocks in local `.md` files.
+- [1.5.3] Migrated to Extension.js with support for existing rules. Updated Mermaid.js from 11.4.1 to 12.3.0. Made Pele the default renderer, added a setting to switch to Mermaid.js, and removed experimental Sandbox mode. Added previews for local `.md` files and Gemini code blocks, individual rule switches, and a larger diagram preview with zoom and pan.
 - [1.5.2] Limited content script injection to matching URLs. See [issue #304](https://github.com/zephyraft/mermaid-previewer/issues/304).
 - [1.5.1] Removed ZenUML support to fix CSS leaking into web pages.
 - [1.5.0] Updated Mermaid.js to 11.4.1 and changed how it is injected. Switched Gist to SVG export once it added native previews. Added support for `zenuml`, `sankey-beta`, `xychart-beta`, `block-beta`, `packet-beta`, `kanban`, and `architecture-beta`.

@@ -1,11 +1,13 @@
 import { getRegistrationMatches, selectRules } from "~core/rules";
 import { readRules, ruleStorageKeys } from "~core/options";
-import type { ExtensionMessage, Renderer } from "~types";
+import type { ExtensionMessage, PreviewWindow, Renderer } from "~types";
+import { showDiagramPreview } from "./diagram-preview";
 import { resolveFontAwesome } from "./font-awesome";
 
-const { action, downloads, runtime, scripting, storage } = chrome;
+const { action, downloads, runtime, scripting, storage, tabs } = chrome;
 const bootstrapId = "mermaid-previewer";
 const legacyScriptIds = ["mermaid", "previewer", "downloader"];
+const siteScript = "scripts/site.js";
 
 action.onClicked.addListener(() => {
   void runtime.openOptionsPage().catch(console.error);
@@ -68,6 +70,35 @@ storage.onChanged.addListener((changes, area) => {
 });
 refreshRegistration();
 
+async function needsPreview(url: string) {
+  const { preview, download } = selectRules(await readRules(), url);
+  return preview.length > 0 || download.length > 0;
+}
+
+async function recoverPreview(tabId: number, url: string) {
+  if (!(await needsPreview(url))) return;
+
+  // Chrome can miss a persisted content script on the first navigation after startup.
+  const [page] = await scripting.executeScript({
+    target: { tabId },
+    func: (expectedUrl) =>
+      location.href === expectedUrl &&
+      !(window as PreviewWindow).mermaidPreviewerLifecycle,
+    args: [url],
+  });
+  if (!page?.result) return;
+  const target = page.documentId
+    ? { tabId, documentIds: [page.documentId] }
+    : { tabId, frameIds: [page.frameId] };
+  await scripting.executeScript({ target, files: [siteScript] });
+}
+
+tabs.onUpdated.addListener((tabId, { status }, { url }) => {
+  if (status === "complete" && url && /^(?:https?|file):/.test(url)) {
+    void recoverPreview(tabId, url).catch(console.error);
+  }
+});
+
 function injectionTarget(sender: chrome.runtime.MessageSender) {
   if (sender.tab?.id === undefined || sender.frameId === undefined) return;
   return {
@@ -82,9 +113,8 @@ async function activatePreview(sender: chrome.runtime.MessageSender) {
   const target = injectionTarget(sender);
   if (!target || !sender.url) return;
 
-  const { preview, download } = selectRules(await readRules(), sender.url);
-  if (preview.length || download.length) {
-    await scripting.executeScript({ target, files: ["scripts/site.js"] });
+  if (await needsPreview(sender.url)) {
+    await scripting.executeScript({ target, files: [siteScript] });
   }
 }
 
@@ -106,24 +136,40 @@ async function loadRenderer(
 
 let fontAwesomeCSS: Promise<string> | undefined;
 
+async function embedFontAwesome(svg: string, fontAwesome: boolean) {
+  if (!fontAwesome) return svg;
+  fontAwesomeCSS ??= fetch(runtime.getURL("fontawesome.css"))
+    .then((response) => {
+      if (!response.ok)
+        throw new Error("Could not load the bundled Font Awesome stylesheet");
+      return response.text();
+    })
+    .catch((error) => {
+      fontAwesomeCSS = undefined;
+      throw error;
+    });
+  const css = await fontAwesomeCSS;
+  return svg.replace(
+    /^(<svg\b[^>]*>)/,
+    (openingTag) => `${openingTag}<style><![CDATA[${css}]]></style>`,
+  );
+}
+
+async function openDiagramPreview(
+  sender: chrome.runtime.MessageSender,
+  request: Extract<ExtensionMessage, { type: "open-diagram-preview" }>,
+) {
+  if (sender.tab?.id === undefined) throw new Error("Missing diagram tab");
+  const svg = await embedFontAwesome(request.svg, request.fontAwesome);
+  await scripting.executeScript({
+    target: { tabId: sender.tab.id },
+    func: showDiagramPreview,
+    args: [svg, request.surface],
+  });
+}
+
 async function downloadSVG(svg: string, fontAwesome: boolean) {
-  if (fontAwesome) {
-    fontAwesomeCSS ??= fetch(runtime.getURL("fontawesome.css"))
-      .then((response) => {
-        if (!response.ok)
-          throw new Error("Could not load the bundled Font Awesome stylesheet");
-        return response.text();
-      })
-      .catch((error) => {
-        fontAwesomeCSS = undefined;
-        throw error;
-      });
-    const css = await fontAwesomeCSS;
-    svg = svg.replace(
-      /^(<svg\b[^>]*>)/,
-      (openingTag) => `${openingTag}<style><![CDATA[${css}]]></style>`,
-    );
-  }
+  svg = await embedFontAwesome(svg, fontAwesome);
   await downloads.download({
     url: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`,
     filename: `${crypto.randomUUID()}.svg`,
@@ -146,6 +192,14 @@ runtime.onMessage.addListener((request: ExtensionMessage, sender, respond) => {
     request.names.every((name) => typeof name === "string")
   ) {
     operation = resolveFontAwesome(request.names);
+  } else if (
+    request?.type === "open-diagram-preview" &&
+    typeof request.svg === "string" &&
+    request.svg.startsWith("<svg") &&
+    typeof request.surface?.color === "string" &&
+    typeof request.surface?.dark === "boolean"
+  ) {
+    operation = openDiagramPreview(sender, request);
   } else if (
     request?.type === "download-svg" &&
     typeof request.svg === "string" &&

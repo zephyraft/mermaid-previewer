@@ -3,7 +3,7 @@ import { type SetStateAction, useEffect, useState } from "react";
 import {
   decodeSetting,
   type DefaultRule,
-  isDisabledDefaultRule,
+  isRuleOverride,
   readSetting,
   resolveRuleSettings,
   type RuleEntry,
@@ -60,9 +60,9 @@ export function useSetting<K extends SettingKey>(key: K) {
   return [value, save] as const;
 }
 
-type RuleFields = ExcludeConfig & { selector?: string };
+type RuleFields = ExcludeConfig & { selector?: string; live?: boolean };
 
-export function bindRuleSettings<T extends ExcludeConfig>(
+export function bindRuleSettings<T extends RuleFields>(
   defaultRules: DefaultRule<T>[],
   [entries, save]: readonly [
     RuleEntry<T>[],
@@ -77,27 +77,42 @@ export function bindRuleSettings<T extends ExcludeConfig>(
   function setCustomConfigs(update: SetStateAction<T[]>) {
     return save((current) => {
       const custom = current.filter(
-        (entry): entry is T => !isDisabledDefaultRule(entry),
+        (entry): entry is T => !isRuleOverride(entry),
       );
       return [
-        ...current.filter(isDisabledDefaultRule),
+        ...current.filter(isRuleOverride),
         ...(typeof update === "function" ? update(custom) : update),
       ];
     });
   }
 
-  function setRuleEnabled(index: number, enabled: boolean) {
+  function setRuleOption(
+    index: number,
+    option: "enabled" | "live",
+    value: boolean,
+  ) {
     const defaultRule = defaultRules[index];
     if (defaultRule) {
       return save((current) => {
+        if (option === "enabled") {
+          const other = current.filter(
+            (entry) =>
+              !(
+                "disabledDefault" in entry &&
+                entry.disabledDefault === defaultRule.id
+              ),
+          );
+          return value
+            ? other
+            : [...other, { disabledDefault: defaultRule.id }];
+        }
         const other = current.filter(
           (entry) =>
-            !isDisabledDefaultRule(entry) ||
-            entry.disabledDefault !== defaultRule.id,
+            !("liveDefault" in entry && entry.liveDefault === defaultRule.id),
         );
-        return enabled
+        return value === (defaultRule.live === true)
           ? other
-          : [...other, { disabledDefault: defaultRule.id }];
+          : [...other, { liveDefault: defaultRule.id, live: value }];
       });
     }
 
@@ -117,7 +132,7 @@ export function bindRuleSettings<T extends ExcludeConfig>(
       if (matchingRules.length !== count) return current;
       const target = matchingRules[occurrence];
       return current.map((entry) =>
-        entry === target ? { ...entry, enabled } : entry,
+        entry === target ? { ...entry, [option]: value } : entry,
       );
     });
   }
@@ -126,7 +141,10 @@ export function bindRuleSettings<T extends ExcludeConfig>(
     defaultConfigs,
     customConfigs,
     setCustomConfigs,
-    setRuleEnabled,
+    setRuleEnabled: (index: number, enabled: boolean) =>
+      setRuleOption(index, "enabled", enabled),
+    setRuleLive: (index: number, live: boolean) =>
+      setRuleOption(index, "live", live),
     resetRules: () => save([]),
   };
 }

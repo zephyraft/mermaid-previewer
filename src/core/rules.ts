@@ -8,14 +8,28 @@ const supportedSchemes = ["http:", "https:", "file:"];
 function splitPattern(pattern: string) {
   const parts = /^(\*|https?|file):\/\/([^/]*)(\/.*)$/.exec(pattern);
   if (!parts) return;
-  const [, scheme, host, path] = parts;
-  if (
-    scheme === "file"
-      ? host !== ""
-      : !/^(\*|(?:\*\.)?(?:[\w.-]+|\[[\da-f:]+\]))$/i.test(host)
-  )
+  const [, scheme, authority, path] = parts;
+  if (scheme === "file") return { scheme, host: "", port: "*", path };
+
+  const hostAndPort =
+    /^(\*\.)?(\*|[^:[\]/@?#*\\\s]+|\[[\da-f:.]+\])(?::(\*|\d+))?$/i.exec(
+      authority,
+    );
+  if (!hostAndPort) return;
+  const [, subdomains = "", hostname, port = "*"] = hostAndPort;
+  if (port !== "*" && (scheme === "*" || Number(port) > 65535)) return;
+  if (hostname === "*") {
+    if (!subdomains) return { scheme, host: hostname, port, path };
     return;
-  return { scheme, host: host.toLowerCase(), path };
+  }
+
+  // Chrome canonicalizes hosts, including IDNs and IPv6 addresses.
+  try {
+    const host = new URL("http://" + hostname).hostname.replace(/\.+$/, "");
+    if (host) return { scheme, host: subdomains + host, port, path };
+  } catch {
+    return;
+  }
 }
 
 function matches(rule: ExcludeConfig, url: URL) {
@@ -24,7 +38,7 @@ function matches(rule: ExcludeConfig, url: URL) {
   if (rule.match !== undefined) {
     const pattern = splitPattern(rule.match);
     if (!pattern) return false;
-    const { scheme, host, path } = pattern;
+    const { scheme, host, port, path } = pattern;
     if (
       scheme === "*"
         ? !["http:", "https:"].includes(url.protocol)
@@ -32,16 +46,21 @@ function matches(rule: ExcludeConfig, url: URL) {
     ) {
       return false;
     }
+    const hostname = url.hostname.replace(/\.+$/, "");
     if (
+      scheme !== "file" &&
       host !== "*" &&
-      host !== url.hostname &&
+      host !== hostname &&
       !(
         host.startsWith("*.") &&
-        (url.hostname === host.slice(2) || url.hostname.endsWith(host.slice(1)))
+        (hostname === host.slice(2) || hostname.endsWith(host.slice(1)))
       )
     ) {
       return false;
     }
+    const effectivePort =
+      url.port || (url.protocol === "https:" ? "443" : "80");
+    if (port !== "*" && port !== effectivePort) return false;
     const wildcard = path
       .split("*")
       .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))

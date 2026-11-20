@@ -1,6 +1,6 @@
 import type {
   ExcludeConfig,
-  Experimental,
+  PreviewConfig,
   Renderer,
   SelectorConfig,
 } from "~types";
@@ -9,20 +9,19 @@ export const storageKey = {
   excludeURLs: "mermaid-previewer.excludeURLs",
   matchSelectors: "mermaid-previewer.matchSelectors",
   downloadSelectors: "mermaid-previewer.downloadSelectors",
-  experimental: "mermaid-previewer.experimental",
   renderer: "mermaid-previewer.renderer",
 } as const;
 
 // Older versions ignore entries without a URL pattern or regular expression.
-type DisabledDefaultRule = { disabledDefault: string };
-export type RuleEntry<T extends ExcludeConfig> = T | DisabledDefaultRule;
+type RuleOverride =
+  { disabledDefault: string } | { liveDefault: string; live: boolean };
+export type RuleEntry<T extends ExcludeConfig> = T | RuleOverride;
 export type DefaultRule<T extends ExcludeConfig> = T & { id: string };
 
 type Settings = {
   [storageKey.excludeURLs]: RuleEntry<ExcludeConfig>[];
-  [storageKey.matchSelectors]: RuleEntry<SelectorConfig>[];
+  [storageKey.matchSelectors]: RuleEntry<PreviewConfig>[];
   [storageKey.downloadSelectors]: RuleEntry<SelectorConfig>[];
-  [storageKey.experimental]: Experimental;
   [storageKey.renderer]: Renderer;
 };
 
@@ -44,17 +43,23 @@ export const defaultExcludes: DefaultRule<ExcludeConfig>[] = [
 ];
 
 export const markdownFenceAttribute = "data-mermaid-previewer-fence";
-export const localMarkdownPreviewRule: DefaultRule<SelectorConfig> = {
+export const localMarkdownPreviewRule: DefaultRule<PreviewConfig> = {
   id: "local-markdown",
   match: "file:///*.md",
   selector: `[${markdownFenceAttribute}]`,
 };
 
-export const defaultMatchSelectors: DefaultRule<SelectorConfig>[] = [
+export const defaultMatchSelectors: DefaultRule<PreviewConfig>[] = [
   {
     id: "bitbucket",
     match: "*://bitbucket.org/*",
     selector: "div.codehilite > pre",
+  },
+  {
+    id: "gemini",
+    match: "https://gemini.google.com/*",
+    selector: ".code-block pre > code",
+    live: true,
   },
   localMarkdownPreviewRule,
   { id: "local-mmd", match: "file:///*.mmd", selector: "body > pre" },
@@ -78,18 +83,19 @@ const defaults: Settings = {
   [storageKey.excludeURLs]: [],
   [storageKey.matchSelectors]: [],
   [storageKey.downloadSelectors]: [],
-  [storageKey.experimental]: { sandbox: false },
   [storageKey.renderer]: "pele",
 };
 
-export function isDisabledDefaultRule(
-  value: unknown,
-): value is DisabledDefaultRule {
+export function isRuleOverride(value: unknown): value is RuleOverride {
   return (
     !!value &&
     typeof value === "object" &&
-    "disabledDefault" in value &&
-    typeof value.disabledDefault === "string"
+    (("disabledDefault" in value &&
+      typeof value.disabledDefault === "string") ||
+      ("liveDefault" in value &&
+        typeof value.liveDefault === "string" &&
+        "live" in value &&
+        typeof value.live === "boolean"))
   );
 }
 
@@ -97,15 +103,25 @@ export function resolveRuleSettings<T extends ExcludeConfig>(
   defaultRules: DefaultRule<T>[],
   entries: RuleEntry<T>[],
 ) {
-  const disabledDefaults = new Set(
-    entries.filter(isDisabledDefaultRule).map((entry) => entry.disabledDefault),
-  );
+  const disabledDefaults = new Set<string>();
+  const liveDefaults = new Map<string, boolean>();
+  for (const entry of entries.filter(isRuleOverride)) {
+    if ("disabledDefault" in entry) disabledDefaults.add(entry.disabledDefault);
+    else liveDefaults.set(entry.liveDefault, entry.live);
+  }
   return {
-    defaultConfigs: defaultRules.map((rule) =>
-      disabledDefaults.has(rule.id) ? { ...rule, enabled: false } : rule,
-    ),
+    defaultConfigs: defaultRules.map((rule) => {
+      const disabled = disabledDefaults.has(rule.id);
+      const live = liveDefaults.get(rule.id);
+      if (!disabled && live === undefined) return rule;
+      return {
+        ...rule,
+        ...(disabled && { enabled: false }),
+        ...(live !== undefined && { live }),
+      };
+    }),
     customConfigs: entries.filter(
-      (entry): entry is T => !isDisabledDefaultRule(entry),
+      (entry): entry is T => !isRuleOverride(entry),
     ),
   };
 }
@@ -127,25 +143,17 @@ export function decodeSetting<K extends keyof Settings>(
     return (value === "mermaid" ? "mermaid" : "pele") as Settings[K];
   }
 
-  if (key === storageKey.experimental) {
-    return (
-      value &&
-      typeof value === "object" &&
-      "sandbox" in value &&
-      typeof value.sandbox === "boolean"
-        ? value
-        : defaults[key]
-    ) as Settings[K];
-  }
-
   if (!Array.isArray(value)) return defaults[key];
-  return value.filter(
-    (rule) =>
-      isDisabledDefaultRule(rule) ||
-      (rule &&
-        (typeof rule.match === "string" || typeof rule.regex === "string") &&
-        (key === storageKey.excludeURLs || typeof rule.selector === "string")),
-  ) as Settings[K];
+  return value.filter((rule) => {
+    if (isRuleOverride(rule)) {
+      return "disabledDefault" in rule || key === storageKey.matchSelectors;
+    }
+    return (
+      rule &&
+      (typeof rule.match === "string" || typeof rule.regex === "string") &&
+      (key === storageKey.excludeURLs || typeof rule.selector === "string")
+    );
+  }) as Settings[K];
 }
 
 function decodeStoredSetting<K extends keyof Settings>(

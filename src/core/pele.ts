@@ -3,6 +3,16 @@ import type { SourceDiagram } from "./render";
 
 type Pele = Pick<typeof import("pele"), "render">;
 
+const darkVariables = {
+  "--pele-fg": "#f1f3f7",
+  "--pele-muted": "#b8c3d2",
+  "--pele-line": "#d3dce8",
+  "--pele-surface": "#2b303a",
+  "--pele-surface-alt": "#232832",
+  "--pele-border": "#8795a9",
+  "--pele-accent": "#a9bfff",
+};
+
 const fontAwesomeReference =
   /\b(?:fa|fas|far|fab|fa-solid|fa-regular|fa-brands):[a-z\d-]+/gi;
 const mermaidConfigKey =
@@ -50,14 +60,14 @@ export async function renderWithPele(
   const fallback: SourceDiagram[] = [];
   for (const diagram of diagrams) {
     if (signal.aborted) break;
-    const { container, source } = diagram;
+    const { container, source, surface } = diagram;
     if (diagram.icons.some((name) => !Object.hasOwn(icons, name))) {
       fallback.push(diagram);
       continue;
     }
     try {
       const id = `mermaid-${crypto.randomUUID()}`;
-      const { svg } = pele.render(source, {
+      const { svg } = pele.render(source.replace(/^\uFEFF/, ""), {
         idPrefix: id,
         autoDirection: false,
         icons: (name) => (Object.hasOwn(icons, name) ? icons[name] : undefined),
@@ -68,6 +78,17 @@ export async function renderWithPele(
       if (!(diagramSVG instanceof SVGSVGElement))
         throw new Error("Pele did not return an SVG");
       diagramSVG.id = id;
+      if (surface.dark) {
+        const styles = getComputedStyle(container);
+        for (const [variable, value] of Object.entries({
+          "--pele-bg": surface.color,
+          ...darkVariables,
+        })) {
+          if (!styles.getPropertyValue(variable).trim())
+            diagramSVG.style.setProperty(variable, value);
+        }
+        diagramSVG.style.backgroundColor = "var(--pele-bg)";
+      }
       container.setAttribute("data-processed", "true");
       container.replaceChildren(diagramSVG);
     } catch {

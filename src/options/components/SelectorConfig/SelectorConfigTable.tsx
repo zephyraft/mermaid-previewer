@@ -4,7 +4,7 @@ import {
 } from "@fluentui/react-icons";
 import React from "react";
 
-import type { SelectorConfig } from "~types";
+import type { PreviewConfig } from "~types";
 
 import ConfigTable, { type Column, type Row } from "../ConfigTable";
 import SelectorConfigForm from "./SelectorConfigForm";
@@ -22,13 +22,14 @@ const columns: Column[] = [
 
 const getRow = (
   index: number,
-  matchSelector: SelectorConfig,
+  matchSelector: PreviewConfig,
   isDefault: boolean,
 ): Row => {
   return {
     key: index,
     isDefault,
     enabled: matchSelector.enabled !== false,
+    live: matchSelector.live,
     cells: [
       {
         key: "match",
@@ -45,15 +46,16 @@ const getRow = (
 };
 
 interface TableProps {
-  defaultConfigs: SelectorConfig[];
-  customConfigs: SelectorConfig[];
-  setCustomConfigs: React.Dispatch<React.SetStateAction<SelectorConfig[]>>;
+  defaultConfigs: PreviewConfig[];
+  customConfigs: PreviewConfig[];
+  setCustomConfigs: React.Dispatch<React.SetStateAction<PreviewConfig[]>>;
   setRuleEnabled: (index: number, enabled: boolean) => void;
+  onLiveChange?: (index: number, live: boolean) => void;
 }
 
 const getIndexOfCustomSelectors = (
   row: Row,
-  defaultSelectors: SelectorConfig[],
+  defaultSelectors: PreviewConfig[],
 ): number => {
   return row.key - defaultSelectors.length;
 };
@@ -63,6 +65,7 @@ export default ({
   customConfigs,
   setCustomConfigs,
   setRuleEnabled,
+  onLiveChange,
 }: TableProps): React.JSX.Element => {
   const rows: Row[] = React.useMemo(
     () =>
@@ -81,6 +84,7 @@ export default ({
       columns={columns}
       rows={rows}
       onEnabledChange={setRuleEnabled}
+      onLiveChange={onLiveChange}
       editFormTitle="Edit rule"
       editForm={(row) => (
         <SelectorConfigForm

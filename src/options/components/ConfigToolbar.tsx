@@ -57,8 +57,8 @@ export default ({
         dialogTitle="Reset to defaults?"
         dialogContent={
           <DialogContent>
-            This will re-enable the built-in rules and remove the custom rules
-            in this section.
+            This will restore the built-in rules' settings and remove the custom
+            rules in this section.
           </DialogContent>
         }
         dialogConfirm="Reset"
