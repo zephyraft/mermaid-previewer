@@ -1,7 +1,8 @@
 import { computePosition, flip, offset, shift } from "@floating-ui/dom";
 
-import type { ExtensionMessage } from "~types";
+import type { DiagramTheme, ExtensionMessage } from "~types";
 import { diagramSurface } from "./diagram-surface";
+import { readSetting, storageKey, writeSetting } from "./options";
 
 function getSVG(target: Element): SVGSVGElement | null {
   if (target instanceof SVGSVGElement) return target;
@@ -60,19 +61,20 @@ async function download(target: Element) {
   if (!response?.ok) throw new Error("Could not download the Mermaid diagram");
 }
 
-async function openPreview(target: Element) {
+function previewMessage(target: Element, previewId: string, update: boolean) {
   const svg = getSVG(target);
   if (!svg) return;
   const message: ExtensionMessage = {
     type: "open-diagram-preview",
+    previewId,
+    update,
     svg: serializeSVG(svg),
     fontAwesome: !!svg.querySelector('i[class*="fa"]'),
     surface: svg.isConnected
       ? diagramSurface(svg)
       : { color: "#fff", dark: false },
   };
-  const response = await chrome.runtime.sendMessage(message);
-  if (!response?.ok) throw new Error("Could not open the diagram preview");
+  return message;
 }
 
 function createButton(id: string, title: string, iconPath: string) {
@@ -124,21 +126,65 @@ function createControls() {
     "Copy Mermaid source",
     "M8 3H4v14h2V5h10V3H8Zm2 4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-8Zm0 2h8v10h-8V9Z",
   );
-  controls.append(previewButton, downloadButton, copyButton);
+  const themeButton = document.createElement("button");
+  themeButton.type = "button";
+  themeButton.id = "diagram-theme";
+  const themeIcon = document.createElement("span");
+  themeIcon.setAttribute("aria-hidden", "true");
+  themeButton.append(themeIcon);
+  controls.append(previewButton, downloadButton, copyButton, themeButton);
   root.append(style, controls);
 
-  return { host, controls, previewButton, downloadButton, copyButton };
+  return {
+    host,
+    controls,
+    previewButton,
+    downloadButton,
+    copyButton,
+    themeButton,
+    themeIcon,
+  };
 }
+
+type PreviewDiagram = {
+  source: string;
+  container: Element;
+  signal?: AbortSignal;
+};
+
+const themeControls = {
+  auto: { label: "Auto", icon: "◐", next: "light" },
+  light: { label: "Light", icon: "☀", next: "dark" },
+  dark: { label: "Dark", icon: "☾", next: "auto" },
+} as const;
 
 export function createExporter(signal: AbortSignal) {
   const tracked = new WeakSet<Element>();
-  const { host, controls, previewButton, downloadButton, copyButton } =
-    createControls();
+  const registrations = new WeakMap<Element, AbortController>();
+  const {
+    host,
+    controls,
+    previewButton,
+    downloadButton,
+    copyButton,
+    themeButton,
+    themeIcon,
+  } = createControls();
   controls.hidden = true;
-  let activeTarget: Element | undefined;
-  let activeSource: string | undefined;
+  let active: { target: Element; diagram?: PreviewDiagram } | undefined;
+  let viewer:
+    { id: string; container?: Element; queue: Promise<void> } | undefined;
   let hideTimer: ReturnType<typeof setTimeout> | undefined;
+  let savingTheme = false;
   const listenerOptions = { signal };
+
+  function setTheme(theme: DiagramTheme) {
+    const mode = themeControls[theme];
+    const label = `Diagram theme: ${mode.label}. Switch to ${themeControls[mode.next].label}`;
+    themeIcon.textContent = mode.icon;
+    themeButton.title = label;
+    themeButton.setAttribute("aria-label", label);
+  }
 
   function hideLater() {
     clearTimeout(hideTimer);
@@ -147,23 +193,40 @@ export function createExporter(signal: AbortSignal) {
     }, 500);
   }
 
-  async function show(target: Element, source?: string) {
+  async function show(target: Element, diagram?: PreviewDiagram) {
     clearTimeout(hideTimer);
-    activeTarget = target;
-    activeSource = source;
+    active = { target, diagram };
     previewButton.hidden =
       target instanceof HTMLIFrameElement && !getSVG(target);
-    copyButton.hidden = source === undefined;
+    copyButton.hidden = themeButton.hidden = diagram === undefined;
     controls.hidden = false;
     const { x, y } = await computePosition(target, controls, {
       placement: "right",
       strategy: "fixed",
       middleware: [offset(4), flip(), shift({ padding: 4, crossAxis: true })],
     });
-    if (activeTarget === target) {
+    if (active?.target === target) {
       controls.style.left = `${x}px`;
       controls.style.top = `${y}px`;
     }
+  }
+
+  function submitPreview(
+    target: Element,
+    current: NonNullable<typeof viewer>,
+    update: boolean,
+  ) {
+    const message = previewMessage(target, current.id, update);
+    if (!message) return;
+    current.queue = current.queue
+      .then(async () => {
+        if (signal.aborted || viewer !== current) return;
+        const response = await chrome.runtime.sendMessage(message);
+        if (!response?.ok)
+          throw new Error("Could not display the diagram preview");
+        if (response.data === false && viewer === current) viewer = undefined;
+      })
+      .catch(console.error);
   }
 
   controls.addEventListener(
@@ -181,22 +244,47 @@ export function createExporter(signal: AbortSignal) {
   previewButton.addEventListener(
     "click",
     () => {
-      if (activeTarget) void openPreview(activeTarget).catch(console.error);
+      if (!active?.target.isConnected) return;
+      viewer = {
+        id: Array.from(crypto.getRandomValues(new Uint32Array(4))).join("-"),
+        container: active.diagram?.container,
+        queue: Promise.resolve(),
+      };
+      submitPreview(active.target, viewer, false);
     },
     listenerOptions,
   );
   downloadButton.addEventListener(
     "click",
     () => {
-      if (activeTarget) void download(activeTarget).catch(console.error);
+      if (active?.target.isConnected)
+        void download(active.target).catch(console.error);
     },
     listenerOptions,
   );
   copyButton.addEventListener(
     "click",
     () => {
-      if (activeSource !== undefined)
-        void navigator.clipboard.writeText(activeSource).catch(console.error);
+      if (active?.diagram)
+        void navigator.clipboard
+          .writeText(active.diagram.source)
+          .catch(console.error);
+    },
+    listenerOptions,
+  );
+  themeButton.addEventListener(
+    "click",
+    () => {
+      if (savingTheme) return;
+      savingTheme = true;
+      void readSetting(storageKey.theme)
+        .then((theme) =>
+          writeSetting(storageKey.theme, themeControls[theme].next),
+        )
+        .catch(console.error)
+        .finally(() => {
+          savingTheme = false;
+        });
     },
     listenerOptions,
   );
@@ -209,35 +297,58 @@ export function createExporter(signal: AbortSignal) {
     { once: true },
   );
 
-  return (target: Element, source?: string, targetSignal = signal) => {
-    if (tracked.has(target) || targetSignal.aborted) return;
+  function attach(target: Element, diagram?: PreviewDiagram) {
+    if (tracked.has(target) || signal.aborted || diagram?.signal?.aborted)
+      return;
     tracked.add(target);
-    const targetListeners = { signal: targetSignal };
-    if (!host.isConnected) document.body.append(host);
-    const hoverTarget =
-      source === undefined ? (target.parentElement ?? target) : target;
-    const showControls = () => {
-      void show(target, source).catch(console.error);
-    };
-    if (!hoverTarget.hasAttribute("tabindex"))
-      hoverTarget.setAttribute("tabindex", "0");
-    hoverTarget.addEventListener("mouseenter", showControls, targetListeners);
-    hoverTarget.addEventListener("mouseleave", hideLater, targetListeners);
-    hoverTarget.addEventListener("focusin", showControls, targetListeners);
-    hoverTarget.addEventListener("focusout", hideLater, targetListeners);
-    if (targetSignal !== signal) {
+    const replacingActive =
+      diagram && active?.diagram?.container === diagram.container;
+    if (replacingActive) active = { target, diagram };
+    let targetSignal = signal;
+    if (diagram) {
+      registrations.get(diagram.container)?.abort();
+      const controller = new AbortController();
+      registrations.set(diagram.container, controller);
+      targetSignal = AbortSignal.any([
+        signal,
+        controller.signal,
+        ...(diagram.signal ? [diagram.signal] : []),
+      ]);
       targetSignal.addEventListener(
         "abort",
         () => {
-          if (activeTarget !== target) return;
+          if (active?.target !== target) return;
           clearTimeout(hideTimer);
-          activeTarget = undefined;
-          activeSource = undefined;
+          active = undefined;
           controls.hidden = true;
         },
         { once: true },
       );
+      if (viewer?.container === diagram.container) {
+        submitPreview(target, viewer, true);
+      }
     }
-    if (hoverTarget.matches(":hover, :focus-within")) showControls();
-  };
+
+    const targetListeners = { signal: targetSignal };
+    if (!host.isConnected) document.body.append(host);
+    const hoverTarget = diagram ? target : (target.parentElement ?? target);
+    const showControls = () => {
+      void show(target, diagram).catch(console.error);
+    };
+    if (!hoverTarget.hasAttribute("tabindex")) {
+      hoverTarget.setAttribute("tabindex", "0");
+    }
+    hoverTarget.addEventListener("mouseenter", showControls, targetListeners);
+    hoverTarget.addEventListener("mouseleave", hideLater, targetListeners);
+    hoverTarget.addEventListener("focusin", showControls, targetListeners);
+    hoverTarget.addEventListener("focusout", hideLater, targetListeners);
+    if (
+      (replacingActive && !controls.hidden) ||
+      hoverTarget.matches(":hover, :focus-within")
+    ) {
+      showControls();
+    }
+  }
+
+  return Object.assign(attach, { setTheme });
 }

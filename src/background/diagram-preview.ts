@@ -2,7 +2,24 @@
 export function showDiagramPreview(
   svg: string,
   surface: { color: string; dark: boolean },
+  id: string,
+  update: boolean,
 ) {
+  const previewWindow = window as Window & {
+    mermaidPreviewerViewer?: {
+      id: string;
+      display: (svg: string, surface: { color: string; dark: boolean }) => void;
+      close: () => void;
+    };
+  };
+  const current = previewWindow.mermaidPreviewerViewer;
+  if (update) {
+    if (current?.id !== id) return false;
+    current.display(svg, surface);
+    return true;
+  }
+  current?.close();
+
   const host = document.createElement("div");
   host.style.setProperty("all", "initial", "important");
   const root = host.attachShadow({ mode: "open" });
@@ -67,7 +84,6 @@ export function showDiagramPreview(
   root.adoptedStyleSheets = [style];
   const dialog = document.createElement("dialog");
   dialog.setAttribute("aria-labelledby", "title");
-  dialog.classList.toggle("dark", surface.dark);
   const header = document.createElement("header");
   const title = document.createElement("h2");
   title.id = "title";
@@ -95,7 +111,6 @@ export function showDiagramPreview(
   canvas.setAttribute("role", "region");
   canvas.setAttribute("aria-label", "Diagram canvas");
   canvas.tabIndex = 0;
-  canvas.style.backgroundColor = surface.color;
   const image = document.createElement("img");
   image.alt = "Mermaid diagram";
   image.draggable = false;
@@ -228,29 +243,37 @@ export function showDiagramPreview(
     () => {
       observer.disconnect();
       host.remove();
+      if (previewWindow.mermaidPreviewerViewer?.id === id) {
+        delete previewWindow.mermaidPreviewerViewer;
+      }
     },
     { once: true },
   );
-  image.addEventListener(
-    "error",
-    () => {
-      error.hidden = false;
-    },
-    { once: true },
-  );
-  image.addEventListener(
-    "load",
-    () => {
-      image.hidden = false;
-      resizeImage();
-    },
-    { once: true },
-  );
+  image.addEventListener("error", () => {
+    error.hidden = false;
+  });
+  image.addEventListener("load", () => {
+    image.hidden = false;
+    resizeImage();
+  });
 
   document.body.append(host);
   dialog.showModal();
   updateView();
   observer.observe(canvas);
-  // Image mode keeps scripts and links in site-provided SVGs inactive.
-  image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  function display(markup: string, background: typeof surface) {
+    dialog.classList.toggle("dark", background.dark);
+    canvas.style.backgroundColor = background.color;
+    error.hidden = true;
+    // Image mode keeps scripts and links in site-provided SVGs inactive.
+    image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(markup)}`;
+  }
+
+  previewWindow.mermaidPreviewerViewer = {
+    id,
+    display,
+    close: () => dialog.close(),
+  };
+  display(svg, surface);
+  return true;
 }

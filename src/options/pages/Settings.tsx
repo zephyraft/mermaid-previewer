@@ -14,6 +14,7 @@ import {
   defaultDownloadSelectors,
   defaultExcludes,
   defaultMatchSelectors,
+  isDiagramTheme,
   storageKey,
 } from "~core/options";
 import ExcludeConfigTable from "~options/components/ExcludeConfig/ExcludeConfigTable";
@@ -36,6 +37,7 @@ export default () => {
     useSetting(storageKey.downloadSelectors),
   );
   const [renderer, setRenderer] = useSetting(storageKey.renderer);
+  const [theme, setTheme] = useSetting(storageKey.theme);
 
   return (
     <div>
@@ -65,6 +67,21 @@ export default () => {
           }}>
           <option value="pele">Pele (recommended)</option>
           <option value="mermaid">Mermaid.js (official)</option>
+        </Select>
+      </Field>
+      <Field
+        className="mb-8 w-full max-w-xl"
+        label={<strong className="font-bold">Diagram theme</strong>}
+        hint="Auto follows the background behind each diagram. Changes apply to open previews immediately.">
+        <Select
+          className="w-full max-w-80"
+          value={theme}
+          onChange={(_, { value }) => {
+            if (isDiagramTheme(value)) void setTheme(value);
+          }}>
+          <option value="auto">Auto</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
         </Select>
       </Field>
       <div className={"flex"}>

@@ -2,6 +2,7 @@ import { createExporter } from "./exporter";
 import { createLivePreviews, livePreviewContents } from "./live-preview";
 import { prepareLocalMarkdown } from "./local-markdown";
 import {
+  decodeSetting,
   localMarkdownPreviewRule,
   readRules,
   readSetting,
@@ -14,7 +15,7 @@ import {
   readSourceDiagram,
 } from "./render";
 import { selectRules } from "./rules";
-import type { SelectorConfig } from "~types";
+import type { DiagramTheme, SelectorConfig } from "~types";
 
 function findContainers(rules: SelectorConfig[]) {
   const containers = new Set<HTMLElement>();
@@ -56,12 +57,14 @@ export async function observeDiagrams(signal: AbortSignal) {
   let queued = false;
   let running = false;
   let restorePreview = false;
+  let theme: DiagramTheme | undefined;
+  let renderedTheme: DiagramTheme | undefined;
 
   function attachPreviewExporter(container: HTMLElement) {
     const source = container.getAttribute(diagramSource);
     const target = container.firstElementChild;
     if (source !== null && target instanceof SVGSVGElement) {
-      attachExporter(target, source);
+      attachExporter(target, { source, container });
     }
   }
 
@@ -79,7 +82,8 @@ export async function observeDiagrams(signal: AbortSignal) {
     try {
       while (queued && !signal.aborted) {
         queued = false;
-        if (render) {
+        const currentTheme = theme;
+        if (render && currentTheme !== undefined) {
           const liveContainers = livePreviews
             ? findContainers(liveRules).filter(isSourceContainer)
             : [];
@@ -91,25 +95,31 @@ export async function observeDiagrams(signal: AbortSignal) {
                   container.contains(source) || source.contains(container),
               ),
           );
-          if (restorePreview) {
-            restorePreview = false;
+          if (restorePreview || renderedTheme !== currentTheme) {
             for (const container of containers) {
               const source = container.getAttribute(diagramSource);
-              if (source !== null) {
+              if (
+                source !== null &&
+                (restorePreview || container.hasAttribute("data-processed"))
+              ) {
                 container.textContent = source;
                 container.removeAttribute("data-processed");
               }
             }
+            restorePreview = false;
+            renderedTheme = currentTheme;
           }
           const diagrams = containers
             .filter(findMermaid)
-            .map(readSourceDiagram);
+            .map((container) => readSourceDiagram(container, currentTheme));
           if (diagrams.length) {
-            await render(diagrams, signal).catch(console.error);
+            await render(diagrams, signal, currentTheme).catch(console.error);
             if (signal.aborted) return;
           }
           containers.forEach(attachPreviewExporter);
-          await livePreviews?.(liveContainers).catch(console.error);
+          await livePreviews?.(liveContainers, currentTheme).catch(
+            console.error,
+          );
           if (signal.aborted) return;
         }
 
@@ -161,13 +171,40 @@ export async function observeDiagrams(signal: AbortSignal) {
       attributeFilter: ["class"],
     }),
   });
+  function applyTheme(next: DiagramTheme) {
+    if (signal.aborted || next === theme) return;
+    theme = next;
+    attachExporter.setTheme(next);
+    void scan().catch(console.error);
+  }
+
+  function onSettingsChange(
+    changes: Record<string, chrome.storage.StorageChange>,
+    area: string,
+  ) {
+    const change = changes[storageKey.theme];
+    if (area === "sync" && change) {
+      applyTheme(decodeSetting(storageKey.theme, change.newValue));
+    }
+  }
+
+  if (render) chrome.storage.onChanged.addListener(onSettingsChange);
   signal.addEventListener(
     "abort",
     () => {
       observer.disconnect();
+      if (render) chrome.storage.onChanged.removeListener(onSettingsChange);
       clearTimeout(liveTimer);
     },
     { once: true },
   );
+  if (render) {
+    const initialTheme = await readSetting(storageKey.theme);
+    if (signal.aborted) return;
+    if (theme === undefined) {
+      theme = initialTheme;
+      attachExporter.setTheme(initialTheme);
+    }
+  }
   await scan();
 }

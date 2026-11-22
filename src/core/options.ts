@@ -1,4 +1,5 @@
 import type {
+  DiagramTheme,
   ExcludeConfig,
   PreviewConfig,
   Renderer,
@@ -10,6 +11,7 @@ export const storageKey = {
   matchSelectors: "mermaid-previewer.matchSelectors",
   downloadSelectors: "mermaid-previewer.downloadSelectors",
   renderer: "mermaid-previewer.renderer",
+  theme: "mermaid-previewer.theme",
 } as const;
 
 // Older versions ignore entries without a URL pattern or regular expression.
@@ -23,6 +25,7 @@ type Settings = {
   [storageKey.matchSelectors]: RuleEntry<PreviewConfig>[];
   [storageKey.downloadSelectors]: RuleEntry<SelectorConfig>[];
   [storageKey.renderer]: Renderer;
+  [storageKey.theme]: DiagramTheme;
 };
 
 const legacyKey: Partial<Record<keyof Settings, string>> = {
@@ -84,6 +87,7 @@ const defaults: Settings = {
   [storageKey.matchSelectors]: [],
   [storageKey.downloadSelectors]: [],
   [storageKey.renderer]: "pele",
+  [storageKey.theme]: "auto",
 };
 
 export function isRuleOverride(value: unknown): value is RuleOverride {
@@ -126,6 +130,10 @@ export function resolveRuleSettings<T extends ExcludeConfig>(
   };
 }
 
+export function isDiagramTheme(value: unknown): value is DiagramTheme {
+  return value === "auto" || value === "light" || value === "dark";
+}
+
 export function decodeSetting<K extends keyof Settings>(
   key: K,
   value: unknown,
@@ -141,6 +149,10 @@ export function decodeSetting<K extends keyof Settings>(
 
   if (key === storageKey.renderer) {
     return (value === "mermaid" ? "mermaid" : "pele") as Settings[K];
+  }
+
+  if (key === storageKey.theme) {
+    return (isDiagramTheme(value) ? value : "auto") as Settings[K];
   }
 
   if (!Array.isArray(value)) return defaults[key];

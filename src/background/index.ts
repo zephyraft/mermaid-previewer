@@ -161,11 +161,12 @@ async function openDiagramPreview(
 ) {
   if (sender.tab?.id === undefined) throw new Error("Missing diagram tab");
   const svg = await embedFontAwesome(request.svg, request.fontAwesome);
-  await scripting.executeScript({
+  const [preview] = await scripting.executeScript({
     target: { tabId: sender.tab.id },
     func: showDiagramPreview,
-    args: [svg, request.surface],
+    args: [svg, request.surface, request.previewId, request.update],
   });
+  return preview?.result ?? false;
 }
 
 async function downloadSVG(svg: string, fontAwesome: boolean) {
@@ -197,7 +198,9 @@ runtime.onMessage.addListener((request: ExtensionMessage, sender, respond) => {
     typeof request.svg === "string" &&
     request.svg.startsWith("<svg") &&
     typeof request.surface?.color === "string" &&
-    typeof request.surface?.dark === "boolean"
+    typeof request.surface?.dark === "boolean" &&
+    typeof request.previewId === "string" &&
+    typeof request.update === "boolean"
   ) {
     operation = openDiagramPreview(sender, request);
   } else if (

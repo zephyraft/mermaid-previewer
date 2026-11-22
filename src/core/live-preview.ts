@@ -1,6 +1,11 @@
+import type { DiagramTheme } from "~types";
 import { diagramSurface } from "./diagram-surface";
 import type { createExporter } from "./exporter";
-import { type createDiagramRenderer, isMermaidSource } from "./render";
+import {
+  type createDiagramRenderer,
+  diagramSource,
+  isMermaidSource,
+} from "./render";
 
 const sourceMarker = "data-mermaid-previewer-live-source";
 const previewMarker = "data-mermaid-previewer-live-preview";
@@ -9,7 +14,9 @@ export const livePreviewContents = `[${previewMarker}], [${pendingMarker}]`;
 
 interface Preview {
   attempted: string;
+  theme: DiagramTheme;
   output?: HTMLElement;
+  outputTheme?: DiagramTheme;
   lifecycle?: AbortController;
 }
 
@@ -51,7 +58,7 @@ export function createLivePreviews(
     { once: true },
   );
 
-  return async function update(containers: HTMLElement[]) {
+  return async function update(containers: HTMLElement[], theme: DiagramTheme) {
     const current = new Map<HTMLElement, string>();
     for (const container of containers) {
       const source = container.innerText;
@@ -73,7 +80,7 @@ export function createLivePreviews(
 
     const pending = [...current].flatMap(([sourceNode, source]) => {
       const previous = previews.get(sourceNode);
-      if (previous?.attempted === source) {
+      if (previous?.attempted === source && previous.theme === theme) {
         // The page can rebuild the surrounding nodes while retaining the source node.
         if (
           previous.output &&
@@ -84,13 +91,14 @@ export function createLivePreviews(
         return [];
       }
 
-      const preview = previous ?? { attempted: source };
+      const preview = previous ?? { attempted: source, theme };
       preview.attempted = source;
+      preview.theme = theme;
       previews.set(sourceNode, preview);
       // Render beside the source so the page can keep updating its text nodes.
       const scratch = document.createElement("span");
       scratch.setAttribute(pendingMarker, "");
-      const surface = diagramSurface(sourceNode);
+      const surface = diagramSurface(sourceNode, theme);
       sourceNode.after(scratch);
       return [
         {
@@ -106,7 +114,26 @@ export function createLivePreviews(
       await render(
         pending.map(({ diagram }) => diagram),
         signal,
+        theme,
       );
+      if (signal.aborted) return;
+      // Streaming text can be incomplete while the last successful diagram is visible.
+      const retries = pending.flatMap(({ preview, diagram }) => {
+        const source = preview.output?.getAttribute(diagramSource);
+        if (
+          source == null ||
+          source === diagram.source ||
+          preview.outputTheme === theme ||
+          diagram.container.firstElementChild instanceof SVGSVGElement
+        ) {
+          return [];
+        }
+        diagram.container.replaceChildren();
+        diagram.container.removeAttribute("data-processed");
+        return [{ ...diagram, source }];
+      });
+      if (retries.length) await render(retries, signal, theme);
+
       for (const { sourceNode, preview, diagram } of pending) {
         if (signal.aborted) break;
         const output = diagram.container;
@@ -118,15 +145,21 @@ export function createLivePreviews(
         )
           continue;
 
-        preview.lifecycle?.abort();
+        const previousLifecycle = preview.lifecycle;
         preview.output?.remove();
         output.removeAttribute(pendingMarker);
         output.setAttribute(previewMarker, "");
         sourceNode.setAttribute(sourceMarker, "");
         sourceNode.after(output);
         preview.output = output;
+        preview.outputTheme = theme;
         preview.lifecycle = new AbortController();
-        attachExporter(target, diagram.source, preview.lifecycle.signal);
+        attachExporter(target, {
+          source: output.getAttribute(diagramSource) ?? diagram.source,
+          container: sourceNode,
+          signal: preview.lifecycle.signal,
+        });
+        previousLifecycle?.abort();
       }
     } finally {
       for (const { diagram, preview } of pending) {

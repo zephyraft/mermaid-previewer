@@ -1,7 +1,7 @@
 import type { Mermaid } from "mermaid";
 import { detectType } from "pele/core";
-import type { ExtensionMessage, Renderer } from "~types";
-import { diagramSurface } from "./diagram-surface";
+import type { DiagramTheme, ExtensionMessage, Renderer } from "~types";
+import { diagramSurface, themedSurface } from "./diagram-surface";
 import { needsOfficialRenderer, renderWithPele } from "./pele";
 
 export const diagramSource = "data-mermaid-previewer-raw";
@@ -29,11 +29,14 @@ export type SourceDiagram = {
   surface: ReturnType<typeof diagramSurface>;
 };
 
-export function readSourceDiagram(container: HTMLElement): SourceDiagram {
+export function readSourceDiagram(
+  container: HTMLElement,
+  theme: DiagramTheme,
+): SourceDiagram {
   return {
     container,
     source: container.innerText,
-    surface: diagramSurface(container),
+    surface: diagramSurface(container, theme),
   };
 }
 
@@ -53,7 +56,11 @@ export function createDiagramRenderer(renderer: Renderer) {
   let peleReady: Promise<EngineWindow["pele"]> | undefined;
   let mermaidReady: Promise<Mermaid> | undefined;
 
-  return async (diagrams: SourceDiagram[], signal: AbortSignal) => {
+  return async (
+    diagrams: SourceDiagram[],
+    signal: AbortSignal,
+    theme: DiagramTheme,
+  ) => {
     for (const { container, source } of diagrams) {
       container.setAttribute(diagramSource, source);
     }
@@ -82,7 +89,7 @@ export function createDiagramRenderer(renderer: Renderer) {
         if (signal.aborted) return;
         official.push(
           ...(pele
-            ? await renderWithPele(pele, candidates, signal)
+            ? await renderWithPele(pele, candidates, signal, theme)
             : candidates),
         );
       }
@@ -112,6 +119,17 @@ export function createDiagramRenderer(renderer: Renderer) {
       await mermaid.run({
         nodes: group.map(({ container }) => container),
         suppressErrors: true,
+        ...(theme !== "auto" && {
+          postRenderCallback: (id: string) => {
+            const svg = document.getElementById(id);
+            if (!(svg instanceof SVGSVGElement)) return;
+            // Mermaid applies diagram-level configuration during render.
+            const activeTheme = mermaid.mermaidAPI.getConfig().theme;
+            svg.style.backgroundColor = themedSurface(
+              activeTheme === "dark",
+            ).color;
+          },
+        }),
       });
     }
   };

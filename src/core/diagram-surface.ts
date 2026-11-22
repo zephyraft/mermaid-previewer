@@ -1,4 +1,12 @@
-export function diagramSurface(target: Element) {
+import type { DiagramTheme } from "~types";
+
+export function themedSurface(dark: boolean) {
+  return { color: dark ? "#232832" : "#fff", dark };
+}
+
+export function diagramSurface(target: Element, theme: DiagramTheme = "auto") {
+  if (theme !== "auto") return themedSurface(theme === "dark");
+
   const channels = [0, 0, 0];
   let remaining = 1;
   for (

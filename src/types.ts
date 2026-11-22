@@ -7,6 +7,7 @@ export type SelectorConfig = ExcludeConfig & { selector: string };
 export type PreviewConfig = SelectorConfig & { live?: boolean };
 
 export type Renderer = "pele" | "mermaid";
+export type DiagramTheme = "auto" | "light" | "dark";
 
 export type PreviewWindow = Window & {
   mermaidPreviewerLifecycle?: AbortController;
@@ -21,5 +22,7 @@ export type ExtensionMessage =
       svg: string;
       fontAwesome: boolean;
       surface: { color: string; dark: boolean };
+      previewId: string;
+      update: boolean;
     }
   | { type: "download-svg"; svg: string; fontAwesome: boolean };
