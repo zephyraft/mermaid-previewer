@@ -108,7 +108,6 @@ function createControls() {
     button:hover { background: #edebe9; }
     button svg { width: 20px; height: 20px; fill: currentColor; }
     #diagram-theme { font: 14px system-ui, sans-serif; }
-    #diagram-theme span::after { content: "▾"; font-size: 9px; margin-left: 1px; }
     .theme-menu { position: fixed; inset: auto; margin: 0; padding: 4px; color: #323130; background: #faf9f8;
       border: 1px solid #b3b0ad; border-radius: 6px; box-shadow: 0 3px 12px #0003; }
     .theme-menu:popover-open { display: grid; }
@@ -183,7 +182,7 @@ type PreviewDiagram = {
 };
 
 const themeControls = {
-  background: { label: "Page background", icon: "◐" },
+  background: { label: "Match page", icon: "◐" },
   system: { label: "System", icon: "▣" },
   light: { label: "Light", icon: "☀" },
   dark: { label: "Dark", icon: "☾" },

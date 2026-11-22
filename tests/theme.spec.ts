@@ -29,7 +29,7 @@ test("toolbar and settings share the theme across open pages and the zoomed prev
   const theme = settings.getByRole("combobox", { name: "Diagram theme" });
   await expect(theme).toHaveValue("background");
   await expect(theme.locator("option")).toHaveText([
-    "Page background",
+    "Match page",
     "System",
     "Light",
     "Dark",
@@ -57,13 +57,13 @@ test("toolbar and settings share the theme across open pages and the zoomed prev
   await toolbarTheme.click();
   await expect(themeMenu).toBeVisible();
   await expect(themeMenu.getByRole("button")).toHaveText([
-    "Page background",
+    "Match page",
     "System",
     "Light",
     "Dark",
   ]);
   await expect(
-    themeMenu.getByRole("button", { name: "Page background", pressed: true }),
+    themeMenu.getByRole("button", { name: "Match page", pressed: true }),
   ).toBeVisible();
   await themeMenu.getByRole("button", { name: "System" }).click();
   await expect(themeMenu).toBeHidden();
@@ -139,7 +139,7 @@ test("toolbar and settings share the theme across open pages and the zoomed prev
   await diagram.hover();
   await toolbarTheme.click();
   await themeMenu
-    .getByRole("button", { name: "Page background", exact: true })
+    .getByRole("button", { name: "Match page", exact: true })
     .click();
   await expect(theme).toHaveValue("background");
   await expect(diagram).toHaveCSS("background-color", "rgb(20, 20, 20)");
