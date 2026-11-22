@@ -2,7 +2,7 @@ import { computePosition, flip, offset, shift } from "@floating-ui/dom";
 
 import type { DiagramTheme, ExtensionMessage } from "~types";
 import { diagramSurface } from "./diagram-surface";
-import { readSetting, storageKey, writeSetting } from "./options";
+import { isDiagramTheme, storageKey, writeSetting } from "./options";
 
 function getSVG(target: Element): SVGSVGElement | null {
   if (target instanceof SVGSVGElement) return target;
@@ -102,11 +102,19 @@ function createControls() {
   const style = document.createElement("style");
   style.textContent = `
     #mermaid-previewer-controls { display: flex; gap: 4px; position: fixed; z-index: 2147483647; flex-direction: column; }
-    #mermaid-previewer-controls[hidden], button[hidden] { display: none; }
-    button { display: grid; place-items: center; width: 24px; height: 24px; padding: 1px;
+    #mermaid-previewer-controls[hidden], [hidden] { display: none; }
+    button { box-sizing: border-box; display: grid; place-items: center; width: 24px; height: 24px; padding: 1px;
       color: #605e5c; background: #faf9f8; border: 1px solid #b3b0ad; border-radius: 4px; cursor: pointer; }
     button:hover { background: #edebe9; }
     button svg { width: 20px; height: 20px; fill: currentColor; }
+    #diagram-theme { font: 14px system-ui, sans-serif; }
+    #diagram-theme span::after { content: "▾"; font-size: 9px; margin-left: 1px; }
+    .theme-menu { position: fixed; inset: auto; margin: 0; padding: 4px; color: #323130; background: #faf9f8;
+      border: 1px solid #b3b0ad; border-radius: 6px; box-shadow: 0 3px 12px #0003; }
+    .theme-menu:popover-open { display: grid; }
+    .theme-menu button { display: block; width: 100%; height: auto; padding: 6px 10px; text-align: left;
+      color: inherit; font: 13px system-ui, sans-serif; border: 0; white-space: nowrap; }
+    .theme-menu button[aria-pressed="true"] { background: #e9e6f2; font-weight: 600; }
   `;
   const controls = document.createElement("div");
   controls.id = "mermaid-previewer-controls";
@@ -129,10 +137,31 @@ function createControls() {
   const themeButton = document.createElement("button");
   themeButton.type = "button";
   themeButton.id = "diagram-theme";
+  themeButton.setAttribute("aria-label", "Diagram theme");
   const themeIcon = document.createElement("span");
   themeIcon.setAttribute("aria-hidden", "true");
   themeButton.append(themeIcon);
-  controls.append(previewButton, downloadButton, copyButton, themeButton);
+
+  const themeMenu = document.createElement("div");
+  themeMenu.className = "theme-menu";
+  themeMenu.popover = "auto";
+  themeMenu.setAttribute("role", "group");
+  themeMenu.setAttribute("aria-label", "Diagram theme options");
+  for (const [value, { label }] of Object.entries(themeControls)) {
+    const option = document.createElement("button");
+    option.type = "button";
+    option.value = value;
+    option.textContent = label;
+    themeMenu.append(option);
+  }
+  themeButton.popoverTargetElement = themeMenu;
+  controls.append(
+    previewButton,
+    downloadButton,
+    copyButton,
+    themeButton,
+    themeMenu,
+  );
   root.append(style, controls);
 
   return {
@@ -142,6 +171,7 @@ function createControls() {
     downloadButton,
     copyButton,
     themeButton,
+    themeMenu,
     themeIcon,
   };
 }
@@ -153,9 +183,10 @@ type PreviewDiagram = {
 };
 
 const themeControls = {
-  auto: { label: "Auto", icon: "◐", next: "light" },
-  light: { label: "Light", icon: "☀", next: "dark" },
-  dark: { label: "Dark", icon: "☾", next: "auto" },
+  background: { label: "Page background", icon: "◐" },
+  system: { label: "System", icon: "▣" },
+  light: { label: "Light", icon: "☀" },
+  dark: { label: "Dark", icon: "☾" },
 } as const;
 
 export function createExporter(signal: AbortSignal) {
@@ -168,6 +199,7 @@ export function createExporter(signal: AbortSignal) {
     downloadButton,
     copyButton,
     themeButton,
+    themeMenu,
     themeIcon,
   } = createControls();
   controls.hidden = true;
@@ -175,21 +207,21 @@ export function createExporter(signal: AbortSignal) {
   let viewer:
     { id: string; container?: Element; queue: Promise<void> } | undefined;
   let hideTimer: ReturnType<typeof setTimeout> | undefined;
-  let savingTheme = false;
   const listenerOptions = { signal };
 
   function setTheme(theme: DiagramTheme) {
     const mode = themeControls[theme];
-    const label = `Diagram theme: ${mode.label}. Switch to ${themeControls[mode.next].label}`;
+    themeButton.title = `Diagram theme: ${mode.label}`;
     themeIcon.textContent = mode.icon;
-    themeButton.title = label;
-    themeButton.setAttribute("aria-label", label);
+    for (const option of themeMenu.querySelectorAll("button")) {
+      option.setAttribute("aria-pressed", String(option.value === theme));
+    }
   }
 
   function hideLater() {
     clearTimeout(hideTimer);
     hideTimer = setTimeout(() => {
-      controls.hidden = true;
+      if (!themeMenu.matches(":popover-open")) controls.hidden = true;
     }, 500);
   }
 
@@ -199,6 +231,7 @@ export function createExporter(signal: AbortSignal) {
     previewButton.hidden =
       target instanceof HTMLIFrameElement && !getSVG(target);
     copyButton.hidden = themeButton.hidden = diagram === undefined;
+    if (!diagram) themeMenu.hidePopover();
     controls.hidden = false;
     const { x, y } = await computePosition(target, controls, {
       placement: "right",
@@ -208,6 +241,7 @@ export function createExporter(signal: AbortSignal) {
     if (active?.target === target) {
       controls.style.left = `${x}px`;
       controls.style.top = `${y}px`;
+      if (themeMenu.matches(":popover-open")) await positionThemeMenu();
     }
   }
 
@@ -272,19 +306,45 @@ export function createExporter(signal: AbortSignal) {
     },
     listenerOptions,
   );
-  themeButton.addEventListener(
-    "click",
+  async function positionThemeMenu() {
+    const { x, y } = await computePosition(themeButton, themeMenu, {
+      placement: "right-start",
+      strategy: "fixed",
+      middleware: [offset(4), flip(), shift({ padding: 4 })],
+    });
+    themeMenu.style.left = `${x}px`;
+    themeMenu.style.top = `${y}px`;
+    themeMenu.style.visibility = "visible";
+  }
+
+  themeMenu.addEventListener(
+    "beforetoggle",
     () => {
-      if (savingTheme) return;
-      savingTheme = true;
-      void readSetting(storageKey.theme)
-        .then((theme) =>
-          writeSetting(storageKey.theme, themeControls[theme].next),
-        )
-        .catch(console.error)
-        .finally(() => {
-          savingTheme = false;
-        });
+      themeMenu.style.visibility = "hidden";
+    },
+    listenerOptions,
+  );
+  themeMenu.addEventListener(
+    "toggle",
+    () => {
+      if (themeMenu.matches(":popover-open")) {
+        clearTimeout(hideTimer);
+        void positionThemeMenu().catch(console.error);
+      } else if (!controls.matches(":hover, :focus-within")) {
+        hideLater();
+      }
+    },
+    listenerOptions,
+  );
+  themeMenu.addEventListener(
+    "click",
+    (event) => {
+      if (!(event.target instanceof HTMLButtonElement)) return;
+      const theme = event.target.value;
+      if (!isDiagramTheme(theme)) return;
+      themeMenu.hidePopover();
+      themeButton.focus();
+      void writeSetting(storageKey.theme, theme).catch(console.error);
     },
     listenerOptions,
   );
@@ -320,6 +380,7 @@ export function createExporter(signal: AbortSignal) {
           if (active?.target !== target) return;
           clearTimeout(hideTimer);
           active = undefined;
+          themeMenu.hidePopover();
           controls.hidden = true;
         },
         { once: true },

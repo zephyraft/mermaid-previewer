@@ -87,7 +87,7 @@ const defaults: Settings = {
   [storageKey.matchSelectors]: [],
   [storageKey.downloadSelectors]: [],
   [storageKey.renderer]: "pele",
-  [storageKey.theme]: "auto",
+  [storageKey.theme]: "background",
 };
 
 export function isRuleOverride(value: unknown): value is RuleOverride {
@@ -131,7 +131,12 @@ export function resolveRuleSettings<T extends ExcludeConfig>(
 }
 
 export function isDiagramTheme(value: unknown): value is DiagramTheme {
-  return value === "auto" || value === "light" || value === "dark";
+  return (
+    value === "background" ||
+    value === "system" ||
+    value === "light" ||
+    value === "dark"
+  );
 }
 
 export function decodeSetting<K extends keyof Settings>(
@@ -152,7 +157,7 @@ export function decodeSetting<K extends keyof Settings>(
   }
 
   if (key === storageKey.theme) {
-    return (isDiagramTheme(value) ? value : "auto") as Settings[K];
+    return (isDiagramTheme(value) ? value : defaults[key]) as Settings[K];
   }
 
   if (!Array.isArray(value)) return defaults[key];

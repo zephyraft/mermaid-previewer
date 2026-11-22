@@ -27,32 +27,58 @@ test("toolbar and settings share the theme across open pages and the zoomed prev
   const settings = await context.newPage();
   await settings.goto(optionsURL);
   const theme = settings.getByRole("combobox", { name: "Diagram theme" });
-  await expect(theme).toHaveValue("auto");
+  await expect(theme).toHaveValue("background");
+  await expect(theme.locator("option")).toHaveText([
+    "Page background",
+    "System",
+    "Light",
+    "Dark",
+  ]);
 
   const otherPage = await context.newPage();
+  await otherPage.emulateMedia({ colorScheme: "light" });
   await otherPage.goto(url);
   const otherDiagram = otherPage.locator("pre > svg.pele");
   await expect(otherDiagram).toHaveCSS("background-color", "rgb(20, 20, 20)");
 
+  await page.emulateMedia({ colorScheme: "light" });
   await page.goto(url);
+  await page.bringToFront();
   const diagram = page.locator("pre > svg.pele");
   await expect(diagram).toHaveCSS("background-color", "rgb(20, 20, 20)");
   await diagram.hover();
 
   const toolbarTheme = page.locator("#diagram-theme");
-  await expect(toolbarTheme).toHaveAccessibleName(
-    "Diagram theme: Auto. Switch to Light",
-  );
+  const themeMenu = page.getByRole("group", { name: "Diagram theme options" });
+  await expect(toolbarTheme).toHaveAccessibleName("Diagram theme");
+  await expect(themeMenu).toBeHidden();
+  await toolbarTheme.hover();
+  await expect(themeMenu).toBeHidden();
   await toolbarTheme.click();
+  await expect(themeMenu).toBeVisible();
+  await expect(themeMenu.getByRole("button")).toHaveText([
+    "Page background",
+    "System",
+    "Light",
+    "Dark",
+  ]);
+  await expect(
+    themeMenu.getByRole("button", { name: "Page background", pressed: true }),
+  ).toBeVisible();
+  await themeMenu.getByRole("button", { name: "System" }).click();
+  await expect(themeMenu).toBeHidden();
   await expect(diagram).toHaveCSS("background-color", light);
   await expect(otherDiagram).toHaveCSS("background-color", light);
-  await expect(theme).toHaveValue("light");
+  await expect(theme).toHaveValue("system");
 
-  await toolbarTheme.click();
+  await expect(toolbarTheme).toHaveAttribute("title", "Diagram theme: System");
+  await page.emulateMedia({ colorScheme: "dark" });
   await expect(diagram).toHaveCSS("background-color", dark);
-  await expect(theme).toHaveValue("dark");
+  await expect(otherDiagram).toHaveCSS("background-color", light);
   await expect(page.locator("html")).toHaveCSS("color-scheme", "light");
 
+  await page.mouse.move(0, 0);
+  await diagram.hover();
   await page.getByRole("button", { name: "Download SVG" }).click();
   await expect
     .poll(
@@ -69,6 +95,7 @@ test("toolbar and settings share the theme across open pages and the zoomed prev
   expect(exported).toContain("--pele-fg: #f1f3f7");
   expect(exported).toContain("background-color: var(--pele-bg)");
 
+  await diagram.hover();
   await page.getByRole("button", { name: "Open preview" }).click();
   const viewer = page.getByRole("dialog", { name: "Diagram preview" });
   const canvas = viewer.getByRole("region", { name: "Diagram canvas" });
@@ -78,12 +105,44 @@ test("toolbar and settings share the theme across open pages and the zoomed prev
   await expect(viewer.getByText("125%", { exact: true })).toBeVisible();
   const previousImage = await image.getAttribute("src");
 
-  await theme.selectOption("auto");
+  await page.emulateMedia({ colorScheme: "light" });
+  await expect(diagram).toHaveCSS("background-color", light);
+  await expect(canvas).toHaveCSS("background-color", light);
+  await expect(image).not.toHaveAttribute("src", previousImage!);
+
+  await theme.selectOption("background");
   await expect(diagram).toHaveCSS("background-color", "rgb(20, 20, 20)");
   await expect(otherDiagram).toHaveCSS("background-color", "rgb(20, 20, 20)");
   await expect(canvas).toHaveCSS("background-color", "rgb(20, 20, 20)");
-  await expect(image).not.toHaveAttribute("src", previousImage!);
   await expect(viewer.getByText("125%", { exact: true })).toBeVisible();
+  await viewer.getByRole("button", { name: "Close preview" }).click();
+
+  const backgroundDiagram = await diagram.getAttribute("id");
+  await otherPage.emulateMedia({ colorScheme: "dark" });
+  await page.emulateMedia({ colorScheme: "dark" });
+  await expect(diagram).toHaveAttribute("id", backgroundDiagram!);
+  await expect(diagram).toHaveCSS("background-color", "rgb(20, 20, 20)");
+  await expect(otherDiagram).toHaveCSS("background-color", "rgb(20, 20, 20)");
+
+  await diagram.hover();
+  await toolbarTheme.click();
+  await themeMenu.getByRole("button", { name: "Light", exact: true }).click();
+  await expect(theme).toHaveValue("light");
+  await expect(diagram).toHaveCSS("background-color", light);
+  await diagram.hover();
+  await toolbarTheme.click();
+  await themeMenu.getByRole("button", { name: "Dark", exact: true }).click();
+  await expect(theme).toHaveValue("dark");
+  await expect(diagram).toHaveCSS("background-color", dark);
+  await page.emulateMedia({ colorScheme: "light" });
+  await expect(diagram).toHaveCSS("background-color", dark);
+  await diagram.hover();
+  await toolbarTheme.click();
+  await themeMenu
+    .getByRole("button", { name: "Page background", exact: true })
+    .click();
+  await expect(theme).toHaveValue("background");
+  await expect(diagram).toHaveCSS("background-color", "rgb(20, 20, 20)");
 });
 
 test("live previews redraw both engines and preserve a theme declared by the diagram", async ({
@@ -111,6 +170,7 @@ flowchart LR
   const settings = await context.newPage();
   await settings.goto(optionsURL);
   const theme = settings.getByRole("combobox", { name: "Diagram theme" });
+  await page.emulateMedia({ colorScheme: "light" });
   await page.goto(url);
   const diagram = page.locator("#stream + span > svg.pele");
   const fallback = page.locator("#fallback + span > svg");
@@ -122,7 +182,8 @@ flowchart LR
     (edge) => getComputedStyle(edge).stroke,
   );
 
-  await theme.selectOption("dark");
+  await page.emulateMedia({ colorScheme: "dark" });
+  await theme.selectOption("system");
   await page.locator("#stream").evaluate((source) => {
     (source.firstChild as Text).data += "\n  Review --> Published";
   });
@@ -131,7 +192,7 @@ flowchart LR
   await expect(fallback).toHaveCSS("background-color", dark);
   await expect(fallbackEdge).not.toHaveCSS("stroke", lightStroke);
 
-  await theme.selectOption("light");
+  await page.emulateMedia({ colorScheme: "light" });
   await expect(diagram).toHaveCSS("background-color", light);
   await expect(diagram.getByText("Published", { exact: true })).toBeVisible();
   await expect(fallback).toHaveCSS("background-color", light);
@@ -142,7 +203,7 @@ flowchart LR
   await incomplete.evaluate((source) => {
     (source.firstChild as Text).data += '\n  Published --> Incomplete["';
   });
-  await theme.selectOption("dark");
+  await page.emulateMedia({ colorScheme: "dark" });
   await expect(diagram).toHaveCSS("background-color", dark);
   await expect(diagram.getByText("Published", { exact: true })).toBeVisible();
   await expect(incomplete).toContainText("Incomplete");

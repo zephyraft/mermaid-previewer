@@ -72,14 +72,15 @@ export default () => {
       <Field
         className="mb-8 w-full max-w-xl"
         label={<strong className="font-bold">Diagram theme</strong>}
-        hint="Auto follows the background behind each diagram. Changes apply to open previews immediately.">
+        hint="Page background matches the area behind each diagram. System follows your device’s light or dark appearance.">
         <Select
           className="w-full max-w-80"
           value={theme}
           onChange={(_, { value }) => {
             if (isDiagramTheme(value)) void setTheme(value);
           }}>
-          <option value="auto">Auto</option>
+          <option value="background">Page background</option>
+          <option value="system">System</option>
           <option value="light">Light</option>
           <option value="dark">Dark</option>
         </Select>

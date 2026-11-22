@@ -15,7 +15,7 @@ import {
   readSourceDiagram,
 } from "./render";
 import { selectRules } from "./rules";
-import type { DiagramTheme, SelectorConfig } from "~types";
+import type { DiagramAppearance, DiagramTheme, SelectorConfig } from "~types";
 
 function findContainers(rules: SelectorConfig[]) {
   const containers = new Set<HTMLElement>();
@@ -58,7 +58,8 @@ export async function observeDiagrams(signal: AbortSignal) {
   let running = false;
   let restorePreview = false;
   let theme: DiagramTheme | undefined;
-  let renderedTheme: DiagramTheme | undefined;
+  let renderedAppearance: DiagramAppearance | undefined;
+  const systemAppearance = window.matchMedia("(prefers-color-scheme: dark)");
 
   function attachPreviewExporter(container: HTMLElement) {
     const source = container.getAttribute(diagramSource);
@@ -82,8 +83,13 @@ export async function observeDiagrams(signal: AbortSignal) {
     try {
       while (queued && !signal.aborted) {
         queued = false;
-        const currentTheme = theme;
-        if (render && currentTheme !== undefined) {
+        if (render && theme !== undefined) {
+          const appearance: DiagramAppearance =
+            theme === "system"
+              ? systemAppearance.matches
+                ? "dark"
+                : "light"
+              : theme;
           const liveContainers = livePreviews
             ? findContainers(liveRules).filter(isSourceContainer)
             : [];
@@ -95,7 +101,7 @@ export async function observeDiagrams(signal: AbortSignal) {
                   container.contains(source) || source.contains(container),
               ),
           );
-          if (restorePreview || renderedTheme !== currentTheme) {
+          if (restorePreview || renderedAppearance !== appearance) {
             for (const container of containers) {
               const source = container.getAttribute(diagramSource);
               if (
@@ -107,19 +113,17 @@ export async function observeDiagrams(signal: AbortSignal) {
               }
             }
             restorePreview = false;
-            renderedTheme = currentTheme;
+            renderedAppearance = appearance;
           }
           const diagrams = containers
             .filter(findMermaid)
-            .map((container) => readSourceDiagram(container, currentTheme));
+            .map((container) => readSourceDiagram(container, appearance));
           if (diagrams.length) {
-            await render(diagrams, signal, currentTheme).catch(console.error);
+            await render(diagrams, signal, appearance).catch(console.error);
             if (signal.aborted) return;
           }
           containers.forEach(attachPreviewExporter);
-          await livePreviews?.(liveContainers, currentTheme).catch(
-            console.error,
-          );
+          await livePreviews?.(liveContainers, appearance).catch(console.error);
           if (signal.aborted) return;
         }
 
@@ -188,7 +192,16 @@ export async function observeDiagrams(signal: AbortSignal) {
     }
   }
 
-  if (render) chrome.storage.onChanged.addListener(onSettingsChange);
+  if (render) {
+    chrome.storage.onChanged.addListener(onSettingsChange);
+    systemAppearance.addEventListener(
+      "change",
+      () => {
+        if (theme === "system") void scan().catch(console.error);
+      },
+      { signal },
+    );
+  }
   signal.addEventListener(
     "abort",
     () => {

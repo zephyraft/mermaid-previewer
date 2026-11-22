@@ -1,4 +1,4 @@
-import type { DiagramTheme, ExtensionMessage } from "~types";
+import type { DiagramAppearance, ExtensionMessage } from "~types";
 import type { SourceDiagram } from "./render";
 
 type Pele = Pick<typeof import("pele"), "render">;
@@ -40,7 +40,7 @@ export async function renderWithPele(
   pele: Pele,
   candidates: SourceDiagram[],
   signal: AbortSignal,
-  theme: DiagramTheme,
+  appearance: DiagramAppearance,
 ) {
   const diagrams = candidates.map((diagram) => ({
     ...diagram,
@@ -79,13 +79,19 @@ export async function renderWithPele(
       if (!(diagramSVG instanceof SVGSVGElement))
         throw new Error("Pele did not return an SVG");
       diagramSVG.id = id;
-      if (surface.dark || theme !== "auto") {
+      if (surface.dark || appearance !== "background") {
         const styles = getComputedStyle(container);
-        if (theme !== "auto" || !styles.getPropertyValue("--pele-bg").trim()) {
+        if (
+          appearance !== "background" ||
+          !styles.getPropertyValue("--pele-bg").trim()
+        ) {
           diagramSVG.style.setProperty("--pele-bg", surface.color);
         }
         for (const [variable, value] of Object.entries(darkVariables)) {
-          if (theme !== "auto" || !styles.getPropertyValue(variable).trim()) {
+          if (
+            appearance !== "background" ||
+            !styles.getPropertyValue(variable).trim()
+          ) {
             diagramSVG.style.setProperty(
               variable,
               surface.dark ? value : "initial",

@@ -1,6 +1,6 @@
 import type { Mermaid } from "mermaid";
 import { detectType } from "pele/core";
-import type { DiagramTheme, ExtensionMessage, Renderer } from "~types";
+import type { DiagramAppearance, ExtensionMessage, Renderer } from "~types";
 import { diagramSurface, themedSurface } from "./diagram-surface";
 import { needsOfficialRenderer, renderWithPele } from "./pele";
 
@@ -31,12 +31,12 @@ export type SourceDiagram = {
 
 export function readSourceDiagram(
   container: HTMLElement,
-  theme: DiagramTheme,
+  appearance: DiagramAppearance,
 ): SourceDiagram {
   return {
     container,
     source: container.innerText,
-    surface: diagramSurface(container, theme),
+    surface: diagramSurface(container, appearance),
   };
 }
 
@@ -59,7 +59,7 @@ export function createDiagramRenderer(renderer: Renderer) {
   return async (
     diagrams: SourceDiagram[],
     signal: AbortSignal,
-    theme: DiagramTheme,
+    appearance: DiagramAppearance,
   ) => {
     for (const { container, source } of diagrams) {
       container.setAttribute(diagramSource, source);
@@ -89,7 +89,7 @@ export function createDiagramRenderer(renderer: Renderer) {
         if (signal.aborted) return;
         official.push(
           ...(pele
-            ? await renderWithPele(pele, candidates, signal, theme)
+            ? await renderWithPele(pele, candidates, signal, appearance)
             : candidates),
         );
       }
@@ -119,7 +119,7 @@ export function createDiagramRenderer(renderer: Renderer) {
       await mermaid.run({
         nodes: group.map(({ container }) => container),
         suppressErrors: true,
-        ...(theme !== "auto" && {
+        ...(appearance !== "background" && {
           postRenderCallback: (id: string) => {
             const svg = document.getElementById(id);
             if (!(svg instanceof SVGSVGElement)) return;

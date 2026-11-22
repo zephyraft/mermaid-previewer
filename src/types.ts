@@ -7,7 +7,8 @@ export type SelectorConfig = ExcludeConfig & { selector: string };
 export type PreviewConfig = SelectorConfig & { live?: boolean };
 
 export type Renderer = "pele" | "mermaid";
-export type DiagramTheme = "auto" | "light" | "dark";
+export type DiagramAppearance = "background" | "light" | "dark";
+export type DiagramTheme = DiagramAppearance | "system";
 
 export type PreviewWindow = Window & {
   mermaidPreviewerLifecycle?: AbortController;

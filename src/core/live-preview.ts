@@ -1,4 +1,4 @@
-import type { DiagramTheme } from "~types";
+import type { DiagramAppearance } from "~types";
 import { diagramSurface } from "./diagram-surface";
 import type { createExporter } from "./exporter";
 import {
@@ -14,9 +14,9 @@ export const livePreviewContents = `[${previewMarker}], [${pendingMarker}]`;
 
 interface Preview {
   attempted: string;
-  theme: DiagramTheme;
+  appearance: DiagramAppearance;
   output?: HTMLElement;
-  outputTheme?: DiagramTheme;
+  outputAppearance?: DiagramAppearance;
   lifecycle?: AbortController;
 }
 
@@ -58,7 +58,10 @@ export function createLivePreviews(
     { once: true },
   );
 
-  return async function update(containers: HTMLElement[], theme: DiagramTheme) {
+  return async function update(
+    containers: HTMLElement[],
+    appearance: DiagramAppearance,
+  ) {
     const current = new Map<HTMLElement, string>();
     for (const container of containers) {
       const source = container.innerText;
@@ -80,7 +83,10 @@ export function createLivePreviews(
 
     const pending = [...current].flatMap(([sourceNode, source]) => {
       const previous = previews.get(sourceNode);
-      if (previous?.attempted === source && previous.theme === theme) {
+      if (
+        previous?.attempted === source &&
+        previous.appearance === appearance
+      ) {
         // The page can rebuild the surrounding nodes while retaining the source node.
         if (
           previous.output &&
@@ -91,14 +97,14 @@ export function createLivePreviews(
         return [];
       }
 
-      const preview = previous ?? { attempted: source, theme };
+      const preview = previous ?? { attempted: source, appearance };
       preview.attempted = source;
-      preview.theme = theme;
+      preview.appearance = appearance;
       previews.set(sourceNode, preview);
       // Render beside the source so the page can keep updating its text nodes.
       const scratch = document.createElement("span");
       scratch.setAttribute(pendingMarker, "");
-      const surface = diagramSurface(sourceNode, theme);
+      const surface = diagramSurface(sourceNode, appearance);
       sourceNode.after(scratch);
       return [
         {
@@ -114,7 +120,7 @@ export function createLivePreviews(
       await render(
         pending.map(({ diagram }) => diagram),
         signal,
-        theme,
+        appearance,
       );
       if (signal.aborted) return;
       // Streaming text can be incomplete while the last successful diagram is visible.
@@ -123,7 +129,7 @@ export function createLivePreviews(
         if (
           source == null ||
           source === diagram.source ||
-          preview.outputTheme === theme ||
+          preview.outputAppearance === appearance ||
           diagram.container.firstElementChild instanceof SVGSVGElement
         ) {
           return [];
@@ -132,7 +138,7 @@ export function createLivePreviews(
         diagram.container.removeAttribute("data-processed");
         return [{ ...diagram, source }];
       });
-      if (retries.length) await render(retries, signal, theme);
+      if (retries.length) await render(retries, signal, appearance);
 
       for (const { sourceNode, preview, diagram } of pending) {
         if (signal.aborted) break;
@@ -152,7 +158,7 @@ export function createLivePreviews(
         sourceNode.setAttribute(sourceMarker, "");
         sourceNode.after(output);
         preview.output = output;
-        preview.outputTheme = theme;
+        preview.outputAppearance = appearance;
         preview.lifecycle = new AbortController();
         attachExporter(target, {
           source: output.getAttribute(diagramSource) ?? diagram.source,
