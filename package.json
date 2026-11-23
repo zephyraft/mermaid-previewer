@@ -1,7 +1,7 @@
 {
   "name": "mermaid-previewer",
   "displayName": "Mermaid Previewer",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "Preview Mermaid diagrams right on the page, copy their source, and download SVGs.",
   "type": "module",
   "scripts": {

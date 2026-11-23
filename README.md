@@ -30,6 +30,10 @@ Pele is the default and recommended rendering engine for faster previews and a s
 
 To switch, choose **Mermaid.js (official)** under **Rendering engine** in Settings, then reload the page you're previewing. The extension also tries Mermaid.js when a diagram uses certain Mermaid.js features or when Pele fails to render it.
 
+## Diagram theme
+
+Choose **Match page**, **System**, **Light**, or **Dark** under **Diagram theme** in Settings, or switch directly from the floating controls on any rendered diagram. Theme changes apply immediately across open pages without reloading.
+
 ## Development
 
 Use Node.js 26.13.1 LTS and pnpm 12.22.0. Run `pnpm install`, then use `pnpm dev` to load the extension in Chrome. `pnpm build` writes an unpacked extension to `dist/chrome`. `pnpm package` writes `dist/mermaid-previewer-chrome.zip`.
@@ -40,6 +44,7 @@ The manual Chrome Web Store workflow uses the existing `SUBMIT_KEYS` secret and 
 
 ## Changelog
 
+- [1.5.4] Added diagram theme switching (Match page, System, Light, and Dark) in Settings and the floating diagram controls, updating rendered diagrams, live previews, and the enlarged preview without reloading the page.
 - [1.5.3] Migrated to Extension.js with support for existing rules. Updated Mermaid.js from 11.4.1 to 12.3.0. Made Pele the default renderer, added a setting to switch to Mermaid.js, and removed experimental Sandbox mode. Added previews for local `.md` files and Gemini code blocks, individual rule switches, and a larger diagram preview with zoom and pan.
 - [1.5.2] Limited content script injection to matching URLs. See [issue #304](https://github.com/zephyraft/mermaid-previewer/issues/304).
 - [1.5.1] Removed ZenUML support to fix CSS leaking into web pages.
